@@ -1,0 +1,4 @@
+goircbot
+========
+
+Go IRC Bot
