@@ -1,3 +1,5 @@
+// Package admin implements a plugin in which registered admins can instruct the
+// bot to perform commands (say, act, notice, op, deop, voice, devoice, quit).
 package admin
 
 import (

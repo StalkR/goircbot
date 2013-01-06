@@ -14,4 +14,4 @@ On [pkgdoc](http://go.pkgdoc.org/github.com/StalkR/goircbot).
 ([documentation](http://go.pkgdoc.org/github.com/fluffle/goirc/client)).
 
 ### Contact
-[StalkR](mailto:stalkr@stalkr.net).
+[StalkR](mailto:goircbot@stalkr.net).

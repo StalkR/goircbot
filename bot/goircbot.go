@@ -1,9 +1,11 @@
+// Go IRC Bot example.
 package main
 
 import (
 	"flag"
 	bot "goircbot"
 	"goircbot/plugins/admin"
+	"goircbot/plugins/failotron"
 	"strings"
 )
 
@@ -17,5 +19,6 @@ func main() {
 	flag.Parse()
 	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
 	admin.Register(b, []string{"nick!ident@host"})
+	failotron.Register(b)
 	b.Run()
 }

@@ -1,6 +1,5 @@
-// Go IRC bot using goirc client library
-// http://go.pkgdoc.org/github.com/fluffle/goirc/client
-
+// Package goircbot implements an IRC bot using goirc library
+// http://go.pkgdoc.org/github.com/fluffle/goirc
 package goircbot
 
 import (
