@@ -42,7 +42,7 @@ func (b *Bot) AddCron(name string, c Cron) {
 // Task is not guaranteed to stop immediately but before the next run.
 func (b *Bot) DelCron(name string) {
 	if _, present := b.crons[name]; !present {
-		log.Println("AddCron: not defined", name)
+		log.Println("DelCron: not defined", name)
 		return
 	}
 	delete(b.crons, name)
