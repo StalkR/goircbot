@@ -18,7 +18,7 @@ func authorized(e *bot.Event) bool {
 			return true
 		}
 	}
-	log.Println("plugins.Admin: not authorized", e.Line.Src)
+	log.Println("admin: not authorized", e.Line.Src)
 	return false
 }
 
