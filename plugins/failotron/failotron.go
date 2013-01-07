@@ -22,7 +22,7 @@ func failotron(b *bot.Bot, e *bot.Event) {
 	humans := make([]string, 0, len(nicks))
 	for _, nick := range nicks {
 		if !nick.Modes.Bot {
-			humans = append(humans, nick.Name)
+			humans = append(humans, nick.Nick)
 		}
 	}
 	if len(humans) == 0 {
