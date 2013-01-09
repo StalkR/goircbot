@@ -6,6 +6,7 @@ import (
 	bot "goircbot"
 	"goircbot/plugins/admin"
 	"goircbot/plugins/failotron"
+	"goircbot/plugins/urbandictionary"
 	"strings"
 )
 
@@ -20,5 +21,6 @@ func main() {
 	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
 	admin.Register(b, []string{"nick!ident@host"})
 	failotron.Register(b)
+	urbandictionary.Register(b)
 	b.Run()
 }
