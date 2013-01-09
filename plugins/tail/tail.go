@@ -14,7 +14,7 @@ import (
 func tail(path string, cb func(line string)) {
 	f, err := os.Open(path)
 	if err != nil {
-		log.Println("tail: os.Open", err)
+		log.Println("tail: error open", path, err)
 		return
 	}
 	defer f.Close()
