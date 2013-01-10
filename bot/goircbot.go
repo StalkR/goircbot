@@ -20,7 +20,7 @@ func main() {
 	flag.Parse()
 	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
 	admin.Register(b, []string{"nick!ident@host"})
-	failotron.Register(b)
+	failotron.Register(b, []string{"bot"})
 	urbandictionary.Register(b)
 	b.Run()
 }
