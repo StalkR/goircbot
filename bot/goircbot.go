@@ -3,10 +3,10 @@ package main
 
 import (
 	"flag"
-	bot "goircbot"
-	"goircbot/plugins/admin"
-	"goircbot/plugins/failotron"
-	"goircbot/plugins/urbandictionary"
+	bot "github.com/StalkR/goircbot"
+	"github.com/StalkR/goircbot/plugins/admin"
+	"github.com/StalkR/goircbot/plugins/failotron"
+	"github.com/StalkR/goircbot/plugins/urbandictionary"
 	"strings"
 )
 

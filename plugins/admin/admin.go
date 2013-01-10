@@ -4,7 +4,7 @@ package admin
 
 import (
 	"fmt"
-	bot "goircbot"
+	bot "github.com/StalkR/goircbot"
 	"log"
 	"strings"
 )

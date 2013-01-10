@@ -3,7 +3,7 @@ package tail
 
 import (
 	"bufio"
-	bot "goircbot"
+	bot "github.com/StalkR/goircbot"
 	"io"
 	"log"
 	"os"

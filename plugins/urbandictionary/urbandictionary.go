@@ -4,9 +4,8 @@ package urbandictionary
 import (
 	"encoding/json"
 	"fmt"
-	bot "goircbot"
+	bot "github.com/StalkR/goircbot"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -30,6 +29,35 @@ type Definition struct {
 	Permalink              string
 	Current_vote           string
 	Thumbs_up, Thumbs_down int
+	Term                   string
+	Type                   string
+}
+
+func (r *Result) String() string {
+	if len(r.List) == 0 {
+		return "no result"
+	}
+	if r.Result_type == "exact" || r.Result_type == "fulltext" {
+		return r.List[0].String()
+	}
+	if r.Result_type == "no_results" {
+		terms := make([]string, 0, len(r.List))
+		for _, d := range r.List {
+			terms = append(terms, d.Term)
+		}
+		return fmt.Sprintf("no result, did you mean: %s?", strings.Join(terms[:5], "? "))
+	}
+	return fmt.Sprintf("%s: %v", r.Result_type, r.List)
+}
+
+func (d *Definition) String() string {
+	def := d.Definition
+	def = strings.Replace(def, "\r", "", -1)
+	def = strings.Replace(def, "\n", " ", -1)
+	if len(def) > 200 {
+		def = def[:200] + "..."
+	}
+	return fmt.Sprintf("%s: %s", d.Word, def)
 }
 
 // Define gets definition of term on urbandictionary and populates a Result.
@@ -53,16 +81,6 @@ func Define(term string) (r Result, e error) {
 	return r, nil
 }
 
-func (d *Definition) String() string {
-	def := d.Definition
-	def = strings.Replace(def, "\r", "", -1)
-	def = strings.Replace(def, "\n", " ", -1)
-	if len(def) > 200 {
-		def = def[:200] + "..."
-	}
-	return fmt.Sprintf("%s: %s", d.Word, def)
-}
-
 func urban(b *bot.Bot, e *bot.Event) {
 	term := strings.TrimSpace(e.Args)
 	if len(term) == 0 {
@@ -70,14 +88,10 @@ func urban(b *bot.Bot, e *bot.Event) {
 	}
 	r, err := Define(term)
 	if err != nil {
-		log.Println("urbandictionary: error", err)
+		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
 	}
-	if len(r.List) == 0 {
-		b.Conn.Privmsg(e.Target, "no result")
-		return
-	}
-	b.Conn.Privmsg(e.Target, r.List[0].String())
+	b.Conn.Privmsg(e.Target, r.String())
 }
 
 // Register registers the plugin with a bot.

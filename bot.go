@@ -5,6 +5,7 @@ package goircbot
 import (
 	irc "github.com/fluffle/goirc/client"
 	"log"
+	"time"
 )
 
 // Bot represents an IRC bot, with IRC client object, settings, commands and crons.
@@ -63,7 +64,9 @@ func (b *Bot) Run() {
 	// Reconnect loop, unless we want to exit.
 	for b.Reconnect {
 		if err := b.Conn.Connect(b.Host); err != nil {
-			log.Println("Connection error:", err)
+			log.Println("Connection error:", err, "- reconnecting in 1min")
+			time.Sleep(time.Minute)
+			continue
 		}
 
 		// Wait on quit channel for a disconnect event.

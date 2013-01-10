@@ -4,8 +4,9 @@ package failotron
 
 import (
 	"fmt"
-	bot "goircbot"
+	bot "github.com/StalkR/goircbot"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -21,9 +22,10 @@ func failotron(b *bot.Bot, e *bot.Event) {
 	nicks := ch.Nicks()
 	humans := make([]string, 0, len(nicks))
 	for _, nick := range nicks {
-		if !nick.Modes.Bot {
-			humans = append(humans, nick.Nick)
+		if nick.Modes.Bot || nick.Modes.Service {
+			continue
 		}
+		humans = append(humans, nick.Nick)
 	}
 	if len(humans) == 0 {
 		return
