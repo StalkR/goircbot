@@ -6,7 +6,6 @@ import (
 	"fmt"
 	bot "github.com/StalkR/goircbot"
 	"math/rand"
-	"strings"
 	"time"
 )
 
