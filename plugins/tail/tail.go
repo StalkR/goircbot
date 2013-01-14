@@ -12,7 +12,7 @@ import (
 )
 
 func Tail(path string, cb func(line string)) {
-	var f os.File
+	var f *os.File
 	for {
 		f, err := os.Open(path)
 		if err == nil {
