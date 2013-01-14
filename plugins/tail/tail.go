@@ -12,10 +12,14 @@ import (
 )
 
 func Tail(path string, cb func(line string)) {
-	f, err := os.Open(path)
-	if err != nil {
+	var f os.File
+	for {
+		f, err := os.Open(path)
+		if err == nil {
+			break
+		}
 		log.Println("tail: error open", path, err)
-		return
+		time.Sleep(time.Duration(30) * time.Second)
 	}
 	defer f.Close()
 
@@ -27,7 +31,7 @@ func Tail(path string, cb func(line string)) {
 	}
 	var line string
 	for {
-		time.Sleep(time.Duration(1) * time.Second)
+		time.Sleep(time.Second)
 		for {
 			buf, err := r.ReadString('\n')
 			line += buf
