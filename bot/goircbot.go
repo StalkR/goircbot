@@ -7,6 +7,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/admin"
 	"github.com/StalkR/goircbot/plugins/failotron"
 	"github.com/StalkR/goircbot/plugins/urbandictionary"
+	"github.com/StalkR/goircbot/plugins/whoami"
 	"strings"
 )
 
@@ -22,5 +23,6 @@ func main() {
 	admin.Register(b, []string{"nick!ident@host"})
 	failotron.Register(b, []string{"bot"})
 	urbandictionary.Register(b)
+	whoami.Register(b)
 	b.Run()
 }
