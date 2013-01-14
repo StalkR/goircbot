@@ -81,7 +81,7 @@ func Define(term string) (r Result, e error) {
 	return r, nil
 }
 
-func urban(b *bot.Bot, e *bot.Event) {
+func Urban(b *bot.Bot, e *bot.Event) {
 	term := strings.TrimSpace(e.Args)
 	if len(term) == 0 {
 		return
@@ -98,7 +98,7 @@ func urban(b *bot.Bot, e *bot.Event) {
 func Register(b *bot.Bot) {
 	b.AddCommand("urban", bot.Command{
 		Help:    "get definition of word from urbandictionary",
-		Handler: urban,
+		Handler: Urban,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

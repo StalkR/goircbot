@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func tail(path string, cb func(line string)) {
+func Tail(path string, cb func(line string)) {
 	f, err := os.Open(path)
 	if err != nil {
 		log.Println("tail: error open", path, err)
@@ -42,7 +42,7 @@ func tail(path string, cb func(line string)) {
 	}
 }
 
-func notify(b *bot.Bot, line string) {
+func Notify(b *bot.Bot, line string) {
 	if !b.Conn.Connected {
 		return
 	}
@@ -54,6 +54,6 @@ func notify(b *bot.Bot, line string) {
 // Register registers the plugin with a bot.
 func Register(b *bot.Bot, paths []string) {
 	for _, path := range paths {
-		go tail(path, func(line string) { notify(b, line) })
+		go Tail(path, func(line string) { Notify(b, line) })
 	}
 }

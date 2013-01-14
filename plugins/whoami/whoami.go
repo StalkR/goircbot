@@ -9,7 +9,7 @@ import (
 	"os/user"
 )
 
-func whoami(b *bot.Bot, e *bot.Event) {
+func Whoami(b *bot.Bot, e *bot.Event) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Println("whoami: hostname error", err)
@@ -30,7 +30,7 @@ func whoami(b *bot.Bot, e *bot.Event) {
 func Register(b *bot.Bot) {
 	b.AddCommand("whoami", bot.Command{
 		Help:    "report user@host of the bot",
-		Handler: whoami,
+		Handler: Whoami,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

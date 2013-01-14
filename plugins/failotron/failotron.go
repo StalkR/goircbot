@@ -13,7 +13,7 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func failotron(b *bot.Bot, e *bot.Event, ignore []string) {
+func Failotron(b *bot.Bot, e *bot.Event, ignore []string) {
 	ch, on := b.Conn.Me.IsOnStr(e.Target)
 	if !on {
 		return
@@ -45,7 +45,7 @@ func failotron(b *bot.Bot, e *bot.Event, ignore []string) {
 func Register(b *bot.Bot, ignore []string) {
 	b.AddCommand("failotron", bot.Command{
 		Help:    "find who is going to have the next fail",
-		Handler: func(b *bot.Bot, e *bot.Event) { failotron(b, e, ignore) },
+		Handler: func(b *bot.Bot, e *bot.Event) { Failotron(b, e, ignore) },
 		Pub:     true,
 		Priv:    false,
 		Hidden:  false})
