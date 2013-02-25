@@ -8,6 +8,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/dns"
 	"github.com/StalkR/goircbot/plugins/failotron"
 	//"github.com/StalkR/goircbot/plugins/googlesearch"
+	//"github.com/StalkR/goircbot/plugins/googletranslate"
 	"github.com/StalkR/goircbot/plugins/imdb"
 	"github.com/StalkR/goircbot/plugins/scores"
 	"github.com/StalkR/goircbot/plugins/up"
@@ -32,6 +33,7 @@ func main() {
 	dns.Register(b)
 	failotron.Register(b, ignore)
 	//googlesearch.Register(b, "<key>", "<cx>")
+	//googletranslate.Register(b, "<key>")
 	imdb.Register(b)
 	scores.Register(b, "/tmp/scores")
 	up.Register(b)
