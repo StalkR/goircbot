@@ -4,7 +4,7 @@ package urbandictionary
 import (
 	"fmt"
 	bot "github.com/StalkR/goircbot"
-	urbandictionary "github.com/StalkR/misc/urbandictionary"
+	"github.com/StalkR/misc/urbandictionary"
 	"strings"
 )
 
