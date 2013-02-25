@@ -9,6 +9,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/failotron"
 	"github.com/StalkR/goircbot/plugins/imdb"
 	"github.com/StalkR/goircbot/plugins/scores"
+	"github.com/StalkR/goircbot/plugins/up"
 	"github.com/StalkR/goircbot/plugins/urbandictionary"
 	"github.com/StalkR/goircbot/plugins/whoami"
 	"strings"
@@ -28,6 +29,7 @@ func main() {
 	failotron.Register(b, []string{"bot"})
 	imdb.Register(b)
 	scores.Register(b, "/tmp/scores")
+	up.Register(b)
 	urbandictionary.Register(b)
 	whoami.Register(b)
 	b.Run()
