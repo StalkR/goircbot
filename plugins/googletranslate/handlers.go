@@ -6,6 +6,7 @@ import (
 	bot "github.com/StalkR/goircbot"
 	"github.com/StalkR/misc/google/translate"
 	"log"
+	"regexp"
 	"strings"
 )
 
@@ -21,8 +22,16 @@ func Supported(target, key string) ([]string, error) {
 	return langs, nil
 }
 
+func compactSpaces(s string) string {
+	r, err := regexp.Compile("\\s\\s+")
+	if err != nil {
+		return s
+	}
+	return string(r.ReplaceAll([]byte(s), []byte(" ")))
+}
+
 func Translate(b *bot.Bot, e *bot.Event, key string) {
-	line := strings.TrimSpace(e.Args)
+	line := strings.TrimSpace(compactSpaces(e.Args))
 	args := strings.SplitN(line, " ", 3)
 	var reply string
 	switch {
