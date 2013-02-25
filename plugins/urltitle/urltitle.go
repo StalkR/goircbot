@@ -16,6 +16,9 @@ import (
 	"time"
 )
 
+// When matched, urltitle do not read line.
+var silenceRegexp = "(^|\\s)tg(\\s|$)"
+
 func timeoutDialer(d time.Duration) func(net, addr string) (c net.Conn, err error) {
 	return func(netw, addr string) (net.Conn, error) {
 		return net.DialTimeout(netw, addr, d)
@@ -58,7 +61,7 @@ func watchLine(b *bot.Bot, line *irc.Line, ignoremap map[string]bool) {
 		return
 	}
 	text := line.Args[1]
-	if !strings.Contains(text, "http") {
+	if m, err := regexp.Match(silenceRegexp, []byte(text)); err != nil || m {
 		return
 	}
 	r, err := regexp.Compile("(?:^|\\s)(https?://[^\\s]+)")
