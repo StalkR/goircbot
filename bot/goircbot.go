@@ -5,6 +5,7 @@ import (
 	"flag"
 	bot "github.com/StalkR/goircbot"
 	"github.com/StalkR/goircbot/plugins/admin"
+	"github.com/StalkR/goircbot/plugins/dns"
 	"github.com/StalkR/goircbot/plugins/failotron"
 	"github.com/StalkR/goircbot/plugins/imdb"
 	"github.com/StalkR/goircbot/plugins/scores"
@@ -23,6 +24,7 @@ func main() {
 	flag.Parse()
 	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
 	admin.Register(b, []string{"nick!ident@host"})
+	dns.Register(b)
 	failotron.Register(b, []string{"bot"})
 	imdb.Register(b)
 	scores.Register(b, "/tmp/scores")
