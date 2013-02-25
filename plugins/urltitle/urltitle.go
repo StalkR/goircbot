@@ -24,7 +24,6 @@ func timeoutDialer(d time.Duration) func(net, addr string) (c net.Conn, err erro
 
 // Title gets an URL and returns its title.
 func Title(url string) (string, error) {
-	log.Println("urltitle:", url)
 	client := &http.Client{
 		Transport: &http.Transport{
 			Dial: timeoutDialer(3 * time.Second),
@@ -73,6 +72,7 @@ func watchLine(b *bot.Bot, line *irc.Line, ignoremap map[string]bool) {
 	url := string(matches[1])
 	title, err := Title(url)
 	if err != nil {
+		log.Println("urltitle:", err)
 		return
 	}
 	if len(title) > 200 {
