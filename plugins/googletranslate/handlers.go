@@ -69,6 +69,9 @@ func Translate(b *bot.Bot, e *bot.Event, key string) {
 		}
 		reply = fmt.Sprintf("%s->%s: %s\n", source, target, t.TranslatedText)
 	}
+	if len(reply) > 300 {
+		reply = reply[:300]
+	}
 	b.Conn.Privmsg(e.Target, reply)
 }
 
