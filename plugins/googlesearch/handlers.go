@@ -2,9 +2,9 @@
 package googlesearch
 
 import (
-	"fmt"
 	bot "github.com/StalkR/goircbot"
 	"github.com/StalkR/misc/google/customsearch"
+	"log"
 	"strings"
 )
 
@@ -15,7 +15,7 @@ func Search(b *bot.Bot, e *bot.Event, key, cx string) {
 	}
 	r, err := customsearch.Search(term, key, cx)
 	if err != nil {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
+		log.Println("googlesearch:", err)
 		return
 	}
 	if len(r.Items) == 0 {
