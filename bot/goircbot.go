@@ -6,6 +6,7 @@ import (
 	bot "github.com/StalkR/goircbot"
 	"github.com/StalkR/goircbot/plugins/admin"
 	"github.com/StalkR/goircbot/plugins/failotron"
+	"github.com/StalkR/goircbot/plugins/imdb"
 	"github.com/StalkR/goircbot/plugins/scores"
 	"github.com/StalkR/goircbot/plugins/urbandictionary"
 	"github.com/StalkR/goircbot/plugins/whoami"
@@ -23,6 +24,7 @@ func main() {
 	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
 	admin.Register(b, []string{"nick!ident@host"})
 	failotron.Register(b, []string{"bot"})
+	imdb.Register(b)
 	scores.Register(b, "/tmp/scores")
 	urbandictionary.Register(b)
 	whoami.Register(b)
