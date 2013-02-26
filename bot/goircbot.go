@@ -11,6 +11,7 @@ import (
 	//"github.com/StalkR/goircbot/plugins/googlesearch"
 	//"github.com/StalkR/goircbot/plugins/googletranslate"
 	"github.com/StalkR/goircbot/plugins/imdb"
+	"github.com/StalkR/goircbot/plugins/ping"
 	"github.com/StalkR/goircbot/plugins/scores"
 	"github.com/StalkR/goircbot/plugins/up"
 	"github.com/StalkR/goircbot/plugins/urbandictionary"
@@ -37,6 +38,7 @@ func main() {
 	//googlesearch.Register(b, "<key>", "<cx>")
 	//googletranslate.Register(b, "<key>")
 	imdb.Register(b)
+	ping.Register(b)
 	scores.Register(b, "/tmp/scores")
 	up.Register(b)
 	urbandictionary.Register(b)
