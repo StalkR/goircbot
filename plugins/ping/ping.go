@@ -23,7 +23,11 @@ func Ping(host string) (string, error) {
 	// -c: packet count, -w: timeout in seconds
 	out, err := exec.Command("ping", "-c", "1", "-w", "3", "--", host).Output()
 	if err != nil {
-		if fmt.Sprintf("%s", err) == "exit status 2" {
+		errs := fmt.Sprintf("%s", err)
+		if errs == "exit status 1" {
+			return "", errors.New("timeout")
+		}
+		if errs == "exit status 2" {
 			return "", errors.New("unknown host")
 		}
 		return "", err
@@ -34,7 +38,7 @@ func Ping(host string) (string, error) {
 	}
 	line := r.Find(out)
 	if line == nil {
-		return "", errors.New("timeout")
+		return "", errors.New("cannot parse ping output")
 	}
 	return string(line), nil
 }
