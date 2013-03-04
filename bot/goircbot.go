@@ -13,6 +13,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/imdb"
 	"github.com/StalkR/goircbot/plugins/ping"
 	"github.com/StalkR/goircbot/plugins/scores"
+	"github.com/StalkR/goircbot/plugins/sed"
 	"github.com/StalkR/goircbot/plugins/up"
 	"github.com/StalkR/goircbot/plugins/urbandictionary"
 	"github.com/StalkR/goircbot/plugins/urltitle"
@@ -40,6 +41,7 @@ func main() {
 	imdb.Register(b)
 	ping.Register(b)
 	scores.Register(b, "/tmp/scores")
+	sed.Register(b)
 	up.Register(b)
 	urbandictionary.Register(b)
 	urltitle.Register(b, ignore)
