@@ -49,7 +49,11 @@ func Title(url string) (string, error) {
 	if len(matches) < 2 {
 		return "", errors.New("no title found in page")
 	}
-	return html.UnescapeString(strings.TrimSpace(string(matches[1]))), nil
+	s := string(matches[1])
+	s = html.UnescapeString(s)
+	s = strings.Replace(s, "\t", " ", -1)
+	s = strings.TrimSpace(s)
+	return s, nil
 }
 
 func watchLine(b *bot.Bot, line *irc.Line, ignoremap map[string]bool) {
