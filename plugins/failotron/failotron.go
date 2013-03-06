@@ -14,7 +14,7 @@ func init() {
 }
 
 func Failotron(b *bot.Bot, e *bot.Event, ignore []string) {
-	ch, on := b.Conn.Me.IsOnStr(e.Target)
+	ch, on := b.Conn.Me().IsOnStr(e.Target)
 	if !on {
 		return
 	}

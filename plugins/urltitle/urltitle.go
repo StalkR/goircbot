@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	bot "github.com/StalkR/goircbot"
-	irc "github.com/fluffle/goirc/client"
+	"github.com/fluffle/goirc/client"
 	"html"
 	"io/ioutil"
 	"log"
@@ -60,7 +60,7 @@ func Title(url string) (string, error) {
 	return s, nil
 }
 
-func watchLine(b *bot.Bot, line *irc.Line, ignoremap map[string]bool) {
+func watchLine(b *bot.Bot, line *client.Line, ignoremap map[string]bool) {
 	target := line.Args[0]
 	if !strings.HasPrefix(target, "#") {
 		return
@@ -99,8 +99,8 @@ func Register(b *bot.Bot, ignore []string) {
 		ignoremap[nick] = true
 	}
 
-	b.Conn.AddHandler("privmsg",
-		func(conn *irc.Conn, line *irc.Line) {
+	b.Conn.HandleFunc("privmsg",
+		func(conn *client.Conn, line *client.Line) {
 			watchLine(b, line, ignoremap)
 		})
 }

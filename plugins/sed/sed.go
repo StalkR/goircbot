@@ -6,7 +6,7 @@ import (
 	"container/list"
 	"fmt"
 	bot "github.com/StalkR/goircbot"
-	irc "github.com/fluffle/goirc/client"
+	"github.com/fluffle/goirc/client"
 	"regexp"
 	"strings"
 	"sync"
@@ -127,7 +127,7 @@ func (bl *Backlog) Sed(channel, nick, pattern, replace string) string {
 	return ""
 }
 
-func watchLine(b *bot.Bot, line *irc.Line, bl *Backlog) {
+func watchLine(b *bot.Bot, line *client.Line, bl *Backlog) {
 	channel := line.Args[0]
 	nick := line.Nick
 	text := line.Args[1]
@@ -155,6 +155,6 @@ func watchLine(b *bot.Bot, line *irc.Line, bl *Backlog) {
 // Register registers the plugin with a bot.
 func Register(b *bot.Bot) {
 	bl := &Backlog{}
-	b.Conn.AddHandler("privmsg",
-		func(conn *irc.Conn, line *irc.Line) { watchLine(b, line, bl) })
+	b.Conn.HandleFunc("privmsg",
+		func(conn *client.Conn, line *client.Line) { watchLine(b, line, bl) })
 }

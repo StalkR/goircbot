@@ -48,10 +48,10 @@ func Tail(path string, cb func(line string)) {
 }
 
 func Notify(b *bot.Bot, line string) {
-	if !b.Conn.Connected {
+	if !b.Conn.Connected() {
 		return
 	}
-	for _, channel := range b.Conn.Me.Channels() {
+	for _, channel := range b.Conn.Me().Channels() {
 		b.Conn.Privmsg(channel.Name, line)
 	}
 }

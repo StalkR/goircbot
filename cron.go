@@ -27,7 +27,7 @@ func (b *Bot) AddCron(name string, c Cron) {
 	go func() {
 		for {
 			if cron, present := b.crons[name]; present {
-				if b.Conn.Connected {
+				if b.Conn.Connected() {
 					cron.Handler(b)
 				}
 				time.Sleep(cron.Duration)

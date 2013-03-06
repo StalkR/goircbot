@@ -2,7 +2,7 @@ package goircbot
 
 import (
 	"fmt"
-	irc "github.com/fluffle/goirc/client"
+	"github.com/fluffle/goirc/client"
 	"log"
 	"sort"
 	"strings"
@@ -10,7 +10,7 @@ import (
 
 // Event is given to plugins.
 type Event struct {
-	Line   *irc.Line
+	Line   *client.Line
 	Target string
 	Args   string
 }
@@ -62,7 +62,7 @@ func (b *Bot) DelCommand(name string) {
 
 // handleCommand parses a line, matches with registered commands and dispatches.
 // A command can be triggered in public with !cmd or bot: cmd and in private with cmd.
-func handleCommand(b *Bot, line *irc.Line) {
+func handleCommand(b *Bot, line *client.Line) {
 	words := strings.Split(line.Args[1], " ")
 	var pub bool
 	var target string
@@ -72,7 +72,7 @@ func handleCommand(b *Bot, line *irc.Line) {
 		switch {
 		case strings.HasPrefix(words[0], "!"):
 			words[0] = words[0][1:]
-		case words[0] == b.Conn.Me.Nick+":":
+		case words[0] == b.Conn.Me().Nick+":":
 			words = words[1:]
 			if len(words) <= 0 {
 				return

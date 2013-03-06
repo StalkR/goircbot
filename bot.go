@@ -3,7 +3,8 @@
 package goircbot
 
 import (
-	irc "github.com/fluffle/goirc/client"
+	"github.com/fluffle/goirc/client"
+	"github.com/fluffle/goirc/state"
 	"log"
 	"time"
 )
@@ -11,7 +12,7 @@ import (
 // Bot represents an IRC bot, with IRC client object, settings, commands and crons.
 type Bot struct {
 	Host      string
-	Conn      *irc.Conn
+	Conn      *client.Conn
 	Quit      chan bool
 	Reconnect bool
 	commands  map[string]Command
@@ -20,34 +21,48 @@ type Bot struct {
 
 // NewBot creates a new Bot with a set of parameters.
 func NewBot(host string, ssl bool, nick, ident string, channels []string) (b *Bot) {
+	cfg := &client.Config{
+		Me:          state.NewNick(nick),
+		NewNick:     func(s string) string { return s + "_" },
+		PingFreq:    3 * time.Minute,
+		QuitMessage: "I have to go.",
+		Server:      host,
+		SSL:         ssl,
+		Version:     "Powered by GoIRCBot",
+	}
+	cfg.Me.Ident = ident
+	cfg.Me.Name = nick
+
+	conn, err := client.Client(cfg)
+	if err != nil {
+		panic(err)
+	}
 	b = &Bot{
 		Host:      host,
-		Conn:      irc.SimpleClient(nick, ident),
+		Conn:      conn,
 		Quit:      make(chan bool),
 		Reconnect: true,
 		commands:  make(map[string]Command),
 		crons:     make(map[string]Cron),
 	}
-	if ssl {
-		b.Conn.SSL = true
-	}
+
 	b.Conn.EnableStateTracking()
 
 	// Join channels on connect and mark ourselves as a Bot.
-	b.Conn.AddHandler("connected",
-		func(conn *irc.Conn, line *irc.Line) {
+	b.Conn.HandleFunc("connected",
+		func(conn *client.Conn, line *client.Line) {
 			for _, channel := range channels {
 				conn.Join(channel)
 			}
-			conn.Mode(conn.Me.Nick, "+B")
+			conn.Mode(conn.Me().Nick, "+B")
 		})
 
 	// Signal disconnect to Bot.Run so it can reconnect.
-	b.Conn.AddHandler("disconnected",
-		func(conn *irc.Conn, line *irc.Line) { b.Quit <- true })
+	b.Conn.HandleFunc("disconnected",
+		func(conn *client.Conn, line *client.Line) { b.Quit <- true })
 
-	b.Conn.AddHandler("privmsg",
-		func(conn *irc.Conn, line *irc.Line) { handleCommand(b, line) })
+	b.Conn.HandleFunc("privmsg",
+		func(conn *client.Conn, line *client.Line) { handleCommand(b, line) })
 
 	b.AddCommand("help", Command{
 		Help:    "show commands and detailed help",
@@ -63,7 +78,7 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) (b *Bo
 func (b *Bot) Run() {
 	// Reconnect loop, unless we want to exit.
 	for b.Reconnect {
-		if err := b.Conn.Connect(b.Host); err != nil {
+		if err := b.Conn.Connect(); err != nil {
 			log.Println("Connection error:", err, "- reconnecting in 1min")
 			time.Sleep(time.Minute)
 			continue

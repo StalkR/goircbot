@@ -5,14 +5,14 @@ package scores
 import (
 	"fmt"
 	bot "github.com/StalkR/goircbot"
-	irc "github.com/fluffle/goirc/client"
+	"github.com/fluffle/goirc/client"
 	"log"
 	"regexp"
 	"strings"
 	"time"
 )
 
-func ParseScore(b *bot.Bot, line *irc.Line, s *Scores) {
+func ParseScore(b *bot.Bot, line *client.Line, s *Scores) {
 	text := line.Args[1]
 	var modifier int
 	switch {
@@ -98,8 +98,8 @@ func TopScores(b *bot.Bot, e *bot.Event, s *Scores) {
 func Register(b *bot.Bot, scoresfile string) {
 	s := Load(scoresfile)
 
-	b.Conn.AddHandler("privmsg",
-		func(conn *irc.Conn, line *irc.Line) { ParseScore(b, line, s) })
+	b.Conn.HandleFunc("privmsg",
+		func(conn *client.Conn, line *client.Line) { ParseScore(b, line, s) })
 
 	b.AddCommand("score", bot.Command{
 		Help:    "score <thing> - show score of something",
