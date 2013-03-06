@@ -51,7 +51,11 @@ func Title(url string) (string, error) {
 	}
 	s := string(matches[1])
 	s = html.UnescapeString(s)
-	s = strings.Replace(s, "\t", " ", -1)
+	r, err = regexp.Compile("\\s+")
+	if err != nil {
+		return "", err
+	}
+	s = r.ReplaceAllString(s, " ")
 	s = strings.TrimSpace(s)
 	return s, nil
 }
