@@ -13,7 +13,7 @@ import (
 
 // Ping runs ping against given host and returns its output.
 func Ping(host string, ipv6 bool) (string, error) {
-	matched, err := regexp.Match("^[\\w._-]+$", []byte(host))
+	matched, err := regexp.Match("^[\\w._:-]+$", []byte(host))
 	if err != nil {
 		return "", err
 	}
