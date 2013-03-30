@@ -29,14 +29,13 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) (b *Bo
 		Server:      host,
 		SSL:         ssl,
 		Version:     "Powered by GoIRCBot",
+		Recover:     (*client.Conn).LogPanic,
+		SplitLen:    450,
 	}
 	cfg.Me.Ident = ident
 	cfg.Me.Name = nick
 
-	conn, err := client.Client(cfg)
-	if err != nil {
-		panic(err)
-	}
+	conn := client.Client(cfg)
 	b = &Bot{
 		Host:      host,
 		Conn:      conn,
