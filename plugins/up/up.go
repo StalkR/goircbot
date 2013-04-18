@@ -2,6 +2,7 @@
 package up
 
 import (
+	"crypto/tls"
 	"fmt"
 	bot "github.com/StalkR/goircbot"
 	"net"
@@ -21,7 +22,8 @@ func timeoutDialer(d time.Duration) func(net, addr string) (c net.Conn, err erro
 func Probe(url string) bool {
 	client := &http.Client{
 		Transport: &http.Transport{
-			Dial: timeoutDialer(3 * time.Second),
+			Dial:            timeoutDialer(3 * time.Second),
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 	}
 	resp, err := client.Get(url)
