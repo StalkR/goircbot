@@ -15,7 +15,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/scores"
 	"github.com/StalkR/goircbot/plugins/sed"
 	"github.com/StalkR/goircbot/plugins/up"
-	"github.com/StalkR/goircbot/plugins/urbandictionary"
+	"github.com/StalkR/goircbot/plugins/urban"
 	"github.com/StalkR/goircbot/plugins/urltitle"
 	"github.com/StalkR/goircbot/plugins/whoami"
 	"strings"
@@ -43,7 +43,7 @@ func main() {
 	scores.Register(b, "/tmp/scores")
 	sed.Register(b)
 	up.Register(b)
-	urbandictionary.Register(b)
+	urban.Register(b)
 	urltitle.Register(b, ignore)
 	whoami.Register(b)
 	b.Run()
