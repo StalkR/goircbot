@@ -1,10 +1,10 @@
-// Package googletranslate implements a plugin to translate with Google Translate.
-package googletranslate
+// Package translate implements a plugin to translate with Google Translate.
+package translate
 
 import (
 	"fmt"
 	bot "github.com/StalkR/goircbot"
-	"github.com/StalkR/misc/google/translate"
+	"github.com/StalkR/goircbot/lib/google/translate"
 	"log"
 	"regexp"
 	"strings"

@@ -8,12 +8,13 @@ import (
 	"github.com/StalkR/goircbot/plugins/dns"
 	"github.com/StalkR/goircbot/plugins/failotron"
 	"github.com/StalkR/goircbot/plugins/geo"
-	//"github.com/StalkR/goircbot/plugins/googlesearch"
-	//"github.com/StalkR/goircbot/plugins/googletranslate"
 	"github.com/StalkR/goircbot/plugins/imdb"
 	"github.com/StalkR/goircbot/plugins/ping"
 	"github.com/StalkR/goircbot/plugins/scores"
+	//"github.com/StalkR/goircbot/plugins/search"
 	"github.com/StalkR/goircbot/plugins/sed"
+	//"github.com/StalkR/goircbot/plugins/tail"
+	//"github.com/StalkR/goircbot/plugins/translate"
 	"github.com/StalkR/goircbot/plugins/up"
 	"github.com/StalkR/goircbot/plugins/urban"
 	"github.com/StalkR/goircbot/plugins/urltitle"
@@ -36,12 +37,13 @@ func main() {
 	dns.Register(b)
 	failotron.Register(b, ignore)
 	geo.Register(b)
-	//googlesearch.Register(b, "<key>", "<cx>")
-	//googletranslate.Register(b, "<key>")
 	imdb.Register(b)
 	ping.Register(b)
 	scores.Register(b, "/tmp/scores")
+	//search.Register(b, "<key>", "<cx>")
 	sed.Register(b)
+	//tail.Register(b, []string{"/path/to/file"})
+	//translate.Register(b, "<key>")
 	up.Register(b)
 	urban.Register(b)
 	urltitle.Register(b, ignore)

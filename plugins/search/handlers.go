@@ -1,9 +1,9 @@
-// Package googlesearch implements a plugin to search on Google Custom Search.
-package googlesearch
+// Package search implements a plugin to search on Google Custom Search.
+package search
 
 import (
 	bot "github.com/StalkR/goircbot"
-	"github.com/StalkR/misc/google/customsearch"
+	"github.com/StalkR/goircbot/lib/google/search"
 	"log"
 	"strings"
 )
@@ -13,7 +13,7 @@ func Search(b *bot.Bot, e *bot.Event, key, cx string) {
 	if len(term) == 0 {
 		return
 	}
-	r, err := customsearch.Search(term, key, cx)
+	r, err := search.Search(term, key, cx)
 	if err != nil {
 		log.Println("googlesearch:", err)
 		return
