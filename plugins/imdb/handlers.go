@@ -4,7 +4,7 @@ package imdb
 import (
 	"fmt"
 	bot "github.com/StalkR/goircbot"
-	"github.com/StalkR/misc/imdb"
+	"github.com/StalkR/goircbot/lib/imdb"
 	"strings"
 )
 

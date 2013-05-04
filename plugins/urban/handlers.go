@@ -1,10 +1,10 @@
-// Package urban implements a plugin to get urban dictionary definition of words.
+// Package urban implements a plugin to get Urban Dictionary definition of words.
 package urban
 
 import (
 	"fmt"
 	bot "github.com/StalkR/goircbot"
-	"github.com/StalkR/goircbot/plugins/urban/dictionary"
+	"github.com/StalkR/goircbot/lib/urbandictionary"
 	"strings"
 )
 
@@ -13,7 +13,7 @@ func Urban(b *bot.Bot, e *bot.Event) {
 	if len(term) == 0 {
 		return
 	}
-	r, err := dictionary.Define(term)
+	r, err := urbandictionary.Define(term)
 	if err != nil {
 		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return

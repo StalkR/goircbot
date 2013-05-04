@@ -1,6 +1,6 @@
-// Package dictionary implements Urban Dictionary definition of words
+// Package urbandictionary implements Urban Dictionary definition of words
 // using their JSON API.
-package dictionary
+package urbandictionary
 
 import (
 	"encoding/json"
