@@ -4,7 +4,7 @@ package geo
 import (
 	"fmt"
 	bot "github.com/StalkR/goircbot"
-	"github.com/StalkR/misc/geo"
+	"github.com/StalkR/goircbot/lib/geo"
 	"strings"
 )
 
