@@ -13,10 +13,10 @@ import (
 	"github.com/StalkR/goircbot/plugins/imdb"
 	"github.com/StalkR/goircbot/plugins/ping"
 	"github.com/StalkR/goircbot/plugins/scores"
-	//"github.com/StalkR/goircbot/plugins/search"
+	"github.com/StalkR/goircbot/plugins/search"
 	"github.com/StalkR/goircbot/plugins/sed"
-	//"github.com/StalkR/goircbot/plugins/tail"
-	//"github.com/StalkR/goircbot/plugins/translate"
+	"github.com/StalkR/goircbot/plugins/tail"
+	"github.com/StalkR/goircbot/plugins/translate"
 	"github.com/StalkR/goircbot/plugins/up"
 	"github.com/StalkR/goircbot/plugins/urban"
 	"github.com/StalkR/goircbot/plugins/urltitle"
@@ -41,10 +41,10 @@ func main() {
 	imdb.Register(b)
 	ping.Register(b)
 	scores.Register(b, "/tmp/scores")
-	//search.Register(b, "<key>", "<cx>")
+	search.Register(b, "<key>", "<cx>")
 	sed.Register(b)
-	//tail.Register(b, []string{"/path/to/file"})
-	//translate.Register(b, "<key>")
+	tail.Register(b, []string{"/etc/passwd"})
+	translate.Register(b, "<key>")
 	up.Register(b)
 	urban.Register(b)
 	urltitle.Register(b, ignore)
