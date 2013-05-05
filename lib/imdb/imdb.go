@@ -81,7 +81,7 @@ func (n *Name) String() string {
 	return n.Name
 }
 
-// Get performs an HTTP get with retries.
+// GetRetry performs an HTTP GET with retries.
 func GetRetry(url string, retries int) (*http.Response, error) {
 	var resp *http.Response
 	for i := 0; i < retries; i++ {
