@@ -3,7 +3,9 @@ package main
 
 import (
 	"flag"
-	bot "github.com/StalkR/goircbot"
+	"strings"
+
+	"github.com/StalkR/goircbot/bot"
 	"github.com/StalkR/goircbot/plugins/admin"
 	"github.com/StalkR/goircbot/plugins/dns"
 	"github.com/StalkR/goircbot/plugins/failotron"
@@ -19,7 +21,6 @@ import (
 	"github.com/StalkR/goircbot/plugins/urban"
 	"github.com/StalkR/goircbot/plugins/urltitle"
 	"github.com/StalkR/goircbot/plugins/whoami"
-	"strings"
 )
 
 var host *string = flag.String("host", "irc.example.com", "Server host[:port]")

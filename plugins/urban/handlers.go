@@ -3,12 +3,13 @@ package urban
 
 import (
 	"fmt"
-	bot "github.com/StalkR/goircbot"
-	"github.com/StalkR/goircbot/lib/urbandictionary"
 	"strings"
+
+	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/urbandictionary"
 )
 
-func Urban(b *bot.Bot, e *bot.Event) {
+func define(b *bot.Bot, e *bot.Event) {
 	term := strings.TrimSpace(e.Args)
 	if len(term) == 0 {
 		return
@@ -25,7 +26,7 @@ func Urban(b *bot.Bot, e *bot.Event) {
 func Register(b *bot.Bot) {
 	b.AddCommand("urban", bot.Command{
 		Help:    "get definition of word from Urban Dictionary",
-		Handler: Urban,
+		Handler: define,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

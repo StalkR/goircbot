@@ -82,10 +82,10 @@ func Search(term, key, cx string) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := Result{}
-	err = json.Unmarshal(contents, &r)
+	r := &Result{}
+	err = json.Unmarshal(contents, r)
 	if err != nil {
 		return nil, err
 	}
-	return &r, nil
+	return r, nil
 }

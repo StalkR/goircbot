@@ -3,13 +3,15 @@ package dns
 
 import (
 	"fmt"
-	bot "github.com/StalkR/goircbot"
 	"net"
 	"strings"
+
+	"github.com/StalkR/goircbot/bot"
 )
 
 // Resolve resolves a host/IP with DNS and returns a list of results.
-func Resolve(h string) (results []string, err error) {
+func Resolve(h string) ([]string, error) {
+	results := []string{}
 	if net.ParseIP(h) != nil {
 		name, err := net.LookupAddr(h)
 		if err != nil {
@@ -28,7 +30,7 @@ func Resolve(h string) (results []string, err error) {
 	return results, nil
 }
 
-func Dns(b *bot.Bot, e *bot.Event) {
+func dns(b *bot.Bot, e *bot.Event) {
 	arg := strings.TrimSpace(e.Args)
 	if len(arg) == 0 {
 		return
@@ -54,7 +56,7 @@ func Dns(b *bot.Bot, e *bot.Event) {
 func Register(b *bot.Bot) {
 	b.AddCommand("dns", bot.Command{
 		Help:    "DNS resolve a host or IP",
-		Handler: Dns,
+		Handler: dns,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

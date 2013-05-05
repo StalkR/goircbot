@@ -4,21 +4,22 @@ package up
 import (
 	"crypto/tls"
 	"fmt"
-	bot "github.com/StalkR/goircbot"
 	"net"
 	"net/http"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/StalkR/goircbot/bot"
 )
 
-func timeoutDialer(d time.Duration) func(net, addr string) (c net.Conn, err error) {
+func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
 	return func(netw, addr string) (net.Conn, error) {
 		return net.DialTimeout(netw, addr, d)
 	}
 }
 
-// Probe gets an URL and returns a boolean if it worked within 3 seconds.
+// Probe gets an URL and returns a boolean if it worked within imparted time.
 func Probe(url string) bool {
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -34,7 +35,7 @@ func Probe(url string) bool {
 	return true
 }
 
-func Up(b *bot.Bot, e *bot.Event) {
+func up(b *bot.Bot, e *bot.Event) {
 	arg := strings.TrimSpace(e.Args)
 	if len(arg) == 0 {
 		return
@@ -55,7 +56,7 @@ func Up(b *bot.Bot, e *bot.Event) {
 func Register(b *bot.Bot) {
 	b.AddCommand("up", bot.Command{
 		Help:    "check if a web host is up or down",
-		Handler: Up,
+		Handler: up,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

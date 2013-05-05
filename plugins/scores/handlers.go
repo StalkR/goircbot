@@ -4,15 +4,16 @@ package scores
 
 import (
 	"fmt"
-	bot "github.com/StalkR/goircbot"
-	"github.com/fluffle/goirc/client"
 	"log"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/StalkR/goircbot/bot"
+	"github.com/fluffle/goirc/client"
 )
 
-func ParseScore(b *bot.Bot, line *client.Line, s *Scores) {
+func parseScore(b *bot.Bot, line *client.Line, s *Scores) {
 	text := line.Args[1]
 	var modifier int
 	switch {
@@ -30,7 +31,7 @@ func ParseScore(b *bot.Bot, line *client.Line, s *Scores) {
 		return
 	}
 	target := line.Args[0]
-	thing := Sanitize(text[:len(text)-2])
+	thing := sanitize(text[:len(text)-2])
 	match, err := regexp.Match("^[-_a-zA-Z0-9/ `'\":;\\\\]+$", []byte(thing))
 	if err != nil {
 		log.Println("scores: regexp error", err)
@@ -59,22 +60,22 @@ func ParseScore(b *bot.Bot, line *client.Line, s *Scores) {
 	b.Conn.Privmsg(target, reply)
 }
 
-func Sanitize(text string) string {
-	clean := RemoveChars(text, " ", "` ", "\\", "\"", "'", ":", ";")
+func sanitize(text string) string {
+	clean := removeChars(text, " ", "` ", "\\", "\"", "'", ":", ";")
 	if len(clean) > 128 {
 		return clean[:128]
 	}
 	return clean
 }
 
-func RemoveChars(s string, chars ...string) string {
+func removeChars(s string, chars ...string) string {
 	for _, c := range chars {
 		s = strings.Replace(s, c, "", -1)
 	}
 	return s
 }
 
-func ShowScore(b *bot.Bot, e *bot.Event, s *Scores) {
+func showScore(b *bot.Bot, e *bot.Event, s *Scores) {
 	thing := strings.TrimSpace(e.Args)
 	if len(thing) == 0 {
 		return
@@ -84,7 +85,7 @@ func ShowScore(b *bot.Bot, e *bot.Event, s *Scores) {
 	b.Conn.Privmsg(e.Target, s.ScoreOf(thing))
 }
 
-func TopScores(b *bot.Bot, e *bot.Event, s *Scores) {
+func topScores(b *bot.Bot, e *bot.Event, s *Scores) {
 	s.Lock()
 	defer s.Unlock()
 	if len(s.Map) == 0 {
@@ -96,28 +97,28 @@ func TopScores(b *bot.Bot, e *bot.Event, s *Scores) {
 
 // Register registers the plugin with a bot.
 func Register(b *bot.Bot, scoresfile string) {
-	s := Load(scoresfile)
+	s := load(scoresfile)
 
 	b.Conn.HandleFunc("privmsg",
-		func(conn *client.Conn, line *client.Line) { ParseScore(b, line, s) })
+		func(conn *client.Conn, line *client.Line) { parseScore(b, line, s) })
 
 	b.AddCommand("score", bot.Command{
 		Help:    "score <thing> - show score of something",
-		Handler: func(b *bot.Bot, e *bot.Event) { ShowScore(b, e, s) },
+		Handler: func(b *bot.Bot, e *bot.Event) { showScore(b, e, s) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
 
 	b.AddCommand("scores", bot.Command{
 		Help:    "show top +/- scores",
-		Handler: func(b *bot.Bot, e *bot.Event) { TopScores(b, e, s) },
+		Handler: func(b *bot.Bot, e *bot.Event) { topScores(b, e, s) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
 
 	if len(scoresfile) > 0 {
 		b.AddCron("name", bot.Cron{
-			Handler:  func(b *bot.Bot) { Save(scoresfile, s) },
+			Handler:  func(b *bot.Bot) { save(scoresfile, s) },
 			Duration: time.Minute})
 	}
 }

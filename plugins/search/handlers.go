@@ -2,20 +2,21 @@
 package search
 
 import (
-	bot "github.com/StalkR/goircbot"
-	"github.com/StalkR/goircbot/lib/google/search"
 	"log"
 	"strings"
+
+	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/google/search"
 )
 
-func Search(b *bot.Bot, e *bot.Event, key, cx string) {
+func find(b *bot.Bot, e *bot.Event, key, cx string) {
 	term := strings.TrimSpace(e.Args)
 	if len(term) == 0 {
 		return
 	}
 	r, err := search.Search(term, key, cx)
 	if err != nil {
-		log.Println("googlesearch:", err)
+		log.Println("search:", err)
 		return
 	}
 	if len(r.Items) == 0 {
@@ -29,7 +30,7 @@ func Search(b *bot.Bot, e *bot.Event, key, cx string) {
 func Register(b *bot.Bot, key, cx string) {
 	b.AddCommand("search", bot.Command{
 		Help:    "search the Web with Google",
-		Handler: func(b *bot.Bot, e *bot.Event) { Search(b, e, key, cx) },
+		Handler: func(b *bot.Bot, e *bot.Event) { find(b, e, key, cx) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

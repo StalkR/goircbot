@@ -3,12 +3,13 @@ package imdb
 
 import (
 	"fmt"
-	bot "github.com/StalkR/goircbot"
-	"github.com/StalkR/goircbot/lib/imdb"
 	"strings"
+
+	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/imdb"
 )
 
-func Imdb(b *bot.Bot, e *bot.Event) {
+func search(b *bot.Bot, e *bot.Event) {
 	q := strings.TrimSpace(e.Args)
 	if len(q) == 0 {
 		return
@@ -34,7 +35,7 @@ func Imdb(b *bot.Bot, e *bot.Event) {
 func Register(b *bot.Bot) {
 	b.AddCommand("imdb", bot.Command{
 		Help:    "imdb <title> - search a Title on IMDb",
-		Handler: Imdb,
+		Handler: search,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

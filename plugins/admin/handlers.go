@@ -4,15 +4,16 @@ package admin
 
 import (
 	"fmt"
-	bot "github.com/StalkR/goircbot"
 	"log"
 	"strings"
+
+	"github.com/StalkR/goircbot/bot"
 )
 
 // Admins allowed to use commands in the form nick!ident@host
 var Admins []string
 
-func Authorized(e *bot.Event) bool {
+func authorized(e *bot.Event) bool {
 	for _, admin := range Admins {
 		if e.Line.Src == admin {
 			return true
@@ -22,7 +23,7 @@ func Authorized(e *bot.Event) bool {
 	return false
 }
 
-func ExtractArgs(args string) (target, text string, err bool) {
+func extractArgs(args string) (target, text string, err bool) {
 	words := strings.SplitN(args, " ", 2)
 	if len(words) < 2 {
 		err = false
@@ -32,35 +33,35 @@ func ExtractArgs(args string) (target, text string, err bool) {
 	return
 }
 
-func Say(b *bot.Bot, e *bot.Event) {
-	if !Authorized(e) {
+func say(b *bot.Bot, e *bot.Event) {
+	if !authorized(e) {
 		return
 	}
-	if target, text, err := ExtractArgs(e.Args); !err {
+	if target, text, err := extractArgs(e.Args); !err {
 		b.Conn.Privmsg(target, text)
 	}
 }
 
-func Act(b *bot.Bot, e *bot.Event) {
-	if !Authorized(e) {
+func act(b *bot.Bot, e *bot.Event) {
+	if !authorized(e) {
 		return
 	}
-	if target, text, err := ExtractArgs(e.Args); !err {
+	if target, text, err := extractArgs(e.Args); !err {
 		b.Conn.Action(target, text)
 	}
 }
 
-func Notice(b *bot.Bot, e *bot.Event) {
-	if !Authorized(e) {
+func notice(b *bot.Bot, e *bot.Event) {
+	if !authorized(e) {
 		return
 	}
-	if target, text, err := ExtractArgs(e.Args); !err {
+	if target, text, err := extractArgs(e.Args); !err {
 		b.Conn.Notice(target, text)
 	}
 }
 
-func DoMode(b *bot.Bot, e *bot.Event, sign, mode string) {
-	if !Authorized(e) {
+func doMode(b *bot.Bot, e *bot.Event, sign, mode string) {
+	if !authorized(e) {
 		return
 	}
 	var channel string
@@ -83,8 +84,8 @@ func DoMode(b *bot.Bot, e *bot.Event, sign, mode string) {
 		strings.Repeat(mode, len(args)), strings.Join(args, " ")))
 }
 
-func Quit(b *bot.Bot, e *bot.Event) {
-	if !Authorized(e) {
+func quit(b *bot.Bot, e *bot.Event) {
+	if !authorized(e) {
 		return
 	}
 	b.Reconnect = false
@@ -95,22 +96,22 @@ func Quit(b *bot.Bot, e *bot.Event) {
 func Register(b *bot.Bot, admins []string) {
 	Admins = admins
 
-	b.AddCommand("say", bot.Command{"say <target> <text>", Say, true, true, true})
-	b.AddCommand("act", bot.Command{"act <target> <text>", Act, true, true, true})
-	b.AddCommand("notice", bot.Command{"notice <target> <text>", Notice, true, true, true})
+	b.AddCommand("say", bot.Command{"say <target> <text>", say, true, true, true})
+	b.AddCommand("act", bot.Command{"act <target> <text>", act, true, true, true})
+	b.AddCommand("notice", bot.Command{"notice <target> <text>", notice, true, true, true})
 
 	b.AddCommand("op", bot.Command{"op [<target>]",
-		func(b *bot.Bot, e *bot.Event) { DoMode(b, e, "+", "o") },
+		func(b *bot.Bot, e *bot.Event) { doMode(b, e, "+", "o") },
 		true, true, true})
 	b.AddCommand("deop", bot.Command{"deop [<target>]",
-		func(b *bot.Bot, e *bot.Event) { DoMode(b, e, "-", "o") },
+		func(b *bot.Bot, e *bot.Event) { doMode(b, e, "-", "o") },
 		true, true, true})
 	b.AddCommand("voice", bot.Command{"voice [<target>]",
-		func(b *bot.Bot, e *bot.Event) { DoMode(b, e, "+", "v") },
+		func(b *bot.Bot, e *bot.Event) { doMode(b, e, "+", "v") },
 		true, true, true})
 	b.AddCommand("devoice", bot.Command{"devoice [<target>]",
-		func(b *bot.Bot, e *bot.Event) { DoMode(b, e, "-", "v") },
+		func(b *bot.Bot, e *bot.Event) { doMode(b, e, "-", "v") },
 		true, true, true})
 
-	b.AddCommand("quit", bot.Command{"quit [msg]", Quit, true, true, true})
+	b.AddCommand("quit", bot.Command{"quit [msg]", quit, true, true, true})
 }

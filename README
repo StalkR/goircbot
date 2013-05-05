@@ -1,0 +1,16 @@
+Go IRC Bot
+----------
+
+Acquire and build: go get github.com/StalkR/goircbot
+
+Root directory is for "package main" and contains an example bot.
+`bot` directory contains the package itself.
+Plugins are available in `plugins`, inspire from them to create new plugins.
+Libraries are available in `lib` for use in plugins.
+
+Documentation: http://godoc.org/github.com/StalkR/goircbot
+
+IRC client library: https://github.com/fluffle/goirc
+Documentation: http://godoc.org/github.com/fluffle/goirc/client
+
+Contact: goircbot@stalkr.net

@@ -3,12 +3,13 @@ package geo
 
 import (
 	"fmt"
-	bot "github.com/StalkR/goircbot"
-	"github.com/StalkR/goircbot/lib/geo"
 	"strings"
+
+	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/geo"
 )
 
-func Geo(b *bot.Bot, e *bot.Event) {
+func locate(b *bot.Bot, e *bot.Event) {
 	addr := strings.TrimSpace(e.Args)
 	if len(addr) == 0 {
 		return
@@ -25,7 +26,7 @@ func Geo(b *bot.Bot, e *bot.Event) {
 func Register(b *bot.Bot) {
 	b.AddCommand("geo", bot.Command{
 		Help:    "geo locate an IP/host",
-		Handler: Geo,
+		Handler: locate,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

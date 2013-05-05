@@ -3,13 +3,14 @@ package whoami
 
 import (
 	"fmt"
-	bot "github.com/StalkR/goircbot"
 	"log"
 	"os"
 	"os/user"
+
+	"github.com/StalkR/goircbot/bot"
 )
 
-func Whoami(b *bot.Bot, e *bot.Event) {
+func whoami(b *bot.Bot, e *bot.Event) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Println("whoami: hostname error", err)
@@ -30,7 +31,7 @@ func Whoami(b *bot.Bot, e *bot.Event) {
 func Register(b *bot.Bot) {
 	b.AddCommand("whoami", bot.Command{
 		Help:    "report user@host of the bot",
-		Handler: Whoami,
+		Handler: whoami,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

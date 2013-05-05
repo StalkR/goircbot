@@ -15,9 +15,9 @@ type Scores struct {
 
 // NewScores returns a new initialized Scores.
 func NewScores() *Scores {
-	var s Scores
+	s := &Scores{}
 	s.Map = make(map[string]int)
-	return &s
+	return s
 }
 
 // ScoreOf returns a formatted string with the score of a given thing.

@@ -3,14 +3,17 @@ package tail
 
 import (
 	"bufio"
-	bot "github.com/StalkR/goircbot"
 	"io"
 	"log"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/StalkR/goircbot/bot"
 )
 
+// Tail watches a file and calls callback for every new line.
+// File can be truncated but it does not detect if file is renamed.
 func Tail(path string, cb func(line string)) {
 	var f *os.File
 	for {
@@ -47,7 +50,7 @@ func Tail(path string, cb func(line string)) {
 	}
 }
 
-func Notify(b *bot.Bot, line string) {
+func notify(b *bot.Bot, line string) {
 	if !b.Conn.Connected() {
 		return
 	}
@@ -59,6 +62,6 @@ func Notify(b *bot.Bot, line string) {
 // Register registers the plugin with a bot.
 func Register(b *bot.Bot, paths []string) {
 	for _, path := range paths {
-		go Tail(path, func(line string) { Notify(b, line) })
+		go Tail(path, func(line string) { notify(b, line) })
 	}
 }

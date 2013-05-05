@@ -43,8 +43,8 @@ func Languages(target string, key string) ([]Language, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := lresult{}
-	err = json.Unmarshal(contents, &r)
+	r := &lresult{}
+	err = json.Unmarshal(contents, r)
 	if err != nil {
 		return nil, err
 	}
@@ -85,15 +85,15 @@ func Translate(source, target, text, key string) (*Translation, error) {
 	if err != nil {
 		return nil, err
 	}
-	var r tresult
-	err = json.Unmarshal(contents, &r)
+	r := &tresult{}
+	err = json.Unmarshal(contents, r)
 	if err != nil {
 		return nil, err
 	}
 	if len(r.Data.Translations) == 0 {
 		return nil, errors.New("no translation")
 	}
-	t := r.Data.Translations[0]
+	t := &r.Data.Translations[0]
 	t.TranslatedText = html.UnescapeString(t.TranslatedText)
-	return &t, nil
+	return t, nil
 }

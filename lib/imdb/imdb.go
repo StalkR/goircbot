@@ -3,7 +3,6 @@ package imdb
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -83,7 +82,8 @@ func (n *Name) String() string {
 }
 
 // Get performs an HTTP get with retries.
-func GetRetry(url string, retries int) (resp *http.Response, err error) {
+func GetRetry(url string, retries int) (*http.Response, error) {
+	var resp *http.Response
 	for i := 0; i < retries; i++ {
 		resp, err := http.Get(url)
 		if err != nil {
@@ -94,7 +94,7 @@ func GetRetry(url string, retries int) (resp *http.Response, err error) {
 		}
 		log.Print("imdb: get error, status ", resp.StatusCode)
 	}
-	return nil, errors.New(fmt.Sprintf("imdb: get error, status: %i", resp.StatusCode))
+	return nil, fmt.Errorf("imdb: get error, status: %i", resp.StatusCode)
 }
 
 // Decode decodes json data from app.

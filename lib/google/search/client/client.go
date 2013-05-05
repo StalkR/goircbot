@@ -3,8 +3,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/StalkR/goircbot/lib/google/search"
 	"os"
+
+	"github.com/StalkR/goircbot/lib/google/search"
 )
 
 func main() {

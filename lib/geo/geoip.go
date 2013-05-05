@@ -91,15 +91,15 @@ func IPLocation(ip string) (*GeoIP, error) {
 	if err != nil {
 		return nil, err
 	}
-	g := GeoIP{}
-	err = json.Unmarshal(c, &g)
+	g := &GeoIP{}
+	err = json.Unmarshal(c, g)
 	// Go < 1.1 do not accept mismatched null so just skip this error.
 	// See https://code.google.com/p/go/issues/detail?id=2540
 	if err != nil && !strings.Contains(fmt.Sprintf("%s", err), "cannot unmarshal null") {
 		log.Print("geoip: decode error: ", fmt.Sprintf("%v", string(c)))
 		return nil, err
 	}
-	return &g, nil
+	return g, nil
 }
 
 // Location gets location of a host/IP using IPLocation. If given a host,

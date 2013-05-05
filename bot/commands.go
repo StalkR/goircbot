@@ -1,11 +1,12 @@
-package goircbot
+package bot
 
 import (
 	"fmt"
-	"github.com/fluffle/goirc/client"
 	"log"
 	"sort"
 	"strings"
+
+	"github.com/fluffle/goirc/client"
 )
 
 // Event is given to plugins.

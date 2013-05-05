@@ -4,16 +4,17 @@ package failotron
 
 import (
 	"fmt"
-	bot "github.com/StalkR/goircbot"
 	"math/rand"
 	"time"
+
+	"github.com/StalkR/goircbot/bot"
 )
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func Failotron(b *bot.Bot, e *bot.Event, ignore []string) {
+func failotron(b *bot.Bot, e *bot.Event, ignore []string) {
 	ch, on := b.Conn.Me().IsOnStr(e.Target)
 	if !on {
 		return
@@ -45,7 +46,7 @@ func Failotron(b *bot.Bot, e *bot.Event, ignore []string) {
 func Register(b *bot.Bot, ignore []string) {
 	b.AddCommand("failotron", bot.Command{
 		Help:    "find who is going to have the next fail",
-		Handler: func(b *bot.Bot, e *bot.Event) { Failotron(b, e, ignore) },
+		Handler: func(b *bot.Bot, e *bot.Event) { failotron(b, e, ignore) },
 		Pub:     true,
 		Priv:    false,
 		Hidden:  false})

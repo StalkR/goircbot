@@ -1,4 +1,4 @@
-package goircbot
+package bot
 
 import (
 	"log"

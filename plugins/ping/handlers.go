@@ -5,10 +5,11 @@ package ping
 import (
 	"errors"
 	"fmt"
-	bot "github.com/StalkR/goircbot"
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/StalkR/goircbot/bot"
 )
 
 // Ping runs ping against given host and returns its output.
@@ -47,7 +48,7 @@ func Ping(host string, ipv6 bool) (string, error) {
 	return string(line), nil
 }
 
-func PingHandler(b *bot.Bot, e *bot.Event, ipv6 bool) {
+func ping(b *bot.Bot, e *bot.Event, ipv6 bool) {
 	arg := strings.TrimSpace(e.Args)
 	if len(arg) == 0 {
 		return
@@ -64,13 +65,13 @@ func PingHandler(b *bot.Bot, e *bot.Event, ipv6 bool) {
 func Register(b *bot.Bot) {
 	b.AddCommand("ping", bot.Command{
 		Help:    "ping a host/IPv4",
-		Handler: func(b *bot.Bot, e *bot.Event) { PingHandler(b, e, false) },
+		Handler: func(b *bot.Bot, e *bot.Event) { ping(b, e, false) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
 	b.AddCommand("ping6", bot.Command{
 		Help:    "ping a host/IPv6",
-		Handler: func(b *bot.Bot, e *bot.Event) { PingHandler(b, e, true) },
+		Handler: func(b *bot.Bot, e *bot.Event) { ping(b, e, true) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

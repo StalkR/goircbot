@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func Load(scoresfile string) *Scores {
+func load(scoresfile string) *Scores {
 	s := NewScores()
 	if len(scoresfile) == 0 {
 		return s
@@ -24,7 +24,7 @@ func Load(scoresfile string) *Scores {
 	return s
 }
 
-func Save(scoresfile string, s *Scores) {
+func save(scoresfile string, s *Scores) {
 	s.Lock()
 	defer s.Unlock()
 	b, err := json.Marshal(s.Map)

@@ -3,8 +3,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/StalkR/goircbot/lib/geo"
 	"os"
+
+	"github.com/StalkR/goircbot/lib/geo"
 )
 
 func main() {

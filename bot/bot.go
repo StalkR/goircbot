@@ -1,12 +1,12 @@
-// Package goircbot implements an IRC bot using goirc library
-// http://go.pkgdoc.org/github.com/fluffle/goirc
-package goircbot
+// Package bot implements an IRC bot with plugins.
+package bot
 
 import (
-	"github.com/fluffle/goirc/client"
-	"github.com/fluffle/goirc/state"
 	"log"
 	"time"
+
+	"github.com/fluffle/goirc/client"
+	"github.com/fluffle/goirc/state"
 )
 
 // Bot represents an IRC bot, with IRC client object, settings, commands and crons.
@@ -20,7 +20,7 @@ type Bot struct {
 }
 
 // NewBot creates a new Bot with a set of parameters.
-func NewBot(host string, ssl bool, nick, ident string, channels []string) (b *Bot) {
+func NewBot(host string, ssl bool, nick, ident string, channels []string) *Bot {
 	cfg := &client.Config{
 		Me:          state.NewNick(nick),
 		NewNick:     func(s string) string { return s + "_" },
@@ -36,7 +36,7 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) (b *Bo
 	cfg.Me.Name = nick
 
 	conn := client.Client(cfg)
-	b = &Bot{
+	b := &Bot{
 		Host:      host,
 		Conn:      conn,
 		Quit:      make(chan bool),

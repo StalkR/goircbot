@@ -3,9 +3,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/StalkR/goircbot/lib/imdb"
 	"os"
 	"regexp"
+
+	"github.com/StalkR/goircbot/lib/imdb"
 )
 
 // FindTitle searches for a title and presents up to 10 results.

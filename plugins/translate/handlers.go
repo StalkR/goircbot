@@ -3,14 +3,15 @@ package translate
 
 import (
 	"fmt"
-	bot "github.com/StalkR/goircbot"
-	"github.com/StalkR/goircbot/lib/google/translate"
 	"log"
 	"regexp"
 	"strings"
+
+	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/google/translate"
 )
 
-func Supported(target, key string) ([]string, error) {
+func supported(target, key string) ([]string, error) {
 	languages, err := translate.Languages(target, key)
 	if err != nil {
 		return nil, err
@@ -30,23 +31,23 @@ func compactSpaces(s string) string {
 	return string(r.ReplaceAll([]byte(s), []byte(" ")))
 }
 
-func Translate(b *bot.Bot, e *bot.Event, key string) {
+func tr(b *bot.Bot, e *bot.Event, key string) {
 	line := strings.TrimSpace(compactSpaces(e.Args))
 	args := strings.SplitN(line, " ", 3)
 	var reply string
 	switch {
 	case len(line) == 0:
-		langs, err := Supported("", key)
+		langs, err := supported("", key)
 		if err != nil {
-			log.Println("googletranslate:", err)
+			log.Println("translate:", err)
 			return
 		}
 		reply = fmt.Sprintf("Supported languages: %s", strings.Join(langs, ", "))
 
 	case len(args) == 1:
-		langs, err := Supported(line, key)
+		langs, err := supported(line, key)
 		if err != nil {
-			log.Println("googletranslate:", err)
+			log.Println("translate:", err)
 			return
 		}
 		reply = fmt.Sprintf("Supported languages for %s: %s", line, strings.Join(langs, ", "))
@@ -61,7 +62,7 @@ func Translate(b *bot.Bot, e *bot.Event, key string) {
 		}
 		t, err := translate.Translate(source, target, text, key)
 		if err != nil {
-			log.Println("googletranslate:", err)
+			log.Println("translate:", err)
 			return
 		}
 		if source == "" {
@@ -79,7 +80,7 @@ func Translate(b *bot.Bot, e *bot.Event, key string) {
 func Register(b *bot.Bot, key string) {
 	b.AddCommand("tr", bot.Command{
 		Help:    "translate <from|-> <to> <text> using Google Translate",
-		Handler: func(b *bot.Bot, e *bot.Event) { Translate(b, e, key) },
+		Handler: func(b *bot.Bot, e *bot.Event) { tr(b, e, key) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

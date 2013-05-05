@@ -3,9 +3,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/StalkR/goircbot/lib/google/translate"
 	"os"
 	"strings"
+
+	"github.com/StalkR/goircbot/lib/google/translate"
 )
 
 func Supported(target, key string) {
