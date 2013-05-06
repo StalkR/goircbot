@@ -30,5 +30,5 @@ func Title(url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return parseTitle(url, string(contents))
+	return ParseTitle(url, string(contents))
 }

@@ -20,8 +20,8 @@ type Parser interface {
 
 var titleRE = regexp.MustCompile(`<title[^>]*>([^<]+)<`)
 
-// parseTitle parses a title from an URL and content.
-func parseTitle(url, body string) (string, error) {
+// ParseTitle parses a title from an URL and content.
+func ParseTitle(url, body string) (string, error) {
 	for _, p := range Parsers {
 		if p.Match(url) {
 			return p.Parse(body)
