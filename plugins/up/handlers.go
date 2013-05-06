@@ -40,7 +40,7 @@ func up(b *bot.Bot, e *bot.Event) {
 	if len(arg) == 0 {
 		return
 	}
-	matched, err := regexp.Match("^[\\w._-]+$", []byte(arg))
+	matched, err := regexp.Match(`^[\w._-]+$`, []byte(arg))
 	if err != nil || !matched {
 		return
 	}

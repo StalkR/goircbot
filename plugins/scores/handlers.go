@@ -32,7 +32,7 @@ func parseScore(b *bot.Bot, line *client.Line, s *Scores) {
 	}
 	target := line.Args[0]
 	thing := sanitize(text[:len(text)-2])
-	match, err := regexp.Match("^[-_a-zA-Z0-9/ `'\":;\\\\]+$", []byte(thing))
+	match, err := regexp.Match(`^[-_a-zA-Z0-9/ '":;\\`+"`]+$", []byte(thing))
 	if err != nil {
 		log.Println("scores: regexp error", err)
 		return
@@ -61,7 +61,7 @@ func parseScore(b *bot.Bot, line *client.Line, s *Scores) {
 }
 
 func sanitize(text string) string {
-	clean := removeChars(text, " ", "` ", "\\", "\"", "'", ":", ";")
+	clean := removeChars(text, " ", "` ", `\`, `"`, "'", ":", ";")
 	if len(clean) > 128 {
 		return clean[:128]
 	}

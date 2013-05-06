@@ -53,7 +53,7 @@ type Item struct {
 }
 
 func compactSpaces(s string) string {
-	r, err := regexp.Compile("\\s\\s+")
+	r, err := regexp.Compile(`\s\s+`)
 	if err != nil {
 		return s
 	}

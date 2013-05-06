@@ -50,7 +50,7 @@ func main() {
 		os.Exit(1)
 	}
 	arg := os.Args[1]
-	matched, err := regexp.Match("^tt\\w+$", []byte(arg))
+	matched, err := regexp.Match(`^tt\w+$`, []byte(arg))
 	if err != nil {
 		fmt.Println("Match error", err)
 		os.Exit(1)
