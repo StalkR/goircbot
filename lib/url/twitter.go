@@ -2,6 +2,7 @@ package url
 
 import (
 	"errors"
+	"html"
 	"regexp"
 )
 
@@ -21,5 +22,5 @@ func (d *twitter) Parse(body string) (string, error) {
 	if text == nil {
 		return "", errors.New("url: twitter: cannot parse tweet")
 	}
-	return StripTags(text[1]), nil
+	return Trim(html.UnescapeString(StripTags(text[1]))), nil
 }
