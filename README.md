@@ -5,8 +5,8 @@
 ## Acquire and build
 `go get github.com/StalkR/goircbot`
 
-It may fail with errors because [goircbot][1] is based on [fluffle/goirc][3]
-master branch but it defaults to branch `go1`.
+If it fails, it's likely because [goircbot][1] is based on [fluffle/goirc][3]
+master branch and Go takes branch `go1` by default.
 
 Solution:
 
@@ -14,11 +14,11 @@ Solution:
 
 2.  `git checkout master`
 
-3.  `git pull`
+3.  `cd -`
 
-4.  `cd -`
+4.  `go install github.com/fluffle/goirc`
 
-5.  `go get github.com/StalkR/goircbot`
+5.  and try again: `go get github.com/StalkR/goircbot`
 
 ## Hierarchy
 * `.` is for `package main` and contains an example bot (`examplebot.go`).
