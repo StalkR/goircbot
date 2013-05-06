@@ -8,7 +8,13 @@ import (
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/url"
 	"github.com/fluffle/goirc/client"
+)
+
+var (
+	linkRE    = regexp.MustCompile(`(?:^|\s)(https?://[^#\s]+)`)
+	silenceRE = regexp.MustCompile(`(^|\s)tg(\s|$)`) // Line ignored if matched.
 )
 
 func watchLine(b *bot.Bot, line *client.Line, ignoremap map[string]bool) {
@@ -20,19 +26,14 @@ func watchLine(b *bot.Bot, line *client.Line, ignoremap map[string]bool) {
 		return
 	}
 	text := line.Args[1]
-	if m, err := regexp.Match(silenceRegexp, []byte(text)); err != nil || m {
+	if silenceRE.MatchString(text) {
 		return
 	}
-	r, err := regexp.Compile("(?:^|\\s)(https?://[^\\s]+)")
-	if err != nil {
+	link := linkRE.FindStringSubmatch(text)
+	if link == nil || len(link[1]) > 200 {
 		return
 	}
-	matches := r.FindSubmatch([]byte(text))
-	if len(matches) < 2 {
-		return
-	}
-	url := string(matches[1])
-	title, err := Title(url)
+	title, err := url.Title(link[1])
 	if err != nil {
 		log.Println("urltitle:", err)
 		return
@@ -40,7 +41,7 @@ func watchLine(b *bot.Bot, line *client.Line, ignoremap map[string]bool) {
 	if len(title) > 200 {
 		title = title[:200]
 	}
-	b.Conn.Privmsg(target, fmt.Sprintf("%s :: %s", url, title))
+	b.Conn.Privmsg(target, fmt.Sprintf("%s :: %s", link[1], title))
 }
 
 // Register registers the plugin with a bot.
