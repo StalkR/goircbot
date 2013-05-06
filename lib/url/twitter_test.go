@@ -10,7 +10,7 @@ func TestGoodMatch(t *testing.T) {
 		"https://twitter.com/nickname/status/123456",
 		"http://twitter.com/nickname/status/123456#extra",
 	}
-	p := &twitter{}
+	p := &Twitter{}
 	for _, url := range urls {
 		if !p.Match(url) {
 			t.Errorf("Match(%v) = false, want true", url)
@@ -22,7 +22,7 @@ func TestBadMatch(t *testing.T) {
 	urls := []string{
 		"http://example.com",
 	}
-	p := &twitter{}
+	p := &Twitter{}
 	for _, url := range urls {
 		if p.Match(url) {
 			t.Errorf("Match(%v) = true, want false", url)
@@ -37,7 +37,7 @@ func TestParse(t *testing.T) {
 
       <div class="stream-item-footer">`
 	const out = `Google Public DNS now checks DNSSEC for you by default. http://googleonlinesecurity.blogspot.co.uk/2013/03/google-public-dns-now-supports-dnssec.html….`
-	p := &twitter{}
+	p := &Twitter{}
 	x, err := p.Parse(in)
 	if err != nil {
 		t.Error(err)

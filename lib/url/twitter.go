@@ -11,13 +11,13 @@ var (
 	tweetRE   = regexp.MustCompile(`<p class="js-tweet-text">(.*?)</p>`)
 )
 
-type twitter struct{}
+type Twitter struct{}
 
-func (d *twitter) Match(url string) bool {
+func (p *Twitter) Match(url string) bool {
 	return twitterRE.MatchString(url)
 }
 
-func (d *twitter) Parse(body string) (string, error) {
+func (p *Twitter) Parse(body string) (string, error) {
 	text := tweetRE.FindStringSubmatch(body)
 	if text == nil {
 		return "", errors.New("url: twitter: cannot parse tweet")
