@@ -15,7 +15,8 @@ func main() {
 	}
 	s, err := mldonkey.Stats(os.Args[1])
 	if err != nil {
-		fmt.Println("err", err)
+		fmt.Printf("Error: %v\n", err)
+		os.Exit(1)
 	}
 	fmt.Println(s.String())
 }

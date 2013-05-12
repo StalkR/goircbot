@@ -9,8 +9,10 @@ import (
 	"github.com/StalkR/goircbot/lib/imdb"
 )
 
-// FindTitle searches for a title and presents up to 10 results.
-func FindTitle(q string) {
+var ttRE = regexp.MustCompile(`^tt\w+$`)
+
+// findTitle searches for a title and presents up to 10 results.
+func findTitle(q string) {
 	r, err := imdb.FindTitle(q)
 	if err != nil {
 		fmt.Println("FindTitle error", err)
@@ -34,8 +36,8 @@ func FindTitle(q string) {
 	}
 }
 
-// Title obtains information on a title id and presents it.
-func Title(id string) {
+// title obtains information on a title id and presents it.
+func title(id string) {
 	t, err := imdb.NewTitle(id)
 	if err != nil {
 		fmt.Println("NewTitle error", err)
@@ -49,15 +51,9 @@ func main() {
 		fmt.Printf("Usage: %s <query|ttID>\n", os.Args[0])
 		os.Exit(1)
 	}
-	arg := os.Args[1]
-	matched, err := regexp.Match(`^tt\w+$`, []byte(arg))
-	if err != nil {
-		fmt.Println("Match error", err)
-		os.Exit(1)
-	}
-	if matched {
-		Title(arg)
+	if ttRE.MatchString(os.Args[1]) {
+		title(os.Args[1])
 		return
 	}
-	FindTitle(arg)
+	findTitle(os.Args[1])
 }
