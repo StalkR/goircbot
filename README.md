@@ -6,7 +6,7 @@
 `go get github.com/StalkR/goircbot`
 
 If it fails, it's likely because [goircbot][1] is based on [fluffle/goirc][3]
-master branch and Go takes branch `go1` by default.
+`master` branch and Go takes `go1` branch by default.
 
 Solution:
 
