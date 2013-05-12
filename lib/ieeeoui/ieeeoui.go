@@ -13,9 +13,7 @@ import (
 	"sync"
 )
 
-const (
-	ouiURL = "http://standards.ieee.org/develop/regauth/oui/oui.txt"
-)
+const ouiURL = "http://standards.ieee.org/develop/regauth/oui/oui.txt"
 
 var (
 	ouiRE = regexp.MustCompile(`^([\da-fA-F-]+)\s+\(hex\)\s+(.*)$`)
