@@ -14,7 +14,35 @@ import (
 	"time"
 )
 
-type Conn struct {
+// Stats returns Statistics for a given transmission URL.
+func Stats(url string) (*Statistics, error) {
+	c, err := newConn(url)
+	if err != nil {
+		return nil, err
+	}
+	return c.stats()
+}
+
+// A Statistics holds generic stats of transmission.
+type Statistics struct {
+	DownloadSpeed, UploadSpeed                           int
+	TorrentCount, ActiveTorrentCount, PausedTorrentcount int
+	CurrentStats, CumulativeStats                        TotalStats
+}
+
+func (s *Statistics) String() string {
+	return fmt.Sprintf("%v KB/s DL, %v KB/s UL, %v torrents (%v active, %v paused)",
+		s.DownloadSpeed/1024, s.UploadSpeed/1024, s.TorrentCount,
+		s.ActiveTorrentCount, s.PausedTorrentcount)
+}
+
+// A TotalStats holds total stats of transmission.
+type TotalStats struct {
+	DownloadedBytes, UploadedBytes          int
+	FilesAdded, SecondsActive, SessionCount int
+}
+
+type conn struct {
 	url    string
 	client http.Client
 }
@@ -25,13 +53,13 @@ func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
 	}
 }
 
-func New(rawurl string) (*Conn, error) {
+func newConn(rawurl string) (*conn, error) {
 	u, err := url.Parse(rawurl)
 	if err != nil {
 		return nil, err
 	}
 	// TODO(StalkR): add CAcert properly instead of InsecureSkipVerify.
-	return &Conn{
+	return &conn{
 		url: rawurl,
 		client: http.Client{
 			Transport: &http.Transport{
@@ -42,7 +70,7 @@ func New(rawurl string) (*Conn, error) {
 	}, nil
 }
 
-func (c *Conn) sessionId() (string, error) {
+func (c *conn) sessionId() (string, error) {
 	resp, err := c.client.Get(c.url + "/transmission/rpc")
 	if err != nil {
 		return "", err
@@ -50,12 +78,12 @@ func (c *Conn) sessionId() (string, error) {
 	defer resp.Body.Close()
 	v, ok := resp.Header["X-Transmission-Session-Id"]
 	if !ok || len(v) < 1 {
-		return "", errors.New("transmission sessionId not found")
+		return "", errors.New("transmission: sessionId not found")
 	}
 	return v[0], nil
 }
 
-func (c *Conn) Stats() (*Stats, error) {
+func (c *conn) stats() (*Statistics, error) {
 	sessId, err := c.sessionId()
 	if err != nil {
 		return nil, err
@@ -72,28 +100,20 @@ func (c *Conn) Stats() (*Stats, error) {
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	var s sessionStats
 	if err := json.Unmarshal(body, &s); err != nil {
 		return nil, err
 	}
 	if s.Result != "success" {
-		return nil, fmt.Errorf("transmission: stats not success: %s", s.Result)
+		return nil, fmt.Errorf("transmission: no success: %s", s.Result)
 	}
 	return &s.Arguments, nil
 }
 
 type sessionStats struct {
-	Arguments Stats
+	Arguments Statistics
 	Result    string
-}
-
-type Stats struct {
-	DownloadSpeed, UploadSpeed                           int
-	TorrentCount, ActiveTorrentCount, PausedTorrentcount int
-	CurrentStats, CumulativeStats                        TotalStats
-}
-
-type TotalStats struct {
-	DownloadedBytes, UploadedBytes          int
-	FilesAdded, SecondsActive, SessionCount int
 }

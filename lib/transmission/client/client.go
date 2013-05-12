@@ -13,15 +13,9 @@ func main() {
 		fmt.Printf("Usage: %s <transmission url>\n", os.Args[0])
 		os.Exit(1)
 	}
-	c, err := transmission.New(os.Args[1])
+	s, err := transmission.Stats(os.Args[1])
 	if err != nil {
 		fmt.Println("err", err)
 	}
-	s, err := c.Stats()
-	if err != nil {
-		fmt.Println("err", err)
-	}
-	fmt.Printf("%v KB/s DL, %v KB/s UL, %v torrents (%v active, %v paused)\n",
-		s.DownloadSpeed/1024, s.UploadSpeed/1024, s.TorrentCount,
-		s.ActiveTorrentCount, s.PausedTorrentcount)
+	fmt.Println(s.String())
 }
