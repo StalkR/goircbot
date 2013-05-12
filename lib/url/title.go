@@ -1,4 +1,4 @@
-// Package url implements a module to get a meaningful title of web URLs.
+// Package url implements a library to get a meaningful title of web URLs.
 package url
 
 import (
