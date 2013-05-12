@@ -12,6 +12,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/failotron"
 	"github.com/StalkR/goircbot/plugins/geo"
 	"github.com/StalkR/goircbot/plugins/imdb"
+	"github.com/StalkR/goircbot/plugins/mac"
 	"github.com/StalkR/goircbot/plugins/ping"
 	"github.com/StalkR/goircbot/plugins/scores"
 	"github.com/StalkR/goircbot/plugins/search"
@@ -41,6 +42,7 @@ func main() {
 	failotron.Register(b, ignore)
 	geo.Register(b)
 	imdb.Register(b)
+	mac.Register(b)
 	ping.Register(b)
 	scores.Register(b, "/tmp/scores")
 	search.Register(b, "<key>", "<cx>")
