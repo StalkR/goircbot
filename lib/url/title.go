@@ -5,7 +5,10 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
 	"time"
+
+	"github.com/StalkR/goircbot/lib/tls"
 )
 
 func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
@@ -15,13 +18,18 @@ func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
 }
 
 // Title gets an URL and returns its title.
-func Title(url string) (string, error) {
+func Title(rawurl string) (string, error) {
+	u, err := url.Parse(rawurl)
+	if err != nil {
+		return "", err
+	}
 	client := &http.Client{
 		Transport: &http.Transport{
-			Dial: timeoutDialer(3 * time.Second),
+			Dial:            timeoutDialer(3 * time.Second),
+			TLSClientConfig: tls.Config(u.Host),
 		},
 	}
-	resp, err := client.Get(url)
+	resp, err := client.Get(rawurl)
 	if err != nil {
 		return "", err
 	}
@@ -30,5 +38,5 @@ func Title(url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return ParseTitle(url, string(contents), Parsers)
+	return ParseTitle(rawurl, string(contents), Parsers)
 }

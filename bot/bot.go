@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/StalkR/goircbot/lib/tls"
 	"github.com/fluffle/goirc/client"
 	"github.com/fluffle/goirc/state"
 )
@@ -28,6 +29,7 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) *Bot {
 		QuitMessage: "I have to go.",
 		Server:      host,
 		SSL:         ssl,
+		SSLConfig:   tls.Config(host),
 		Version:     "Powered by GoIRCBot",
 		Recover:     (*client.Conn).LogPanic,
 		SplitLen:    450,

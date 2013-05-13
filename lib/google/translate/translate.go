@@ -9,6 +9,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+
+	"github.com/StalkR/goircbot/lib/tls"
 )
 
 type lresult struct {
@@ -28,13 +30,18 @@ type Language struct {
 // Languages returns the list of supported Google Translate languages for a
 // given target language or empty string for all supported languages.
 func Languages(target string, key string) ([]Language, error) {
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: tls.Config("www.googleapis.com"),
+		},
+	}
 	base := "https://www.googleapis.com/language/translate/v2/languages"
 	params := url.Values{}
 	params.Set("key", key)
 	if target != "" {
 		params.Set("target", target)
 	}
-	resp, err := http.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
+	resp, err := client.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
 	if err != nil {
 		return nil, err
 	}
@@ -68,6 +75,11 @@ type Translation struct {
 // It requires a Google API Key (key), valid source and target languages.
 // For automatic source language detection, use empty string.
 func Translate(source, target, text, key string) (*Translation, error) {
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: tls.Config("www.googleapis.com"),
+		},
+	}
 	base := "https://www.googleapis.com/language/translate/v2"
 	params := url.Values{}
 	params.Set("key", key)
@@ -76,7 +88,7 @@ func Translate(source, target, text, key string) (*Translation, error) {
 	}
 	params.Set("target", target)
 	params.Set("q", text)
-	resp, err := http.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
+	resp, err := client.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
 	if err != nil {
 		return nil, err
 	}

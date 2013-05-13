@@ -25,13 +25,15 @@ import (
 	"github.com/StalkR/goircbot/plugins/whoami"
 )
 
-var host *string = flag.String("host", "irc.example.com", "Server host[:port]")
-var ssl *bool = flag.Bool("ssl", true, "Enable SSL")
-var nick *string = flag.String("nick", "goircbot", "Bot nick")
-var ident *string = flag.String("ident", "goircbot", "Bot ident")
-var channels *string = flag.String("channels", "", "Channels to join (separated by comma)")
+var (
+	host     *string = flag.String("host", "irc.example.com", "Server host[:port]")
+	ssl      *bool   = flag.Bool("ssl", true, "Enable SSL")
+	nick     *string = flag.String("nick", "goircbot", "Bot nick")
+	ident    *string = flag.String("ident", "goircbot", "Bot ident")
+	channels *string = flag.String("channels", "", "Channels to join (separated by comma)")
 
-var ignore = []string{"bot"}
+	ignore = []string{"bot"}
+)
 
 func main() {
 	flag.Parse()

@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/StalkR/goircbot/lib/tls"
 )
 
-var (
-	APPURL = "https://movie-db-api.appspot.com"
-)
+const appURL = "https://movie-db-api.appspot.com"
 
 type Result struct {
 	Id, Name string
@@ -82,10 +82,19 @@ func (n *Name) String() string {
 }
 
 // GetRetry performs an HTTP GET with retries.
-func GetRetry(url string, retries int) (*http.Response, error) {
+func GetRetry(rawurl string, retries int) (*http.Response, error) {
+	u, err := url.Parse(rawurl)
+	if err != nil {
+		return nil, err
+	}
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: tls.Config(u.Host),
+		},
+	}
 	var resp *http.Response
 	for i := 0; i < retries; i++ {
-		resp, err := http.Get(url)
+		resp, err := client.Get(rawurl)
 		if err != nil {
 			return nil, err
 		}
@@ -111,7 +120,7 @@ func Decode(data []byte, v interface{}) error {
 
 // NewTitle obtains a Title ID with its information and returns a Title.
 func NewTitle(id string) (*Title, error) {
-	base := APPURL + "/title"
+	base := appURL + "/title"
 	resp, err := GetRetry(fmt.Sprintf("%s/%s", base, id), 3)
 	if err != nil {
 		return nil, err
@@ -130,7 +139,7 @@ func NewTitle(id string) (*Title, error) {
 
 // FindTitle searches a Title and returns a list of Result.
 func FindTitle(q string) ([]Result, error) {
-	base := APPURL + "/find"
+	base := appURL + "/find"
 	params := url.Values{}
 	params.Set("s", "tt")
 	params.Set("q", q)

@@ -2,7 +2,6 @@
 package mldonkey
 
 import (
-	"crypto/tls"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -12,6 +11,8 @@ import (
 	"regexp"
 	"strconv"
 	"time"
+
+	"github.com/StalkR/goircbot/lib/tls"
 )
 
 var (
@@ -57,13 +58,12 @@ func newConn(rawurl string) (*conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	// TODO(StalkR): add CAcert properly instead of InsecureSkipVerify.
 	return &conn{
 		url: rawurl,
 		client: http.Client{
 			Transport: &http.Transport{
 				Dial:            timeoutDialer(3 * time.Second),
-				TLSClientConfig: &tls.Config{ServerName: u.Host, InsecureSkipVerify: true},
+				TLSClientConfig: tls.Config(u.Host),
 			},
 		},
 	}, nil

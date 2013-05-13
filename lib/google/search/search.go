@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+
+	"github.com/StalkR/goircbot/lib/tls"
 )
 
 type Result struct {
@@ -67,13 +69,18 @@ func (i *Item) String() string {
 // Search searches a term on Google Custom Search and returns a Result.
 // It requires a Google API Key (key) and a Google Custom Search ID (cx).
 func Search(term, key, cx string) (*Result, error) {
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: tls.Config("www.googleapis.com"),
+		},
+	}
 	base := "https://www.googleapis.com/customsearch/v1"
 	params := url.Values{}
 	params.Set("key", key)
 	params.Set("cx", cx)
 	params.Set("alt", "json")
 	params.Set("q", term)
-	resp, err := http.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
+	resp, err := client.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
 	if err != nil {
 		return nil, err
 	}

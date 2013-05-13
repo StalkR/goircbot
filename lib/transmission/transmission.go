@@ -3,7 +3,6 @@ package transmission
 
 import (
 	"bytes"
-	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +11,8 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/StalkR/goircbot/lib/tls"
 )
 
 // Stats returns Statistics for a given transmission URL.
@@ -58,13 +59,12 @@ func newConn(rawurl string) (*conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	// TODO(StalkR): add CAcert properly instead of InsecureSkipVerify.
 	return &conn{
 		url: rawurl,
 		client: http.Client{
 			Transport: &http.Transport{
 				Dial:            timeoutDialer(3 * time.Second),
-				TLSClientConfig: &tls.Config{ServerName: u.Host, InsecureSkipVerify: true},
+				TLSClientConfig: tls.Config(u.Host),
 			},
 		},
 	}, nil

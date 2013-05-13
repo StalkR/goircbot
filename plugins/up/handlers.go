@@ -2,15 +2,16 @@
 package up
 
 import (
-	"crypto/tls"
 	"fmt"
 	"net"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
 
 	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/tls"
 )
 
 func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
@@ -20,14 +21,18 @@ func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
 }
 
 // Probe gets an URL and returns a boolean if it worked within imparted time.
-func Probe(url string) bool {
+func Probe(rawurl string) bool {
+	u, err := url.Parse(rawurl)
+	if err != nil {
+		return false
+	}
 	client := &http.Client{
 		Transport: &http.Transport{
 			Dial:            timeoutDialer(3 * time.Second),
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			TLSClientConfig: tls.Config(u.Host),
 		},
 	}
-	resp, err := client.Get(url)
+	resp, err := client.Get(rawurl)
 	if err != nil {
 		return false
 	}
