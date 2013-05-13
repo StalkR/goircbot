@@ -3,6 +3,7 @@ package bot
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/StalkR/goircbot/lib/tls"
@@ -22,6 +23,7 @@ type Bot struct {
 
 // NewBot creates a new Bot with a set of parameters.
 func NewBot(host string, ssl bool, nick, ident string, channels []string) *Bot {
+	hostPort := strings.SplitN(host, ":", 2)
 	cfg := &client.Config{
 		Me:          state.NewNick(nick),
 		NewNick:     func(s string) string { return s + "_" },
@@ -29,7 +31,7 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) *Bot {
 		QuitMessage: "I have to go.",
 		Server:      host,
 		SSL:         ssl,
-		SSLConfig:   tls.Config(host),
+		SSLConfig:   tls.Config(hostPort[0]),
 		Version:     "Powered by GoIRCBot",
 		Recover:     (*client.Conn).LogPanic,
 		SplitLen:    450,
