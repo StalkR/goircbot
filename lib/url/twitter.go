@@ -8,7 +8,7 @@ import (
 
 var (
 	twitterRE = regexp.MustCompile(`^https?://twitter\.com/.*?/status/\d+(#|$)`)
-	tweetRE   = regexp.MustCompile(`<p class="js-tweet-text">(.*?)</p>`)
+	tweetRE   = regexp.MustCompile(`<p class="js-tweet-text[^"]*">(.*?)</p>`)
 )
 
 type Twitter struct{}
