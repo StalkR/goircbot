@@ -96,22 +96,60 @@ func quit(b *bot.Bot, e *bot.Event) {
 func Register(b *bot.Bot, admins []string) {
 	Admins = admins
 
-	b.AddCommand("say", bot.Command{"say <target> <text>", say, true, true, true})
-	b.AddCommand("act", bot.Command{"act <target> <text>", act, true, true, true})
-	b.AddCommand("notice", bot.Command{"notice <target> <text>", notice, true, true, true})
-
-	b.AddCommand("op", bot.Command{"op [<target>]",
-		func(b *bot.Bot, e *bot.Event) { doMode(b, e, "+", "o") },
-		true, true, true})
-	b.AddCommand("deop", bot.Command{"deop [<target>]",
-		func(b *bot.Bot, e *bot.Event) { doMode(b, e, "-", "o") },
-		true, true, true})
-	b.AddCommand("voice", bot.Command{"voice [<target>]",
-		func(b *bot.Bot, e *bot.Event) { doMode(b, e, "+", "v") },
-		true, true, true})
-	b.AddCommand("devoice", bot.Command{"devoice [<target>]",
-		func(b *bot.Bot, e *bot.Event) { doMode(b, e, "-", "v") },
-		true, true, true})
-
-	b.AddCommand("quit", bot.Command{"quit [msg]", quit, true, true, true})
+	b.AddCommand("say", bot.Command{
+		Help:    "say <target> <text>",
+		Handler: say,
+		Pub:     true,
+		Priv:    true,
+		Hidden:  true,
+	})
+	b.AddCommand("act", bot.Command{
+		Help:    "act <target> <text>",
+		Handler: act,
+		Pub:     true,
+		Priv:    true,
+		Hidden:  true,
+	})
+	b.AddCommand("notice", bot.Command{
+		Help:    "notice <target> <text>",
+		Handler: notice,
+		Pub:     true,
+		Priv:    true,
+		Hidden:  true,
+	})
+	b.AddCommand("op", bot.Command{
+		Help:    "op [<target>]",
+		Handler: func(b *bot.Bot, e *bot.Event) { doMode(b, e, "+", "o") },
+		Pub:     true,
+		Priv:    true,
+		Hidden:  true,
+	})
+	b.AddCommand("deop", bot.Command{
+		Help:    "deop [<target>]",
+		Handler: func(b *bot.Bot, e *bot.Event) { doMode(b, e, "-", "o") },
+		Pub:     true,
+		Priv:    true,
+		Hidden:  true,
+	})
+	b.AddCommand("voice", bot.Command{
+		Help:    "voice [<target>]",
+		Handler: func(b *bot.Bot, e *bot.Event) { doMode(b, e, "+", "v") },
+		Pub:     true,
+		Priv:    true,
+		Hidden:  true,
+	})
+	b.AddCommand("devoice", bot.Command{
+		Help:    "devoice [<target>]",
+		Handler: func(b *bot.Bot, e *bot.Event) { doMode(b, e, "-", "v") },
+		Pub:     true,
+		Priv:    true,
+		Hidden:  true,
+	})
+	b.AddCommand("quit", bot.Command{
+		Help:    "quit [msg]",
+		Handler: quit,
+		Pub:     true,
+		Priv:    true,
+		Hidden:  true,
+	})
 }
