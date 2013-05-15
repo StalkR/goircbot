@@ -1,4 +1,4 @@
-// Package transmission implements a library to pull statistics from transmission.
+// Package transmission implements a library to talk to Transmission.
 package transmission
 
 import (
@@ -15,20 +15,10 @@ import (
 	"github.com/StalkR/goircbot/lib/tls"
 )
 
-// Stats returns Statistics for a given transmission URL.
-func Stats(url string) (*Statistics, error) {
-	c, err := newConn(url)
-	if err != nil {
-		return nil, err
-	}
-	return c.stats()
-}
-
-// A Statistics holds generic stats of transmission.
+// A Statistics holds generic stats of Transmission.
 type Statistics struct {
 	DownloadSpeed, UploadSpeed                           int
 	TorrentCount, ActiveTorrentCount, PausedTorrentcount int
-	CurrentStats, CumulativeStats                        TotalStats
 }
 
 func (s *Statistics) String() string {
@@ -37,13 +27,8 @@ func (s *Statistics) String() string {
 		s.ActiveTorrentCount, s.PausedTorrentcount)
 }
 
-// A TotalStats holds total stats of transmission.
-type TotalStats struct {
-	DownloadedBytes, UploadedBytes          int
-	FilesAdded, SecondsActive, SessionCount int
-}
-
-type conn struct {
+// A Conn represents a connection to Transmission.
+type Conn struct {
 	url    string
 	client http.Client
 }
@@ -54,12 +39,13 @@ func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
 	}
 }
 
-func newConn(rawurl string) (*conn, error) {
+// New prepares a Transmission connection by returning a *Conn.
+func New(rawurl string) (*Conn, error) {
 	u, err := url.Parse(rawurl)
 	if err != nil {
 		return nil, err
 	}
-	return &conn{
+	return &Conn{
 		url: rawurl,
 		client: http.Client{
 			Transport: &http.Transport{
@@ -70,26 +56,32 @@ func newConn(rawurl string) (*conn, error) {
 	}, nil
 }
 
-func (c *conn) sessionId() (string, error) {
+// sessionId asks Transmission for an RPC session ID.
+func (c *Conn) sessionId() (string, error) {
 	resp, err := c.client.Get(c.url + "/transmission/rpc")
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
-	v, ok := resp.Header["X-Transmission-Session-Id"]
-	if !ok || len(v) < 1 {
+	values, ok := resp.Header["X-Transmission-Session-Id"]
+	if !ok || len(values) < 1 {
 		return "", errors.New("transmission: sessionId not found")
 	}
-	return v[0], nil
+	return values[0], nil
 }
 
-func (c *conn) stats() (*Statistics, error) {
+// rpc sends an RPC request to Transmission with the right session ID.
+func (c *Conn) rpc(request interface{}) ([]byte, error) {
 	sessId, err := c.sessionId()
 	if err != nil {
 		return nil, err
 	}
-	buf := bytes.NewBufferString(`{"method":"session-stats"}`)
-	req, err := http.NewRequest("POST", c.url+"/transmission/rpc", buf)
+	js, err := json.Marshal(request)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", c.url+"/transmission/rpc",
+		bytes.NewBufferString(string(js)))
 	if err != nil {
 		return nil, err
 	}
@@ -99,21 +91,65 @@ func (c *conn) stats() (*Statistics, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	return ioutil.ReadAll(resp.Body)
+}
+
+// Stats returns current statistics (speed, number of torrents, etc.).
+func (c *Conn) Stats() (*Statistics, error) {
+	b, err := c.rpc(map[string]string{"method": "session-stats"})
 	if err != nil {
 		return nil, err
 	}
-	var s sessionStats
-	if err := json.Unmarshal(body, &s); err != nil {
+	var r sessionStats
+	if err := json.Unmarshal(b, &r); err != nil {
 		return nil, err
 	}
-	if s.Result != "success" {
-		return nil, fmt.Errorf("transmission: no success: %s", s.Result)
+	if r.Result != "success" {
+		return nil, fmt.Errorf("transmission: result: %s", r.Result)
 	}
-	return &s.Arguments, nil
+	return &r.Arguments, nil
 }
 
 type sessionStats struct {
 	Arguments Statistics
 	Result    string
+}
+
+// Add adds a torrent by URL and returns its name.
+func (c *Conn) Add(url string) (string, error) {
+	b, err := c.rpc(map[string]interface{}{
+		"method": "torrent-add",
+		"arguments": map[string]interface{}{
+			"paused":   false,
+			"filename": url,
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+	var r torrentAdd
+	if err := json.Unmarshal(b, &r); err != nil {
+		return "", err
+	}
+	if r.Result != "success" {
+		return "", fmt.Errorf("transmission: result: %s", r.Result)
+	}
+	if r.Arguments.TorrentAdded.Name == "" {
+		return "", errors.New("transmission: empty result")
+	}
+	return r.Arguments.TorrentAdded.Name, nil
+}
+
+type torrentAdd struct {
+	Arguments torrentAddedArguments
+	Result    string
+}
+
+type torrentAddedArguments struct {
+	TorrentAdded torrentAdded `json:"torrent-added"`
+}
+
+type torrentAdded struct {
+	Id               int
+	Name, HashString string
 }
