@@ -103,7 +103,7 @@ func GetRetry(rawurl string, retries int) (*http.Response, error) {
 		}
 		log.Print("imdb: get error, status ", resp.StatusCode)
 	}
-	return nil, fmt.Errorf("imdb: get error, status: %i", resp.StatusCode)
+	return nil, fmt.Errorf("imdb: get error, status: %v", resp.StatusCode)
 }
 
 // Decode decodes json data from app.
