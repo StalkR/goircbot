@@ -1,4 +1,4 @@
-// Package mldonkey implements a library to pull statistics from mldonkey.
+// Package mldonkey implements a library to talk to MLDonkey.
 package mldonkey
 
 import (
@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/StalkR/goircbot/lib/tls"
@@ -19,18 +20,10 @@ var (
 	downRE  = regexp.MustCompile(`Down: ([\d.]+ .B/s) `)
 	upRE    = regexp.MustCompile(`Up: ([\d.]+ .B/s) `)
 	totalRE = regexp.MustCompile(`Total\((\d+)\): ([\d.]+.)/([\d.]+.) @`)
+	linkRE  = regexp.MustCompile(`^ed2k://`)
 )
 
-// Stats returns Statistics for a given mldonkey URL.
-func Stats(url string) (*Statistics, error) {
-	c, err := newConn(url)
-	if err != nil {
-		return nil, err
-	}
-	return c.stats()
-}
-
-// A Statistics holds generic stats of mldonkey.
+// A Statistics holds generic stats of MLDonkey.
 type Statistics struct {
 	DL, UL            string
 	Count             int
@@ -42,7 +35,8 @@ func (s *Statistics) String() string {
 		s.DL, s.UL, s.Count, s.Downloaded, s.Total)
 }
 
-type conn struct {
+// A Conn represents a connection to MLDonkey.
+type Conn struct {
 	url    string
 	client http.Client
 }
@@ -53,12 +47,13 @@ func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
 	}
 }
 
-func newConn(rawurl string) (*conn, error) {
+// New prepares an MLDonkey connection by returning a *Conn.
+func New(rawurl string) (*Conn, error) {
 	u, err := url.Parse(rawurl)
 	if err != nil {
 		return nil, err
 	}
-	return &conn{
+	return &Conn{
 		url: rawurl,
 		client: http.Client{
 			Transport: &http.Transport{
@@ -69,7 +64,8 @@ func newConn(rawurl string) (*conn, error) {
 	}, nil
 }
 
-func (c *conn) stats() (*Statistics, error) {
+// Stats returns current statistics (speed, total downloads, etc.).
+func (c *Conn) Stats() (*Statistics, error) {
 	resp, err := c.client.Get(c.url + "/submit?q=bw_stats")
 	if err != nil {
 		return nil, err
@@ -111,4 +107,27 @@ func (c *conn) stats() (*Statistics, error) {
 	total := string(m[3])
 
 	return &Statistics{DL: DL, UL: UL, Count: count, Downloaded: dled, Total: total}, nil
+}
+
+// Add adds a link by URL.
+func (c *Conn) Add(link string) error {
+	if !linkRE.MatchString(link) {
+		return errors.New("mldonkey: invalid link")
+	}
+	params := url.Values{}
+	params.Set("q", link)
+	resp, err := c.client.Get(c.url + "/submit?" + params.Encode())
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	page, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	if !strings.Contains(string(page), "Added link") {
+		fmt.Println(string(page))
+		return fmt.Errorf("mldonkey: no result")
+	}
+	return nil
 }

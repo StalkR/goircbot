@@ -1,4 +1,4 @@
-// MLDonkey client to print stats.
+// MLDonkey client for stats and add link by URL.
 package main
 
 import (
@@ -8,15 +8,43 @@ import (
 	"github.com/StalkR/goircbot/lib/mldonkey"
 )
 
+func usage() {
+	fmt.Printf("Usage: %s <MLDonkey URL> (stats|add <URL>)\n", os.Args[0])
+	os.Exit(1)
+}
+
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Printf("Usage: %s <mldonkey url>\n", os.Args[0])
-		os.Exit(1)
+	if len(os.Args) < 3 {
+		usage()
 	}
-	s, err := mldonkey.Stats(os.Args[1])
+
+	c, err := mldonkey.New(os.Args[1])
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
-	fmt.Println(s.String())
+
+	switch os.Args[2] {
+
+	case "stats":
+		stats, err := c.Stats()
+		if err != nil {
+			fmt.Println("Error:", err)
+			os.Exit(1)
+		}
+		fmt.Println(stats.String())
+
+	case "add":
+		if len(os.Args) < 4 {
+			usage()
+		}
+		if err := c.Add(os.Args[3]); err != nil {
+			fmt.Println("Error:", err)
+			os.Exit(1)
+		}
+		fmt.Println("Link added.")
+
+	default:
+		usage()
+	}
 }
