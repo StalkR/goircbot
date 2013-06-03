@@ -1,7 +1,6 @@
 package travisci
 
 import (
-	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -41,8 +40,7 @@ func watch(user, repo string, duration time.Duration, notify func(string)) {
 			if b.Success {
 				continue
 			}
-			notify(fmt.Sprintf("Build #%v: %v (%v) %v (%v/%v)\n",
-				b.Number, "errored", b.Finished, b.Message, b.Branch, b.Commit))
+			notify(b.String())
 		}
 	}
 }

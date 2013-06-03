@@ -13,9 +13,6 @@ import (
 	"github.com/StalkR/goircbot/lib/tls"
 )
 
-// buildsURL is a format string taking user and repo to make the JSON builds URL.
-const buildsURL = "https://api.travis-ci.org/repos/%s/%s/builds.json"
-
 // Build represents a Travis-CI build.
 // Compared to the JSON:
 // 1) Started/Finished replace StartedAt/FinishedAt and are of type time.Time
@@ -23,18 +20,32 @@ const buildsURL = "https://api.travis-ci.org/repos/%s/%s/builds.json"
 // When build state is in progress (e.g. not "finished"), Started/Finished are
 // not set (zero value of time.Time) because Travis-CI does not provide them.
 type Build struct {
-	Id           int
-	RepositoryId int
-	Number       int
-	State        string
-	Success      bool
-	Started      time.Time
-	Finished     time.Time
-	Duration     int
-	Commit       string
-	Branch       string
-	Message      string
-	EventType    string
+	Id, RepositoryId, Number int
+	State                    string
+	Success                  bool
+	Started, Finished        time.Time
+	Duration                 int
+	Commit, Branch, Message  string
+	EventType                string
+	BuildURL, CommitURL      string
+}
+
+func (b *Build) String() string {
+	var status string
+	if b.State == "finished" {
+		status = "passed"
+		if !b.Success {
+			status = "errored"
+		}
+	} else {
+		status = "in progress"
+	}
+	if b.Finished.IsZero() {
+		return fmt.Sprintf("Build #%v: %v %v %v %v", b.Number, status,
+			b.BuildURL, b.CommitURL, b.Message)
+	}
+	return fmt.Sprintf("Build #%v: %v (%v) %v %v %v", b.Number, status,
+		b.Finished.Format("2006-01-02 15:04:05 UTC"), b.BuildURL, b.CommitURL, b.Message)
 }
 
 // buildJSON represents the builds.json replied by Travis-CI API.
@@ -75,7 +86,7 @@ func httpClient(rawurl string) *http.Client {
 }
 
 func Builds(user, repo string) ([]Build, error) {
-	url := fmt.Sprintf(buildsURL, user, repo)
+	url := fmt.Sprintf("https://api.travis-ci.org/repos/%s/%s/builds.json", user, repo)
 	resp, err := httpClient(url).Get(url)
 	if err != nil {
 		return nil, err
@@ -126,6 +137,8 @@ func Builds(user, repo string) ([]Build, error) {
 			Branch:       b.Branch,
 			Message:      b.Message,
 			EventType:    b.EventType,
+			BuildURL:     fmt.Sprintf("https://travis-ci.org/%v/%v/builds/%v", user, repo, b.Id),
+			CommitURL:    fmt.Sprintf("https://github.com/%v/%v/commit/%v", user, repo, b.Commit),
 		})
 	}
 	return builds, nil

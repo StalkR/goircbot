@@ -4,6 +4,7 @@ package main
 import (
 	"flag"
 	"strings"
+	"time"
 
 	"github.com/StalkR/goircbot/bot"
 	"github.com/StalkR/goircbot/plugins/admin"

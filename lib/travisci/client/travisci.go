@@ -37,21 +37,6 @@ func main() {
 		builds[i], builds[j] = builds[j], builds[i]
 	}
 	for _, b := range builds {
-		var status string
-		if b.State == "finished" {
-			status = "passed"
-			if !b.Success {
-				status = "errored"
-			}
-		} else {
-			status = "in progress"
-		}
-		if b.Finished.IsZero() {
-			fmt.Printf(" - Build #%v: %v, %v (%v/%v)\n", b.Number, status,
-				b.Message, b.Branch, b.Commit)
-		} else {
-			fmt.Printf(" - Build #%v: %v (%v) %v (%v/%v)\n", b.Number, status, b.Finished,
-				b.Message, b.Branch, b.Commit)
-		}
+		fmt.Println(b.String())
 	}
 }

@@ -28,23 +28,7 @@ func travis(b *bot.Bot, e *bot.Event) {
 		return
 	}
 	last := builds[0]
-	var status string
-	if last.State == "finished" {
-		status = "passed"
-		if !last.Success {
-			status = "errored"
-		}
-	} else {
-		status = "in progress"
-	}
-	if last.Finished.IsZero() {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("Build #%v: %v, %v (%v/%v)\n",
-			last.Number, status, last.Message, last.Branch, last.Commit))
-	} else {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("Build #%v: %v (%v) %v (%v/%v)\n",
-			last.Number, status, last.Finished, last.Message, last.Branch, last.Commit))
-	}
-
+	b.Conn.Privmsg(e.Target, last.String())
 }
 
 // Register registers the plugin with a bot.
