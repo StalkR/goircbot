@@ -34,7 +34,7 @@ func watch(user, repo string, duration time.Duration, notify func(string)) {
 			builds[i], builds[j] = builds[j], builds[i]
 		}
 		for _, b := range builds {
-			if b.Number <= lastBuild {
+			if b.Number <= lastBuild || b.State != "finished" {
 				continue
 			}
 			lastBuild = b.Number

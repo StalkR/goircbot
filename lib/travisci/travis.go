@@ -20,6 +20,8 @@ const buildsURL = "https://api.travis-ci.org/repos/%s/%s/builds.json"
 // Compared to the JSON:
 // 1) Started/Finished replace StartedAt/FinishedAt and are of type time.Time
 // 2) Success replaces Result and is of type bool
+// When build state is in progress (e.g. not "finished"), Started/Finished are
+// not set (zero value of time.Time) because Travis-CI does not provide them.
 type Build struct {
 	Id           int
 	RepositoryId int
@@ -36,8 +38,8 @@ type Build struct {
 }
 
 // buildJSON represents the builds.json replied by Travis-CI API.
-// Result is a pointer to int because it can be null in JSON (build failed, nil)
-// and we want to distinguish from a 0 value (build successful, value 0).
+// Some fields are pointers because they can be null, and we want to differentiate
+// from value 0.
 type buildJSON struct {
 	Id           int    `json:"id"`
 	RepositoryId int    `json:"repository_id"`
@@ -89,14 +91,20 @@ func Builds(user, repo string) ([]Build, error) {
 	}
 	var builds []Build
 	for _, b := range bjs {
-		startedAt, err := time.Parse("2006-01-02T15:04:05Z", b.StartedAt)
-		if err != nil {
-			return nil, err
+		var startedAt, finishedAt time.Time
+		if b.StartedAt != "" {
+			startedAt, err = time.Parse("2006-01-02T15:04:05Z", b.StartedAt)
+			if err != nil {
+				return nil, err
+			}
 		}
-		finishedAt, err := time.Parse("2006-01-02T15:04:05Z", b.FinishedAt)
-		if err != nil {
-			return nil, err
+		if b.FinishedAt != "" {
+			finishedAt, err = time.Parse("2006-01-02T15:04:05Z", b.FinishedAt)
+			if err != nil {
+				return nil, err
+			}
 		}
+
 		success := false
 		if b.Result != nil {
 			if *b.Result != 0 {
@@ -104,6 +112,7 @@ func Builds(user, repo string) ([]Build, error) {
 			}
 			success = true
 		}
+
 		builds = append(builds, Build{
 			Id:           b.Id,
 			RepositoryId: b.RepositoryId,

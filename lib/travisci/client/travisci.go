@@ -3,16 +3,22 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/StalkR/goircbot/lib/travisci"
 )
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Printf("Usage: %v <user> <repo>)\n", os.Args[0])
+		fmt.Printf("Usage: %v <user>/<repo>)\n", os.Args[0])
 		os.Exit(1)
 	}
-	user, repo := os.Args[1], os.Args[2]
+	userRepo := strings.SplitN(os.Args[1], "/", 2)
+	if len(userRepo) != 2 {
+		fmt.Printf("Invalid user/repo: %v\n", os.Args[1])
+		os.Exit(1)
+	}
+	user, repo := userRepo[0], userRepo[1]
 
 	builds, err := travisci.Builds(user, repo)
 	if err != nil {
@@ -31,11 +37,21 @@ func main() {
 		builds[i], builds[j] = builds[j], builds[i]
 	}
 	for _, b := range builds {
-		status := "passed"
-		if !b.Success {
-			status = "errored"
+		var status string
+		if b.State == "finished" {
+			status = "passed"
+			if !b.Success {
+				status = "errored"
+			}
+		} else {
+			status = "in progress"
 		}
-		fmt.Printf(" - Build #%v: %v (%v) %v (%v/%v)\n", b.Number, status, b.Finished,
-			b.Message, b.Branch, b.Commit)
+		if b.Finished.IsZero() {
+			fmt.Printf(" - Build #%v: %v, %v (%v/%v)\n", b.Number, status,
+				b.Message, b.Branch, b.Commit)
+		} else {
+			fmt.Printf(" - Build #%v: %v (%v) %v (%v/%v)\n", b.Number, status, b.Finished,
+				b.Message, b.Branch, b.Commit)
+		}
 	}
 }
