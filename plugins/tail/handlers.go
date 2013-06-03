@@ -12,18 +12,17 @@ import (
 	"github.com/StalkR/goircbot/bot"
 )
 
-// Tail watches a file and calls callback for every new line.
+// Tail watches a file and calls notify for every new line.
 // File can be truncated but it does not detect if file is renamed.
-func Tail(path string, cb func(line string)) {
+func Tail(path string, notify func(string)) {
 	var f *os.File
-	for {
+	for ; ; time.Sleep(time.Minute) {
 		fp, err := os.Open(path)
 		if err == nil {
 			f = fp
 			break
 		}
 		log.Println("tail: error open", path, err)
-		time.Sleep(time.Minute)
 	}
 	defer f.Close()
 
@@ -34,15 +33,14 @@ func Tail(path string, cb func(line string)) {
 		}
 	}
 	var line string
-	for {
-		time.Sleep(time.Second)
+	for ; ; time.Sleep(time.Second) {
 		for {
 			buf, err := r.ReadString('\n')
 			line += buf
 			if err == io.EOF {
 				break
 			} else if err == nil {
-				cb(strings.TrimSpace(line))
+				notify(strings.TrimSpace(line))
 				line = ""
 			}
 		}
