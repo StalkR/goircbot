@@ -9,7 +9,7 @@ import (
 )
 
 func usage() {
-	fmt.Printf("Usage: %s <Transmission URL> (stats|add <URL>)\n", os.Args[0])
+	fmt.Printf("Usage: %v <Transmission URL> (stats|add <URL>)\n", os.Args[0])
 	os.Exit(1)
 }
 

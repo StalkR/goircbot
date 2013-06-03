@@ -57,7 +57,7 @@ func New(rawurl string) (*Conn, error) {
 		url: rawurl,
 		client: http.Client{
 			Transport: &http.Transport{
-				Dial:            timeoutDialer(3 * time.Second),
+				Dial:            timeoutDialer(5 * time.Second),
 				TLSClientConfig: tls.Config(u.Host),
 			},
 		},

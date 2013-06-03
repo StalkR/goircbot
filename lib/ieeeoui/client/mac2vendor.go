@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Printf("Usage: %s <mac address>\n", os.Args[0])
+		fmt.Printf("Usage: %v <mac address>\n", os.Args[0])
 		os.Exit(1)
 	}
 	r := ieeeoui.New()

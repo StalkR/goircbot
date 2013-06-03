@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) < 4 {
-		fmt.Printf("Usage: %s <key> <cx> <query>\n", os.Args[0])
+		fmt.Printf("Usage: %v <key> <cx> <query>\n", os.Args[0])
 		os.Exit(1)
 	}
 	r, err := search.Search(os.Args[3], os.Args[1], os.Args[2])

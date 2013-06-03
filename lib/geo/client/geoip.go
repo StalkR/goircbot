@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Printf("Usage: %s <ip|host>\n", os.Args[0])
+		fmt.Printf("Usage: %v <ip|host>\n", os.Args[0])
 		os.Exit(1)
 	}
 	g, err := geo.Location(os.Args[1])

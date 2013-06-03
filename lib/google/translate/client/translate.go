@@ -22,7 +22,7 @@ func Supported(target, key string) {
 	if target == "" {
 		fmt.Println("Supported languages:", strings.Join(langs, ", "))
 	}
-	fmt.Printf("Supported languages for %s: %s\n", target,
+	fmt.Printf("Supported languages for %v: %v\n", target,
 		strings.Join(langs, ", "))
 }
 
@@ -35,7 +35,7 @@ func Translate(source, target, text, key string) {
 	if source == "" {
 		source = translated.DetectedSourceLanguage
 	}
-	fmt.Printf("%s->%s: %s\n", source, target, translated.TranslatedText)
+	fmt.Printf("%v->%v: %v\n", source, target, translated.TranslatedText)
 }
 
 func main() {
@@ -48,11 +48,11 @@ func main() {
 		Translate(os.Args[2], os.Args[3], os.Args[4], os.Args[1])
 	default:
 		fmt.Println("Show all supported languages:")
-		fmt.Printf("	%s <key>\n", os.Args[0])
+		fmt.Printf("	%v <key>\n", os.Args[0])
 		fmt.Println("Show supported languages for a given target language:")
-		fmt.Printf("	%s <key> <target>\n", os.Args[0])
+		fmt.Printf("	%v <key> <target>\n", os.Args[0])
 		fmt.Println("Translate text from source to target language:")
-		fmt.Printf("   %s <key> <source> <target> <text>\n", os.Args[0])
+		fmt.Printf("   %v <key> <source> <target> <text>\n", os.Args[0])
 		os.Exit(1)
 	}
 }

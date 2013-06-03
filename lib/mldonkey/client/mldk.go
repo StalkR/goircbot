@@ -9,7 +9,7 @@ import (
 )
 
 func usage() {
-	fmt.Printf("Usage: %s <MLDonkey URL> (stats|add <URL>)\n", os.Args[0])
+	fmt.Printf("Usage: %v <MLDonkey URL> (stats|add <URL>)\n", os.Args[0])
 	os.Exit(1)
 }
 
