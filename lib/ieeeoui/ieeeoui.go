@@ -74,7 +74,11 @@ func (r *Resolver) init() {
 }
 
 func (r *Resolver) Find(address string) (string, error) {
-	oui, err := strconv.ParseInt(rp.Replace(address)[:6], 16, 0)
+	hex := rp.Replace(address)
+	if len(hex) < 6 {
+		return "", errors.New("need at least 3 address bytes")
+	}
+	oui, err := strconv.ParseInt(hex[:6], 16, 0)
 	if err != nil {
 		return "", errors.New("invalid address")
 	}
