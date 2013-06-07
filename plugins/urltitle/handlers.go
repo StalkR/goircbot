@@ -14,7 +14,7 @@ import (
 
 var (
 	linkRE    = regexp.MustCompile(`(?:^|\s)(https?://[^#\s]+)`)
-	silenceRE = regexp.MustCompile(`(^|\s)tg(\s|$)`) // Line ignored if matched.
+	silenceRE = regexp.MustCompile(`(^|\s)tg(\)|\s|$)`) // Line ignored if matched.
 )
 
 func watchLine(b *bot.Bot, line *client.Line, ignoremap map[string]bool) {
