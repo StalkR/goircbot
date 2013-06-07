@@ -117,10 +117,7 @@ func Builds(user, repo string) ([]Build, error) {
 		}
 
 		success := false
-		if b.Result != nil {
-			if *b.Result != 0 {
-				panic(fmt.Sprintf("build result has non-zero value %d", *b.Result))
-			}
+		if b.Result != nil && *b.Result == 0 {
 			success = true
 		}
 
