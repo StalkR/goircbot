@@ -14,7 +14,7 @@ import (
 )
 
 func parseScore(b *bot.Bot, line *client.Line, s *Scores) {
-	text := line.Args[1]
+	text := strings.TrimSpace(line.Args[1])
 	var modifier int
 	switch {
 	case !strings.HasPrefix(line.Args[0], "#") || len(text) < 3:
