@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/StalkR/goircbot/lib/transport"
 )
 
 type Result struct {
@@ -63,9 +64,13 @@ func (d *Definition) String() string {
 // Define gets definition of term on Urban Dictionary and populates a Result.
 func Define(term string) (*Result, error) {
 	base := "http://api.urbandictionary.com/v0/define"
+	client, err := transport.Client(base)
+	if err != nil {
+		return nil, err
+	}
 	params := url.Values{}
 	params.Set("term", term)
-	resp, err := http.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
+	resp, err := client.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
 	if err != nil {
 		return nil, err
 	}

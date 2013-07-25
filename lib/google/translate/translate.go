@@ -7,10 +7,9 @@ import (
 	"fmt"
 	"html"
 	"io/ioutil"
-	"net/http"
 	"net/url"
 
-	"github.com/StalkR/goircbot/lib/tls"
+	"github.com/StalkR/goircbot/lib/transport"
 )
 
 type lresult struct {
@@ -30,12 +29,11 @@ type Language struct {
 // Languages returns the list of supported Google Translate languages for a
 // given target language or empty string for all supported languages.
 func Languages(target string, key string) ([]Language, error) {
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: tls.Config("www.googleapis.com"),
-		},
-	}
 	base := "https://www.googleapis.com/language/translate/v2/languages"
+	client, err := transport.Client(base)
+	if err != nil {
+		return nil, err
+	}
 	params := url.Values{}
 	params.Set("key", key)
 	if target != "" {
@@ -75,12 +73,11 @@ type Translation struct {
 // It requires a Google API Key (key), valid source and target languages.
 // For automatic source language detection, use empty string.
 func Translate(source, target, text, key string) (*Translation, error) {
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: tls.Config("www.googleapis.com"),
-		},
-	}
 	base := "https://www.googleapis.com/language/translate/v2"
+	client, err := transport.Client(base)
+	if err != nil {
+		return nil, err
+	}
 	params := url.Values{}
 	params.Set("key", key)
 	if source != "" {

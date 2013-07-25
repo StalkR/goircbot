@@ -6,11 +6,12 @@ import (
 	"errors"
 	"io"
 	"log"
-	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/StalkR/goircbot/lib/transport"
 )
 
 const ouiURL = "http://standards.ieee.org/develop/regauth/oui/oui.txt"
@@ -36,7 +37,11 @@ type Resolver struct {
 
 func (r *Resolver) init() {
 	defer r.Done()
-	resp, err := http.Get(ouiURL)
+	client, err := transport.Client(ouiURL)
+	if err != nil {
+		panic(err)
+	}
+	resp, err := client.Get(ouiURL)
 	if err != nil {
 		return
 	}

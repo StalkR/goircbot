@@ -8,8 +8,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
-	"net/http"
 	"strings"
+
+	"github.com/StalkR/goircbot/lib/transport"
 )
 
 type GeoIP struct {
@@ -82,7 +83,11 @@ func (g *GeoIP) String() string {
 // It is limited to 25 addresses per day.
 func IPLocation(ip string) (*GeoIP, error) {
 	url := fmt.Sprintf("http://www.maxmind.com/geoip/v2.0/city_isp_org/%s?demo=1", ip)
-	resp, err := http.Get(url)
+	client, err := transport.Client(url)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}

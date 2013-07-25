@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/StalkR/goircbot/lib/tls"
+	"github.com/StalkR/goircbot/lib/transport"
 )
 
 const appURL = "https://movie-db-api.appspot.com"
@@ -83,14 +83,9 @@ func (n *Name) String() string {
 
 // GetRetry performs an HTTP GET with retries.
 func GetRetry(rawurl string, retries int) (*http.Response, error) {
-	u, err := url.Parse(rawurl)
+	client, err := transport.Client(rawurl)
 	if err != nil {
 		return nil, err
-	}
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: tls.Config(u.Host),
-		},
 	}
 	var resp *http.Response
 	for i := 0; i < retries; i++ {

@@ -5,11 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"net/url"
 	"regexp"
 
-	"github.com/StalkR/goircbot/lib/tls"
+	"github.com/StalkR/goircbot/lib/transport"
 )
 
 type Result struct {
@@ -69,12 +68,11 @@ func (i *Item) String() string {
 // Search searches a term on Google Custom Search and returns a Result.
 // It requires a Google API Key (key) and a Google Custom Search ID (cx).
 func Search(term, key, cx string) (*Result, error) {
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: tls.Config("www.googleapis.com"),
-		},
-	}
 	base := "https://www.googleapis.com/customsearch/v1"
+	client, err := transport.Client(base)
+	if err != nil {
+		return nil, err
+	}
 	params := url.Values{}
 	params.Set("key", key)
 	params.Set("cx", cx)

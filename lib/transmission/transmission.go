@@ -7,12 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"net"
 	"net/http"
-	"net/url"
-	"time"
 
-	"github.com/StalkR/goircbot/lib/tls"
+	"github.com/StalkR/goircbot/lib/transport"
 )
 
 // A Statistics holds generic stats of Transmission.
@@ -30,30 +27,16 @@ func (s *Statistics) String() string {
 // A Conn represents a connection to Transmission.
 type Conn struct {
 	url    string
-	client http.Client
-}
-
-func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
-	return func(netw, addr string) (net.Conn, error) {
-		return net.DialTimeout(netw, addr, d)
-	}
+	client *http.Client
 }
 
 // New prepares a Transmission connection by returning a *Conn.
-func New(rawurl string) (*Conn, error) {
-	u, err := url.Parse(rawurl)
+func New(serverURL string) (*Conn, error) {
+	client, err := transport.Client(serverURL)
 	if err != nil {
 		return nil, err
 	}
-	return &Conn{
-		url: rawurl,
-		client: http.Client{
-			Transport: &http.Transport{
-				Dial:            timeoutDialer(5 * time.Second),
-				TLSClientConfig: tls.Config(u.Host),
-			},
-		},
-	}, nil
+	return &Conn{url: serverURL, client: client}, nil
 }
 
 // sessionId asks Transmission for an RPC session ID.

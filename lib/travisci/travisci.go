@@ -5,12 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net"
-	"net/http"
-	"net/url"
 	"time"
 
-	"github.com/StalkR/goircbot/lib/tls"
+	"github.com/StalkR/goircbot/lib/transport"
 )
 
 // Build represents a Travis-CI build.
@@ -66,28 +63,13 @@ type buildJSON struct {
 	EventType    string `json:"event_type"`
 }
 
-func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
-	return func(netw, addr string) (net.Conn, error) {
-		return net.DialTimeout(netw, addr, d)
-	}
-}
-
-func httpClient(rawurl string) *http.Client {
-	u, err := url.Parse(rawurl)
-	if err != nil {
-		panic(err)
-	}
-	return &http.Client{
-		Transport: &http.Transport{
-			Dial:            timeoutDialer(5 * time.Second),
-			TLSClientConfig: tls.Config(u.Host),
-		},
-	}
-}
-
 func Builds(user, repo string) ([]Build, error) {
 	url := fmt.Sprintf("https://api.travis-ci.org/repos/%s/%s/builds.json", user, repo)
-	resp, err := httpClient(url).Get(url)
+	client, err := transport.Client(url)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}
