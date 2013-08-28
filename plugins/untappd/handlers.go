@@ -16,16 +16,16 @@ import (
 
 var (
 	indexRE   = regexp.MustCompile(`<title>Untappd`)
+	nameRE    = regexp.MustCompile(`<title>(.*) on Untappd</title>`)
+	totalRE   = regexp.MustCompile(`(?s)<p><strong>Total</strong></p>\s*<span>(\d+)`)
 	detailsRE = regexp.MustCompile(`(?s)<div class="details">(.*)`)
-	userRE    = regexp.MustCompile(`(?s)<a href=./user[^>]+>([^<]+)`)
 	beerRE    = regexp.MustCompile(`(?s)<a href=./b/[^>]+>([^<]+)`)
 	whenRE    = regexp.MustCompile(`(?s)<li class="time[^>]+>([^<]+)</li>`)
-	totalRE   = regexp.MustCompile(`(?s)<p><strong>Total</strong></p>\s*<span>(\d+)`)
 )
 
 // Info represents an Untappd user info with last activity and total.
 type Info struct {
-	User  string
+	Name  string
 	Beer  string
 	When  time.Time
 	Total int
@@ -33,10 +33,13 @@ type Info struct {
 
 // String formats an Info to fit on a single IRC line.
 func (i Info) String() string {
+	if i.Total == 0 {
+		return fmt.Sprintf("%v doesn't drink, booo!", i.Name)
+	}
 	d := time.Since(i.When)
 	d = d / time.Second * time.Second
 	return fmt.Sprintf("%v is drinking %v (%v ago) - Total beers: %v",
-		i.User, i.Beer, d, i.Total)
+		i.Name, i.Beer, d, i.Total)
 }
 
 // userPage fetches an Untappd user page.
@@ -61,20 +64,32 @@ func userPage(user string) ([]byte, error) {
 // parsePage parses an Untappd user page and return its info.
 func parsePage(page []byte) (i Info, err error) {
 	if indexRE.Match(page) {
-		return i, errors.New("untappd: no such user")
+		return i, errors.New("no such user")
 	}
 
-	match := detailsRE.FindSubmatch(page)
+	match := nameRE.FindSubmatch(page)
+	if match == nil {
+		return i, errors.New("untappd: could not parse name")
+	}
+	i.Name = strings.TrimSpace(string(match[1]))
+
+	match = totalRE.FindSubmatch(page)
+	if match == nil {
+		return i, errors.New("untappd: could not parse total")
+	}
+	i.Total, err = strconv.Atoi(strings.TrimSpace(string(match[1])))
+	if err != nil {
+		return i, fmt.Errorf("untappd: error parsing total: %v", err)
+	}
+	if i.Total == 0 {
+		return i, nil
+	}
+
+	match = detailsRE.FindSubmatch(page)
 	if match == nil {
 		return i, errors.New("untappd: could not parse details")
 	}
 	details := match[1]
-
-	match = userRE.FindSubmatch(details)
-	if match == nil {
-		return i, errors.New("untappd: could not parse user")
-	}
-	i.User = strings.TrimSpace(string(match[1]))
 
 	match = beerRE.FindSubmatch(details)
 	if match == nil {
@@ -91,15 +106,6 @@ func parsePage(page []byte) (i Info, err error) {
 		return i, fmt.Errorf("untappd: error parsing time: %v", err)
 	}
 	i.When = when
-
-	match = totalRE.FindSubmatch(page)
-	if match == nil {
-		return i, errors.New("untappd: could not parse total")
-	}
-	i.Total, err = strconv.Atoi(strings.TrimSpace(string(match[1])))
-	if err != nil {
-		return i, fmt.Errorf("untappd: error parsing total: %v", err)
-	}
 
 	return
 }
