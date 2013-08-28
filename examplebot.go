@@ -21,6 +21,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/tail"
 	"github.com/StalkR/goircbot/plugins/translate"
 	"github.com/StalkR/goircbot/plugins/travisci"
+	"github.com/StalkR/goircbot/plugins/untappd"
 	"github.com/StalkR/goircbot/plugins/up"
 	"github.com/StalkR/goircbot/plugins/urban"
 	"github.com/StalkR/goircbot/plugins/urltitle"
@@ -55,6 +56,7 @@ func main() {
 	translate.Register(b, "<key>")
 	travisci.Register(b)
 	travisci.Watch(b, []string{"StalkR/goircbot"}, 5*time.Minute)
+	untappd.Register(b)
 	up.Register(b)
 	urban.Register(b)
 	urltitle.Register(b, ignore)
