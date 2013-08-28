@@ -2,6 +2,7 @@
 package untappd
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"regexp"
@@ -14,6 +15,7 @@ import (
 )
 
 var (
+	indexRE   = regexp.MustCompile(`<title>Untappd`)
 	detailsRE = regexp.MustCompile(`(?s)<div class="details">(.*)`)
 	userRE    = regexp.MustCompile(`(?s)<a href=./user[^>]+>([^<]+)`)
 	beerRE    = regexp.MustCompile(`(?s)<a href=./b/[^>]+>([^<]+)`)
@@ -56,50 +58,59 @@ func userPage(user string) ([]byte, error) {
 	return page, nil
 }
 
-// UserInfo fetches then parses an Untappd user page to return its info.
-func UserInfo(user string) (i Info, err error) {
-	page, err := userPage(user)
-	if err != nil {
-		return
+// parsePage parses an Untappd user page and return its info.
+func parsePage(page []byte) (i Info, err error) {
+	if indexRE.Match(page) {
+		return i, errors.New("untappd: no such user")
 	}
+
 	match := detailsRE.FindSubmatch(page)
 	if match == nil {
-		return
+		return i, errors.New("untappd: could not parse details")
 	}
 	details := match[1]
 
 	match = userRE.FindSubmatch(details)
 	if match == nil {
-		return
+		return i, errors.New("untappd: could not parse user")
 	}
 	i.User = strings.TrimSpace(string(match[1]))
 
 	match = beerRE.FindSubmatch(details)
 	if match == nil {
-		return
+		return i, errors.New("untappd: could not parse beer")
 	}
 	i.Beer = strings.TrimSpace(string(match[1]))
 
 	match = whenRE.FindSubmatch(details)
 	if match == nil {
-		return
+		return i, errors.New("untappd: could not parse when")
 	}
 	when, err := time.Parse(time.RFC1123Z, strings.TrimSpace(string(match[1])))
 	if err != nil {
-		return
+		return i, fmt.Errorf("untappd: error parsing time: %v", err)
 	}
 	i.When = when
 
 	match = totalRE.FindSubmatch(page)
 	if match == nil {
-		return
+		return i, errors.New("untappd: could not parse total")
 	}
 	i.Total, err = strconv.Atoi(strings.TrimSpace(string(match[1])))
 	if err != nil {
-		return
+		return i, fmt.Errorf("untappd: error parsing total: %v", err)
 	}
 
 	return
+}
+
+// UserInfo obtains info for a user by querying its web page and parsing it.
+func UserInfo(user string) (Info, error) {
+	page, err := userPage(user)
+	if err != nil {
+		return Info{}, fmt.Errorf("untappd: error getting page: %v", err)
+	}
+	return parsePage(page)
 }
 
 // untappd handles an IRC command to print an Untappd user info.
@@ -110,7 +121,7 @@ func untappd(b *bot.Bot, e *bot.Event) {
 	}
 	info, err := UserInfo(user)
 	if err != nil {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
+		b.Conn.Privmsg(e.Target, err.Error())
 		return
 	}
 	b.Conn.Privmsg(e.Target, info.String())
