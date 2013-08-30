@@ -14,7 +14,7 @@ func watch(user, repo string, duration time.Duration, notify func(string)) {
 
 	builds, err := travisci.Builds(user, repo)
 	if err != nil {
-		log.Printf("travisci: error watching %v/%v builds:", user, repo, err)
+		log.Printf("travisci: error watching %v/%v builds: %v", user, repo, err)
 	} else if len(builds) > 0 {
 		lastBuild = builds[0].Number
 	}
