@@ -7,7 +7,9 @@ import (
 	"time"
 
 	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/size"
 	"github.com/StalkR/goircbot/plugins/admin"
+	"github.com/StalkR/goircbot/plugins/df"
 	"github.com/StalkR/goircbot/plugins/dl"
 	"github.com/StalkR/goircbot/plugins/dns"
 	"github.com/StalkR/goircbot/plugins/failotron"
@@ -42,6 +44,7 @@ func main() {
 	flag.Parse()
 	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
 	admin.Register(b, []string{"nick!ident@host"})
+	df.Register(b, []df.Alarm{df.NewAlarm("/", 10*size.GB)})
 	dl.Register(b, "", "")
 	dns.Register(b)
 	failotron.Register(b, ignore)
