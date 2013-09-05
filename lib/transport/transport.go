@@ -31,7 +31,7 @@ func ByURL(url string) (*http.Transport, error) {
 	}, nil
 }
 
-// Client returns an client given an URL.
+// Client returns a client given an URL.
 func Client(url string) (*http.Client, error) {
 	trans, err := ByURL(url)
 	if err != nil {
