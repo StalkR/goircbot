@@ -117,7 +117,7 @@ func Register(b *bot.Bot, scoresfile string) {
 		Hidden:  false})
 
 	if len(scoresfile) > 0 {
-		b.AddCron("name", bot.Cron{
+		b.AddCron("scores-save", bot.Cron{
 			Handler:  func(b *bot.Bot) { save(scoresfile, s) },
 			Duration: time.Minute})
 	}
