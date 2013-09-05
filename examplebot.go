@@ -16,6 +16,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/geo"
 	"github.com/StalkR/goircbot/plugins/imdb"
 	"github.com/StalkR/goircbot/plugins/mac"
+	"github.com/StalkR/goircbot/plugins/old"
 	"github.com/StalkR/goircbot/plugins/ping"
 	"github.com/StalkR/goircbot/plugins/scores"
 	"github.com/StalkR/goircbot/plugins/search"
@@ -51,6 +52,7 @@ func main() {
 	geo.Register(b)
 	imdb.Register(b)
 	mac.Register(b)
+	old.Register(b, "/tmp/old")
 	ping.Register(b)
 	scores.Register(b, "/tmp/scores")
 	search.Register(b, "<key>", "<cx>")
