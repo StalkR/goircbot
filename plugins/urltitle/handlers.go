@@ -29,11 +29,15 @@ func watchLine(b *bot.Bot, line *client.Line, ignoremap map[string]bool) {
 	if silenceRE.MatchString(text) {
 		return
 	}
-	link := linkRE.FindStringSubmatch(text)
-	if link == nil || len(link[1]) > 200 {
+	match := linkRE.FindStringSubmatch(text)
+	if match == nil {
 		return
 	}
-	title, err := url.Title(link[1])
+	link := match[1]
+	if len(link) > 200 {
+		return
+	}
+	title, err := url.Title(link)
 	if err != nil {
 		log.Println("urltitle:", err)
 		return
@@ -41,7 +45,7 @@ func watchLine(b *bot.Bot, line *client.Line, ignoremap map[string]bool) {
 	if len(title) > 200 {
 		title = title[:200]
 	}
-	b.Conn.Privmsg(target, fmt.Sprintf("%s :: %s", link[1], title))
+	b.Conn.Privmsg(target, fmt.Sprintf("%s :: %s", link, title))
 }
 
 // Register registers the plugin with a bot.
