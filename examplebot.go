@@ -29,6 +29,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/urban"
 	"github.com/StalkR/goircbot/plugins/urltitle"
 	"github.com/StalkR/goircbot/plugins/whoami"
+	"github.com/StalkR/goircbot/plugins/wunderground"
 )
 
 var (
@@ -66,5 +67,6 @@ func main() {
 	urban.Register(b)
 	urltitle.Register(b, ignore)
 	whoami.Register(b)
+	wunderground.Register(b, "<key>")
 	b.Run()
 }
