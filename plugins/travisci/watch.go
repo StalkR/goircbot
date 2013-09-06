@@ -11,14 +11,6 @@ import (
 
 func watch(user, repo string, duration time.Duration, notify func(string)) {
 	lastBuild := 0
-
-	builds, err := travisci.Builds(user, repo)
-	if err != nil {
-		log.Printf("travisci: error watching %v/%v builds: %v", user, repo, err)
-	} else if len(builds) > 0 {
-		lastBuild = builds[0].Number
-	}
-
 	for ; ; time.Sleep(duration) {
 		builds, err := travisci.Builds(user, repo)
 		if err != nil {
@@ -27,6 +19,10 @@ func watch(user, repo string, duration time.Duration, notify func(string)) {
 		}
 		if len(builds) == 0 {
 			log.Printf("travisci: %v/%v has no build yet\n", user, repo)
+			continue
+		}
+		if lastBuild == 0 {
+			lastBuild = builds[0].Number
 			continue
 		}
 		for i, j := 0, len(builds)-1; i < j; i, j = i+1, j-1 {
