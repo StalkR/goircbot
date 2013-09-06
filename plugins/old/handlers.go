@@ -2,12 +2,14 @@
 package old
 
 import (
+	"fmt"
 	"log"
 	"regexp"
 	"strings"
 	"time"
 
 	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/nohl"
 	"github.com/fluffle/goirc/client"
 )
 
@@ -33,7 +35,9 @@ func readURLs(b *bot.Bot, line *client.Line, o *Old) {
 			}
 			return
 		}
-		b.Conn.Privmsg(target, i.String())
+		duration := time.Since(i.Time) / time.Second * time.Second
+		nick := nohl.Nick(b, target, i.Nick)
+		b.Conn.Privmsg(target, fmt.Sprintf("old! first shared by %v %v ago", nick, duration))
 	}
 }
 
