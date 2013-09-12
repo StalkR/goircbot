@@ -23,6 +23,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/search"
 	"github.com/StalkR/goircbot/plugins/sed"
 	"github.com/StalkR/goircbot/plugins/tail"
+	"github.com/StalkR/goircbot/plugins/tor"
 	"github.com/StalkR/goircbot/plugins/translate"
 	"github.com/StalkR/goircbot/plugins/travisci"
 	"github.com/StalkR/goircbot/plugins/untappd"
@@ -64,6 +65,7 @@ func main() {
 	search.Register(b, "<key>", "<cx>")
 	sed.Register(b)
 	tail.Register(b, []string{"/etc/passwd"})
+	tor.Register(b, "127.0.0.1:9051", "secret")
 	translate.Register(b, "<key>")
 	travisci.Register(b)
 	travisci.Watch(b, []string{"StalkR/goircbot"}, 5*time.Minute)
