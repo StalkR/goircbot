@@ -17,12 +17,12 @@ var (
 	silenceRE = regexp.MustCompile(`(^|\s)tg(\)|\s|$)`) // Line ignored if matched.
 )
 
-func watchLine(b *bot.Bot, line *client.Line, ignoremap map[string]bool) {
+func watchLine(b *bot.Bot, line *client.Line, ignore map[string]bool) {
 	target := line.Args[0]
 	if !strings.HasPrefix(target, "#") {
 		return
 	}
-	if _, ignore := ignoremap[line.Nick]; ignore {
+	if _, ignore := ignore[line.Nick]; ignore {
 		return
 	}
 	text := line.Args[1]
