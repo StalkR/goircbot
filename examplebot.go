@@ -53,7 +53,7 @@ func main() {
 	geo.Register(b)
 	imdb.Register(b)
 	mac.Register(b)
-	old.Register(b, "/tmp/old")
+	old.Register(b, "/tmp/old", ignore)
 	ping.Register(b)
 	scores.Register(b, "/tmp/scores")
 	search.Register(b, "<key>", "<cx>")

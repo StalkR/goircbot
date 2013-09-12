@@ -15,9 +15,12 @@ import (
 
 var linkRE = regexp.MustCompile(`(?:^|\s)(https?://[^#\s]+)`)
 
-func readURLs(b *bot.Bot, line *client.Line, o *Old) {
+func readURLs(b *bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
 	target := line.Args[0]
 	if !strings.HasPrefix(target, "#") {
+		return
+	}
+	if _, ignore := ignore[line.Nick]; ignore {
 		return
 	}
 	text := line.Args[1]
@@ -42,11 +45,16 @@ func readURLs(b *bot.Bot, line *client.Line, o *Old) {
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, oldfile string) {
+func Register(b *bot.Bot, oldfile string, ignore []string) {
+	ignoremap := make(map[string]bool)
+	for _, nick := range ignore {
+		ignoremap[nick] = true
+	}
+
 	o := load(oldfile)
 
 	b.Conn.HandleFunc("privmsg",
-		func(conn *client.Conn, line *client.Line) { readURLs(b, line, o) })
+		func(conn *client.Conn, line *client.Line) { readURLs(b, line, o, ignoremap) })
 
 	if len(oldfile) > 0 {
 		b.AddCron("old-save", bot.Cron{
