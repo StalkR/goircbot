@@ -36,10 +36,27 @@ func (i Info) String() string {
 	if i.Total == 0 {
 		return fmt.Sprintf("%v doesn't drink, booo!", i.Name)
 	}
-	d := time.Since(i.When)
-	d = d / time.Second * time.Second
 	return fmt.Sprintf("%v is drinking %v (%v ago) - Total beers: %v",
-		i.Name, i.Beer, d, i.Total)
+		i.Name, i.Beer, duration(time.Since(i.When)), i.Total)
+}
+
+// duration represents a duration in the most appropriate unit by approximation.
+// It knows about years, months, days, minutes, hours, seconds.
+func duration(d time.Duration) string {
+	n, unit := 0, ""
+	if d > time.Hour*24*365 {
+		n, unit = int(d/time.Hour/24/365), "year"
+	} else if d > time.Hour*24*31 {
+		n, unit = int(d/time.Hour/24/31), "month"
+	} else if d > time.Hour*24 {
+		n, unit = int(d/time.Hour/24), "day"
+	} else {
+		return fmt.Sprintf("%v", d/time.Second*time.Second)
+	}
+	if n > 1 {
+		unit += "s"
+	}
+	return fmt.Sprintf("%v %v", n, unit)
 }
 
 // userPage fetches an Untappd user page.
