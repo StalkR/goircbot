@@ -24,10 +24,11 @@ type Information struct {
 
 // String formats Information on one line.
 func (i *Information) String() string {
+	version := strings.Split(i.Version, " ")[0]
 	in, out := size.Byte(i.In).String(), size.Byte(i.Out).String()
 	url := fmt.Sprintf("https://atlas.torproject.org/#details/%v", i.Fingerprint)
 	return fmt.Sprintf("Running %v, %v in, %v out, %v circuits - Flags: %v - %v",
-		i.Version, in, out, i.Circuits, strings.Join(i.Flags, ", "), url)
+		version, in, out, i.Circuits, strings.Join(i.Flags, ", "), url)
 }
 
 // Info obtains information on a TOR node by connecting to its control protocol.
