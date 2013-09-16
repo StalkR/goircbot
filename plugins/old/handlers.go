@@ -13,7 +13,10 @@ import (
 	"github.com/fluffle/goirc/client"
 )
 
-var linkRE = regexp.MustCompile(`(?:^|\s)(https?://[^#\s]+)`)
+var (
+	linkRE    = regexp.MustCompile(`(?:^|\s)(https?://[^#\s]+)`)
+	backlogRE = regexp.MustCompile("<[+%@&~]?[a-zA-Z0-9_`^\\[\\]-]+>")
+)
 
 func readURLs(b *bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
 	target := line.Args[0]
@@ -24,6 +27,9 @@ func readURLs(b *bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
 		return
 	}
 	text := line.Args[1]
+	if backlogRE.MatchString(text) {
+		return
+	}
 
 	matches := linkRE.FindAllStringSubmatch(text, -1)
 	if matches == nil {
