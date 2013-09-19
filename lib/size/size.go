@@ -32,7 +32,7 @@ func (b Byte) String() string {
 	case b >= KB:
 		return fmt.Sprintf("%vKB", b.fmt(KB))
 	}
-	return fmt.Sprintf("%vB", b)
+	return fmt.Sprintf("%dB", b)
 }
 
 // fmt represents a Byte in a unit with 3 significant digits minimum.
