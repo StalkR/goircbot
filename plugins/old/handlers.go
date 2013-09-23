@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/duration"
 	"github.com/StalkR/goircbot/lib/nohl"
 	"github.com/fluffle/goirc/client"
 )
@@ -44,9 +45,9 @@ func readURLs(b *bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
 			}
 			return
 		}
-		duration := time.Since(i.Time) / time.Second * time.Second
+		ago := duration.Format(time.Since(i.Time))
 		nick := nohl.Nick(b, target, i.Nick)
-		b.Conn.Privmsg(target, fmt.Sprintf("old! first shared by %v %v ago", nick, duration))
+		b.Conn.Privmsg(target, fmt.Sprintf("old! first shared by %v %v ago", nick, ago))
 	}
 }
 
