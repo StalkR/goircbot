@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/StalkR/goircbot/lib/duration"
 )
 
 // Old represents URLs seen.
@@ -64,6 +66,6 @@ func (o *Old) Clean(expiry time.Duration) {
 
 // String returns formatted information about a URL.
 func (i Info) String() string {
-	duration := time.Since(i.Time) / time.Second * time.Second
-	return fmt.Sprintf("old! first shared by %v %v ago", i.Nick, duration)
+	return fmt.Sprintf("old! first shared by %v %v ago",
+		i.Nick, duration.Format(time.Since(i.Time)))
 }
