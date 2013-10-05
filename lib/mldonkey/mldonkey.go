@@ -17,7 +17,7 @@ import (
 var (
 	downRE  = regexp.MustCompile(`Down: ([\d.]+ .B/s) `)
 	upRE    = regexp.MustCompile(`Up: ([\d.]+ .B/s) `)
-	totalRE = regexp.MustCompile(`Total\((\d+)\): ([\d.]+.)/([\d.]+.) @`)
+	totalRE = regexp.MustCompile(`Total\((\d+)\): ([\d.]+.?)/([\d.]+.?) @`)
 	linkRE  = regexp.MustCompile(`^ed2k://`)
 )
 
@@ -29,6 +29,9 @@ type Statistics struct {
 }
 
 func (s *Statistics) String() string {
+	if s.Count == 0 {
+		return fmt.Sprintf("%v DL, %v UL, 0 total", s.DL, s.UL)
+	}
 	return fmt.Sprintf("%v DL, %v UL, %v total (%v/%v downloaded)",
 		s.DL, s.UL, s.Count, s.Downloaded, s.Total)
 }
@@ -80,17 +83,27 @@ func (c *Conn) Stats() (*Statistics, error) {
 		return nil, err
 	}
 	m = totalRE.FindSubmatch(vd)
-	if m == nil {
-		return nil, errors.New("mldonkey: cannot parse total")
+	if m == nil { // No current download.
+		return &Statistics{DL: DL, UL: UL}, nil
 	}
 	count, err := strconv.Atoi(string(m[1]))
 	if err != nil {
 		return nil, errors.New("mldonkey: cannot parse total int")
 	}
-	dled := string(m[2])
-	total := string(m[3])
+	dled := appendBytesSuffix(string(m[2]))
+	total := appendBytesSuffix(string(m[3]))
 
 	return &Statistics{DL: DL, UL: UL, Count: count, Downloaded: dled, Total: total}, nil
+}
+
+// appendBytesSuffix appends B suffix if it is a number.
+// When large enough, mldk appends suffix like KB, MB, but nothing for bytes.
+// Appending B so size cannot be confused with a number.
+func appendBytesSuffix(n string) string {
+	if _, err := strconv.Atoi(n); err == nil {
+		return n + "B"
+	}
+	return n
 }
 
 // Add adds a link by URL.
