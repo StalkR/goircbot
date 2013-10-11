@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	linkRE    = regexp.MustCompile(`(?:^|\s)(https?://[^#\s]+)`)
+	linkRE    = regexp.MustCompile(`(?:^|\s)(https?://[^\s]+)`)
 	backlogRE = regexp.MustCompile("<[+%@&~]?[a-zA-Z0-9_`^\\[\\]-]+>")
 )
 
