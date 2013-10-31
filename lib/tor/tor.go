@@ -61,7 +61,9 @@ func Info(hostPort, pwd string) (*Information, error) {
 
 	ns, err := getinfoMany(c, fmt.Sprintf("ns/id/%s", i.Fingerprint))
 	if err != nil {
-		return nil, err
+		if !strings.Contains(err.Error(), "Unrecognized key") {
+			return nil, err
+		}
 	}
 	for _, line := range ns {
 		if strings.HasPrefix(line, "s ") {
