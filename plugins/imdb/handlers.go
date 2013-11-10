@@ -14,21 +14,21 @@ func search(b *bot.Bot, e *bot.Event) {
 	if len(q) == 0 {
 		return
 	}
-	r, err := imdb.FindTitle(q)
+	titles, err := imdb.FindTitle(q)
 	if err != nil {
 		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
 	}
-	if len(r) == 0 {
+	if len(titles) == 0 {
 		b.Conn.Privmsg(e.Target, "No results found.")
 		return
 	}
-	t, err := imdb.NewTitle(r[0].Id)
+	title, err := imdb.NewTitle(titles[0].ID)
 	if err != nil {
 		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
 	}
-	b.Conn.Privmsg(e.Target, t.String())
+	b.Conn.Privmsg(e.Target, title.String())
 }
 
 // Register registers the plugin with a bot.
