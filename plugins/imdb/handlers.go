@@ -6,7 +6,8 @@ import (
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/imdb"
+	"github.com/StalkR/goircbot/lib/transport"
+	imdb "github.com/StalkR/imdb/appengine"
 )
 
 func search(b *bot.Bot, e *bot.Event) {
@@ -14,7 +15,12 @@ func search(b *bot.Bot, e *bot.Event) {
 	if len(q) == 0 {
 		return
 	}
-	titles, err := imdb.FindTitle(q)
+	c, err := transport.Client(imdb.AppURL)
+	if err != nil {
+		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
+		return
+	}
+	titles, err := imdb.SearchTitle(c, q)
 	if err != nil {
 		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
@@ -23,7 +29,7 @@ func search(b *bot.Bot, e *bot.Event) {
 		b.Conn.Privmsg(e.Target, "No results found.")
 		return
 	}
-	title, err := imdb.NewTitle(titles[0].ID)
+	title, err := imdb.NewTitle(c, titles[0].ID)
 	if err != nil {
 		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
