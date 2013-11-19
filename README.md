@@ -1,11 +1,11 @@
 # Go IRC Bot
 
-[![Build Status][5]][6]
+[![Build Status][1]][2] [![Go Walker][3]][4]
 
 ## Acquire and build
 `go get github.com/StalkR/goircbot`
 
-If it fails, it's likely because [goircbot][1] is based on [fluffle/goirc][3]
+If it fails, it's likely because [goircbot][5] is based on [fluffle/goirc][6]
 `master` branch and Go takes `go1` branch by default.
 
 Solution:
@@ -29,21 +29,18 @@ Solution:
 
 * `lib` is for little libraries used by plugins.
 
-## Documentation
-On GoDoc: [godoc.org/github.com/StalkR/goircbot][2].
-
 ## IRC library
-It uses [fluffle/goirc][3] ([doc][4]). Very good!
+It uses [fluffle/goirc][6] ([doc][7]). Very good!
 
 ## Bugs, comments, questions
-Create a [new issue][9] or email [goircbot@stalkr.net][8].
+Create a [new issue][8] or email [goircbot@stalkr.net][9].
 
-[1]: http://github.com/StalkR/goircbot
-[2]: http://godoc.org/github.com/StalkR/goircbot
-[3]: http://github.com/fluffle/goirc
-[4]: http://godoc.org/github.com/fluffle/goirc/client
-[5]: https://secure.travis-ci.org/StalkR/goircbot.png
-[6]: http://www.travis-ci.org/StalkR/goircbot
-[7]: http://godoc.org
-[8]: mailto:goircbot@stalkr.net
-[9]: https://github.com/StalkR/goircbot/issues/new
+[1]: https://secure.travis-ci.org/StalkR/goircbot.png
+[2]: http://www.travis-ci.org/StalkR/goircbot
+[3]: http://gowalker.org/api/v1/badge
+[4]: http://gowalker.org/github.com/StalkR/aecache
+[5]: http://github.com/StalkR/goircbot
+[6]: http://github.com/fluffle/goirc
+[7]: http://gowalker.org/github.com/fluffle/goirc
+[8]: https://github.com/StalkR/goircbot/issues/new
+[9]: mailto:goircbot@stalkr.net
