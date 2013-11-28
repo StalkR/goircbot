@@ -52,7 +52,7 @@ func main() {
 		"public":  "http://darkstat.public.com",
 		"private": "https://user:pass@darkstat.private.com",
 	})
-	df.Register(b, []df.Alarm{df.NewAlarm("/", 10*size.GB)})
+	df.Register(b, df.NewAlarm(`/`, 10*size.GB))
 	dl.Register(b, "", "")
 	dns.Register(b)
 	failotron.Register(b, ignore)

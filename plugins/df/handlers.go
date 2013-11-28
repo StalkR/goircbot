@@ -4,7 +4,7 @@ package df
 import (
 	"fmt"
 	"log"
-	"syscall"
+	"strings"
 	"time"
 
 	"github.com/StalkR/goircbot/bot"
@@ -29,15 +29,12 @@ func NewAlarm(path string, limit size.Byte) Alarm {
 
 // Monitor monitors a path and notifies when limit is crossed.
 func (a *Alarm) Monitor(b *bot.Bot) {
-	s := syscall.Statfs_t{}
 	for ; ; time.Sleep(delay) {
-		err := syscall.Statfs(a.Path, &s)
+		total, free, err := space(a.Path)
 		if err != nil {
-			log.Printf("diskusage: statfs error: %v", err)
+			log.Printf("df: space error: %v", err)
 			continue
 		}
-		total := int(s.Bsize) * int(s.Blocks)
-		free := int(s.Bsize) * int(s.Bfree)
 		if free > a.Limit {
 			a.notified = false
 			continue
@@ -64,9 +61,43 @@ func (a *Alarm) Notify(b *bot.Bot, total, free int) {
 	}
 }
 
+func df(b *bot.Bot, e *bot.Event, alarms ...Alarm) {
+	path := strings.TrimSpace(e.Args)
+	// Only allow paths with an alarm.
+	found := false
+	for _, a := range alarms {
+		if path == a.Path {
+			found = true
+			break
+		}
+	}
+	if !found {
+		return
+	}
+
+	total, free, err := space(path)
+	if err != nil {
+		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %v", err))
+		return
+	}
+	percent := 100 * (total - free) / total
+	totalFmt := size.Byte(total).String()
+	freeFmt := size.Byte(free).String()
+	line := fmt.Sprintf("%v has %v free (%v%% of %v used)",
+		path, freeFmt, percent, totalFmt)
+	b.Conn.Privmsg(e.Target, line)
+}
+
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, alarms []Alarm) {
+func Register(b *bot.Bot, alarms ...Alarm) {
 	for _, a := range alarms {
 		go a.Monitor(b)
 	}
+
+	b.AddCommand("df", bot.Command{
+		Help:    "See disk usage",
+		Handler: func(b *bot.Bot, e *bot.Event) { df(b, e, alarms...) },
+		Pub:     true,
+		Priv:    false,
+		Hidden:  false})
 }
