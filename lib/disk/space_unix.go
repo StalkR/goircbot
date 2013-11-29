@@ -1,4 +1,5 @@
-// +build linux
+// +build darwin dragonfly freebsd linux netbsd openbsd
+
 package disk
 
 import (
