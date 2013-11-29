@@ -1,11 +1,13 @@
 // +build linux
-package df
+package disk
 
 import (
 	"syscall"
 )
 
-func space(path string) (total, free int, err error) {
+// Space returns total and free bytes available in a directory, e.g. `/`.
+// Think of it as "df" UNIX command.
+func Space(path string) (total, free int, err error) {
 	s := syscall.Statfs_t{}
 	err = syscall.Statfs(path, &s)
 	if err != nil {

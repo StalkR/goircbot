@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/StalkR/goircbot/bot"
+	"github.com/StalkR/goircbot/lib/disk"
 	"github.com/StalkR/goircbot/lib/size"
 )
 
@@ -30,9 +31,9 @@ func NewAlarm(path string, limit size.Byte) Alarm {
 // Monitor monitors a path and notifies when limit is crossed.
 func (a *Alarm) Monitor(b *bot.Bot) {
 	for ; ; time.Sleep(delay) {
-		total, free, err := space(a.Path)
+		total, free, err := disk.Space(a.Path)
 		if err != nil {
-			log.Printf("df: space error: %v", err)
+			log.Printf("df: error: %v", err)
 			continue
 		}
 		if free > a.Limit {
@@ -75,7 +76,7 @@ func df(b *bot.Bot, e *bot.Event, alarms ...Alarm) {
 		return
 	}
 
-	total, free, err := space(path)
+	total, free, err := disk.Space(path)
 	if err != nil {
 		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %v", err))
 		return

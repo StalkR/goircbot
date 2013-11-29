@@ -1,14 +1,15 @@
 // +build windows
-package df
+package disk
 
 import (
 	"syscall"
 	"unsafe"
 )
 
-// TODO(StalkR): Use syscall.Statfs when available in Go 1.3.
-// 	 cf. https://codereview.appspot.com/34850043
-func space(path string) (total, free int, err error) {
+// Space returns total and free bytes available in a directory, e.g. `C:\`.
+// It returns free space available to the user (including quota limitations),
+// so it can be lower than the free space of the disk.
+func Space(path string) (total, free int, err error) {
 	kernel32, err := syscall.LoadLibrary("Kernel32.dll")
 	if err != nil {
 		return
@@ -35,6 +36,6 @@ func space(path string) (total, free int, err error) {
 		return
 	}
 	total = int(lpTotalNumberOfBytes)
-	free = int(lpTotalNumberOfFreeBytes)
+	free = int(lpFreeBytesAvailable)
 	return
 }
