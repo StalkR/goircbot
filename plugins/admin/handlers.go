@@ -19,7 +19,7 @@ func authorized(e *bot.Event) bool {
 			return true
 		}
 	}
-	log.Println("admin: not authorized", e.Line.Src)
+	log.Printf("admin: %s not authorized for %s", e.Line.Src, e.Args)
 	return false
 }
 
@@ -33,34 +33,34 @@ func extractArgs(args string) (target, text string, err bool) {
 	return
 }
 
-func say(b *bot.Bot, e *bot.Event) {
+func say(e *bot.Event) {
 	if !authorized(e) {
 		return
 	}
 	if target, text, err := extractArgs(e.Args); !err {
-		b.Conn.Privmsg(target, text)
+		e.Bot.Privmsg(target, text)
 	}
 }
 
-func act(b *bot.Bot, e *bot.Event) {
+func act(e *bot.Event) {
 	if !authorized(e) {
 		return
 	}
 	if target, text, err := extractArgs(e.Args); !err {
-		b.Conn.Action(target, text)
+		e.Bot.Action(target, text)
 	}
 }
 
-func notice(b *bot.Bot, e *bot.Event) {
+func notice(e *bot.Event) {
 	if !authorized(e) {
 		return
 	}
 	if target, text, err := extractArgs(e.Args); !err {
-		b.Conn.Notice(target, text)
+		e.Bot.Notice(target, text)
 	}
 }
 
-func doMode(b *bot.Bot, e *bot.Event, sign, mode string) {
+func doMode(e *bot.Event, sign, mode string) {
 	if !authorized(e) {
 		return
 	}
@@ -80,72 +80,71 @@ func doMode(b *bot.Bot, e *bot.Event, sign, mode string) {
 	if len(args) <= 0 || args[0] == "" {
 		args = []string{e.Line.Nick}
 	}
-	b.Conn.Mode(channel, fmt.Sprintf("%s%s %s", sign,
+	e.Bot.Mode(channel, fmt.Sprintf("%s%s %s", sign,
 		strings.Repeat(mode, len(args)), strings.Join(args, " ")))
 }
 
-func quit(b *bot.Bot, e *bot.Event) {
+func quit(e *bot.Event) {
 	if !authorized(e) {
 		return
 	}
-	b.Reconnect = false
-	b.Conn.Quit(e.Args)
+	e.Bot.Quit(e.Args)
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, admins []string) {
+func Register(b bot.Bot, admins []string) {
 	Admins = admins
 
-	b.AddCommand("say", bot.Command{
+	b.Commands().Add("say", bot.Command{
 		Help:    "say <target> <text>",
 		Handler: say,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  true,
 	})
-	b.AddCommand("act", bot.Command{
+	b.Commands().Add("act", bot.Command{
 		Help:    "act <target> <text>",
 		Handler: act,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  true,
 	})
-	b.AddCommand("notice", bot.Command{
+	b.Commands().Add("notice", bot.Command{
 		Help:    "notice <target> <text>",
 		Handler: notice,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  true,
 	})
-	b.AddCommand("op", bot.Command{
+	b.Commands().Add("op", bot.Command{
 		Help:    "op [<target>]",
-		Handler: func(b *bot.Bot, e *bot.Event) { doMode(b, e, "+", "o") },
+		Handler: func(e *bot.Event) { doMode(e, "+", "o") },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  true,
 	})
-	b.AddCommand("deop", bot.Command{
+	b.Commands().Add("deop", bot.Command{
 		Help:    "deop [<target>]",
-		Handler: func(b *bot.Bot, e *bot.Event) { doMode(b, e, "-", "o") },
+		Handler: func(e *bot.Event) { doMode(e, "-", "o") },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  true,
 	})
-	b.AddCommand("voice", bot.Command{
+	b.Commands().Add("voice", bot.Command{
 		Help:    "voice [<target>]",
-		Handler: func(b *bot.Bot, e *bot.Event) { doMode(b, e, "+", "v") },
+		Handler: func(e *bot.Event) { doMode(e, "+", "v") },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  true,
 	})
-	b.AddCommand("devoice", bot.Command{
+	b.Commands().Add("devoice", bot.Command{
 		Help:    "devoice [<target>]",
-		Handler: func(b *bot.Bot, e *bot.Event) { doMode(b, e, "-", "v") },
+		Handler: func(e *bot.Event) { doMode(e, "-", "v") },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  true,
 	})
-	b.AddCommand("quit", bot.Command{
+	b.Commands().Add("quit", bot.Command{
 		Help:    "quit [msg]",
 		Handler: quit,
 		Pub:     true,
