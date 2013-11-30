@@ -12,7 +12,7 @@ import (
 // Old represents URLs seen.
 type Old struct {
 	sync.Mutex
-	URLs  map[string]Info
+	urls  map[string]Info
 	dirty bool
 }
 
@@ -24,14 +24,14 @@ type Info struct {
 
 // NewOld returns a new initialized Old.
 func NewOld() *Old {
-	return &Old{URLs: make(map[string]Info)}
+	return &Old{urls: make(map[string]Info)}
 }
 
 // Old returns info of an URL if it is old, error if it does not exist.
 func (o *Old) Old(url string) (Info, error) {
 	o.Lock()
 	defer o.Unlock()
-	if i, ok := o.URLs[url]; ok {
+	if i, ok := o.urls[url]; ok {
 		return i, nil
 	}
 	return Info{}, errors.New("old: does not exist")
@@ -41,10 +41,10 @@ func (o *Old) Old(url string) (Info, error) {
 func (o *Old) Add(url, channel, nick string) error {
 	o.Lock()
 	defer o.Unlock()
-	if _, ok := o.URLs[url]; ok {
+	if _, ok := o.urls[url]; ok {
 		return errors.New("old: already exists")
 	}
-	o.URLs[url] = Info{
+	o.urls[url] = Info{
 		Channel: channel,
 		Nick:    nick,
 		Time:    time.Now(),
@@ -57,9 +57,9 @@ func (o *Old) Add(url, channel, nick string) error {
 func (o *Old) Clean(expiry time.Duration) {
 	o.Lock()
 	defer o.Unlock()
-	for url, i := range o.URLs {
+	for url, i := range o.urls {
 		if time.Since(i.Time) > expiry {
-			delete(o.URLs, url)
+			delete(o.urls, url)
 			o.dirty = true
 		}
 	}

@@ -16,7 +16,7 @@ func load(oldfile string) *Old {
 		log.Println("old: unable to open old file")
 		return o
 	}
-	if err := json.Unmarshal(b, &o.URLs); err != nil {
+	if err := json.Unmarshal(b, &o.urls); err != nil {
 		log.Println("old: unable to load old")
 		return o
 	}
@@ -30,7 +30,7 @@ func save(oldfile string, o *Old) {
 	if !o.dirty {
 		return
 	}
-	b, err := json.Marshal(o.URLs)
+	b, err := json.Marshal(o.urls)
 	if err != nil {
 		log.Println("old: unable to encode old for saving")
 		return
