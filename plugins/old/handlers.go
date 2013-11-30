@@ -19,7 +19,7 @@ var (
 	backlogRE = regexp.MustCompile("<[+%@&~]?[a-zA-Z0-9_`^\\[\\]-]+>")
 )
 
-func readURLs(b *bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
+func readURLs(b bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
 	target := line.Args[0]
 	if !strings.HasPrefix(target, "#") {
 		return
@@ -47,12 +47,12 @@ func readURLs(b *bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
 		}
 		ago := duration.Format(time.Since(i.Time))
 		nick := nohl.Nick(b, target, i.Nick)
-		b.Conn.Privmsg(target, fmt.Sprintf("old! first shared by %v %v ago", nick, ago))
+		b.Privmsg(target, fmt.Sprintf("old! first shared by %v %v ago", nick, ago))
 	}
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, oldfile string, ignore []string) {
+func Register(b bot.Bot, oldfile string, ignore []string) {
 	ignoremap := make(map[string]bool)
 	for _, nick := range ignore {
 		ignoremap[nick] = true
@@ -60,7 +60,7 @@ func Register(b *bot.Bot, oldfile string, ignore []string) {
 
 	o := load(oldfile)
 
-	b.Conn.HandleFunc("privmsg",
+	b.Conn().HandleFunc("privmsg",
 		func(conn *client.Conn, line *client.Line) { readURLs(b, line, o, ignoremap) })
 
 	// Every minute, save to file.
