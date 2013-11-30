@@ -10,30 +10,45 @@ import (
 // Scores is the main structure to hold scores in the plugin.
 type Scores struct {
 	sync.Mutex
-	Map map[string]int
+	scores map[string]int
 }
 
 // NewScores returns a new initialized Scores.
 func NewScores() *Scores {
 	s := &Scores{}
-	s.Map = make(map[string]int)
+	s.scores = make(map[string]int)
 	return s
 }
 
-// ScoreOf returns a formatted string with the score of a given thing.
-func (s *Scores) ScoreOf(thing string) string {
-	score, present := s.Map[thing]
-	if !present {
-		score = 0
+// Add adds n score points to a given thing.
+func (s *Scores) Add(thing string, n int) {
+	if n == 0 {
+		return
 	}
-	return fmt.Sprintf("%s is %d", thing, score)
+	s.Lock()
+	defer s.Unlock()
+	score := s.scores[thing] // If not present, default value 0.
+	if score+n == 0 {
+		delete(s.scores, thing)
+	} else {
+		s.scores[thing] = score + n
+	}
+	s.dirty = true
+}
+
+// Score returns the score of a given thing.
+func (s *Scores) Score(thing string) int {
+	s.Lock()
+	defer s.Unlock()
+	score := s.scores[thing] // If not present, default value 0.
+	return score
 }
 
 // List sorts scores and returns an ordered ScoreList.
 // It assumes the lock has already been taken.
 func (s *Scores) List() *ScoreList {
-	o := make(ScoreList, 0, len(s.Map))
-	for name, value := range s.Map {
+	o := make(ScoreList, 0, len(s.scores))
+	for name, value := range s.scores {
 		o = append(o, &ScoreEntry{name, value})
 	}
 	sort.Sort(o)

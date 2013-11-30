@@ -45,19 +45,8 @@ func parseScore(b *bot.Bot, line *client.Line, s *Scores) {
 		reply := fmt.Sprintf("Scoring for yourself? %s--", thing)
 		b.Conn.Privmsg(target, reply)
 	}
-	s.Lock()
-	defer s.Unlock()
-	score, present := s.Map[thing]
-	if !present {
-		score = 0
-	}
-	newScore := score + modifier
-	s.Map[thing] = newScore
-	if newScore == 0 {
-		delete(s.Map, thing)
-	}
-	reply := fmt.Sprintf("%s is now %d", thing, newScore)
-	b.Conn.Privmsg(target, reply)
+	s.Add(thing, modifier)
+	b.Conn.Privmsg(target, fmt.Sprintf("%s is now %d", thing, s.Score(thing)))
 }
 
 func sanitize(text string) string {
@@ -80,9 +69,7 @@ func showScore(b *bot.Bot, e *bot.Event, s *Scores) {
 	if len(thing) == 0 {
 		return
 	}
-	s.Lock()
-	defer s.Unlock()
-	b.Conn.Privmsg(e.Target, s.ScoreOf(thing))
+	b.Conn.Privmsg(e.Target, fmt.Sprintf("%s is %d", thing, s.Score(thing)))
 }
 
 func topScores(b *bot.Bot, e *bot.Event, s *Scores) {

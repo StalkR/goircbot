@@ -16,7 +16,7 @@ func load(scoresfile string) *Scores {
 		log.Println("scores: unable to open scores file")
 		return s
 	}
-	if err := json.Unmarshal(b, &s.Map); err != nil {
+	if err := json.Unmarshal(b, &s.scores); err != nil {
 		log.Println("scores: unable to load scores")
 		return s
 	}
@@ -27,7 +27,10 @@ func load(scoresfile string) *Scores {
 func save(scoresfile string, s *Scores) {
 	s.Lock()
 	defer s.Unlock()
-	b, err := json.Marshal(s.Map)
+	if !s.dirty {
+		return
+	}
+	b, err := json.Marshal(s.scores)
 	if err != nil {
 		log.Println("scores: unable to encode scores for saving")
 		return
@@ -36,4 +39,5 @@ func save(scoresfile string, s *Scores) {
 		log.Println("scores: unable to save scores")
 		return
 	}
+	s.dirty = false
 }
