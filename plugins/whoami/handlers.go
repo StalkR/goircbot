@@ -10,7 +10,7 @@ import (
 	"github.com/StalkR/goircbot/bot"
 )
 
-func whoami(b *bot.Bot, e *bot.Event) {
+func whoami(e *bot.Event) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Println("whoami: hostname error", err)
@@ -24,12 +24,12 @@ func whoami(b *bot.Bot, e *bot.Event) {
 		username = current.Username
 	}
 	reply := fmt.Sprintf("is running as %s@%s", username, hostname)
-	b.Conn.Action(e.Target, reply)
+	e.Bot.Action(e.Target, reply)
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot) {
-	b.AddCommand("whoami", bot.Command{
+func Register(b bot.Bot) {
+	b.Commands().Add("whoami", bot.Command{
 		Help:    "report user@host of the bot",
 		Handler: whoami,
 		Pub:     true,
