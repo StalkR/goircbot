@@ -36,5 +36,4 @@ func save(scoresfile string, s *Scores) {
 		log.Println("scores: unable to save scores")
 		return
 	}
-	log.Println("scores: saved successfully")
 }
