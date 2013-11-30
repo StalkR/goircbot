@@ -36,5 +36,4 @@ func save(oldfile string, o *Old) {
 		log.Println("old: unable to save old")
 		return
 	}
-	log.Println("old: saved successfully")
 }
