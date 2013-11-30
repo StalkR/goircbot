@@ -63,14 +63,19 @@ func Register(b *bot.Bot, oldfile string, ignore []string) {
 	b.Conn.HandleFunc("privmsg",
 		func(conn *client.Conn, line *client.Line) { readURLs(b, line, o, ignoremap) })
 
+	// Every minute, save to file.
 	if len(oldfile) > 0 {
-		b.AddCron("old-save", bot.Cron{
-			Handler:  func(b *bot.Bot) { save(oldfile, o) },
-			Duration: time.Minute})
+		go func() {
+			for _ = range time.Tick(time.Minute) {
+				save(oldfile, o)
+			}
+		}()
 	}
 
 	// Every day, clean URLs older than a year so it does not grow infinitely.
-	b.AddCron("old-clean", bot.Cron{
-		Handler:  func(b *bot.Bot) { o.Clean(time.Hour * 24 * 365) },
-		Duration: time.Hour * 24})
+	go func() {
+		for _ = range time.Tick(time.Hour * 24) {
+			o.Clean(time.Hour * 24 * 365)
+		}
+	}()
 }
