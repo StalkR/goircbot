@@ -17,7 +17,7 @@ var (
 	silenceRE = regexp.MustCompile(`(^|\s)tg(\)|\s|$)`) // Line ignored if matched.
 )
 
-func watchLine(b *bot.Bot, line *client.Line, ignore map[string]bool) {
+func watchLine(b bot.Bot, line *client.Line, ignore map[string]bool) {
 	target := line.Args[0]
 	if !strings.HasPrefix(target, "#") {
 		return
@@ -45,18 +45,16 @@ func watchLine(b *bot.Bot, line *client.Line, ignore map[string]bool) {
 	if len(title) > 200 {
 		title = title[:200]
 	}
-	b.Conn.Privmsg(target, fmt.Sprintf("%s :: %s", link, title))
+	b.Privmsg(target, fmt.Sprintf("%s :: %s", link, title))
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, ignore []string) {
+func Register(b bot.Bot, ignore []string) {
 	ignoremap := make(map[string]bool)
 	for _, nick := range ignore {
 		ignoremap[nick] = true
 	}
 
-	b.Conn.HandleFunc("privmsg",
-		func(conn *client.Conn, line *client.Line) {
-			watchLine(b, line, ignoremap)
-		})
+	b.Conn().HandleFunc("privmsg",
+		func(conn *client.Conn, line *client.Line) { watchLine(b, line, ignoremap) })
 }
