@@ -48,17 +48,17 @@ func Tail(path string, notify func(string)) {
 	}
 }
 
-func notify(b *bot.Bot, line string) {
-	if !b.Conn.Connected() {
+func notify(b bot.Bot, line string) {
+	if !b.Connected() {
 		return
 	}
-	for _, channel := range b.Conn.Me().Channels() {
-		b.Conn.Privmsg(channel.Name, line)
+	for _, channel := range b.Me().Channels() {
+		b.Privmsg(channel.Name, line)
 	}
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, paths []string) {
+func Register(b bot.Bot, paths []string) {
 	for _, path := range paths {
 		go Tail(path, func(line string) { notify(b, line) })
 	}
