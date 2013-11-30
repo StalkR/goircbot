@@ -11,14 +11,13 @@ import (
 	"github.com/fluffle/goirc/state"
 )
 
-// Bot represents an IRC bot, with IRC client object, settings, commands and crons.
+// Bot represents an IRC bot, with IRC client object, settings, commands.
 type Bot struct {
 	Host      string
 	Conn      *client.Conn
 	Quit      chan bool
 	Reconnect bool
 	commands  map[string]Command
-	crons     map[string]Cron
 }
 
 // NewBot creates a new Bot with a set of parameters.
@@ -46,7 +45,6 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) *Bot {
 		Quit:      make(chan bool),
 		Reconnect: true,
 		commands:  make(map[string]Command),
-		crons:     make(map[string]Cron),
 	}
 
 	b.Conn.EnableStateTracking()
