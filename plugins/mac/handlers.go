@@ -8,26 +8,26 @@ import (
 	"github.com/StalkR/goircbot/lib/ieeeoui"
 )
 
-func mac(b *bot.Bot, e *bot.Event, r *ieeeoui.Resolver) {
+func mac(e *bot.Event, r *ieeeoui.Resolver) {
 	arg := strings.TrimSpace(e.Args)
 	if len(arg) == 0 {
 		return
 	}
 	manufacturer, err := r.Find(arg)
 	if err != nil {
-		b.Conn.Privmsg(e.Target, err.Error())
+		e.Bot.Privmsg(e.Target, err.Error())
 		return
 	}
-	b.Conn.Privmsg(e.Target, manufacturer)
+	e.Bot.Privmsg(e.Target, manufacturer)
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot) {
+func Register(b bot.Bot) {
 	resolver := ieeeoui.New()
 
-	b.AddCommand("mac", bot.Command{
+	b.Commands().Add("mac", bot.Command{
 		Help:    "find manufacturer of a MAC address (IEEE public OUI)",
-		Handler: func(b *bot.Bot, e *bot.Event) { mac(b, e, resolver) },
+		Handler: func(e *bot.Event) { mac(e, resolver) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
