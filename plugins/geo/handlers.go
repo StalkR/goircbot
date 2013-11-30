@@ -9,22 +9,22 @@ import (
 	"github.com/StalkR/goircbot/lib/geo"
 )
 
-func locate(b *bot.Bot, e *bot.Event) {
+func locate(e *bot.Event) {
 	addr := strings.TrimSpace(e.Args)
 	if len(addr) == 0 {
 		return
 	}
 	g, err := geo.Location(addr)
 	if err != nil {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
+		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
 	}
-	b.Conn.Privmsg(e.Target, g.String())
+	e.Bot.Privmsg(e.Target, g.String())
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot) {
-	b.AddCommand("geo", bot.Command{
+func Register(b bot.Bot) {
+	b.Commands().Add("geo", bot.Command{
 		Help:    "geo locate an IP/host",
 		Handler: locate,
 		Pub:     true,
