@@ -83,24 +83,21 @@ func (bl *Backlog) Store(channel, nick, line string) {
 	}
 }
 
-// Search iterates through backlog lines of a channel/nick.
-func (bl *Backlog) Search(channel, nick string) chan string {
-	c := make(chan string)
-	go func() {
-		bl.Lock()
-		defer bl.Unlock()
-		if _, p := bl.M[channel]; p {
-			if _, q := bl.M[channel][nick]; q {
-				l := bl.M[channel][nick]
-				for e := l.Front(); e != nil; e = e.Next() {
-					entry := e.Value.(Entry)
-					c <- entry.Line
-				}
+// Search returns backlog lines of a channel/nick.
+func (bl *Backlog) Search(channel, nick string) []string {
+	var results []string
+	bl.Lock()
+	defer bl.Unlock()
+	if _, p := bl.M[channel]; p {
+		if _, q := bl.M[channel][nick]; q {
+			l := bl.M[channel][nick]
+			for e := l.Front(); e != nil; e = e.Next() {
+				entry := e.Value.(Entry)
+				results = append(results, entry.Line)
 			}
 		}
-		close(c)
-	}()
-	return c
+	}
+	return results
 }
 
 // Sed attempts to replace a pattern in a backlog for channel/nick.
@@ -111,7 +108,7 @@ func (bl *Backlog) Sed(channel, nick, pattern, replace string) string {
 	if len(replace) > 80 {
 		replace = replace[:80]
 	}
-	for line := range bl.Search(channel, nick) {
+	for _, line := range bl.Search(channel, nick) {
 		if strings.Contains(line, pattern) {
 			r := strings.Replace(line, pattern, replace, 1)
 			if len(r) > 160 {
