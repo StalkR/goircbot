@@ -48,30 +48,30 @@ func Ping(host string, ipv6 bool) (string, error) {
 	return string(line), nil
 }
 
-func ping(b *bot.Bot, e *bot.Event, ipv6 bool) {
+func ping(e *bot.Event, ipv6 bool) {
 	arg := strings.TrimSpace(e.Args)
 	if len(arg) == 0 {
 		return
 	}
 	s, err := Ping(arg, ipv6)
 	if err != nil {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
+		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
 	}
-	b.Conn.Privmsg(e.Target, s)
+	e.Bot.Privmsg(e.Target, s)
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot) {
-	b.AddCommand("ping", bot.Command{
+func Register(b bot.Bot) {
+	b.Commands().Add("ping", bot.Command{
 		Help:    "ping a host/IPv4",
-		Handler: func(b *bot.Bot, e *bot.Event) { ping(b, e, false) },
+		Handler: func(e *bot.Event) { ping(e, false) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
-	b.AddCommand("ping6", bot.Command{
+	b.Commands().Add("ping6", bot.Command{
 		Help:    "ping a host/IPv6",
-		Handler: func(b *bot.Bot, e *bot.Event) { ping(b, e, true) },
+		Handler: func(e *bot.Event) { ping(e, true) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
