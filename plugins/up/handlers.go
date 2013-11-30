@@ -24,7 +24,7 @@ func Probe(url string) bool {
 	return true
 }
 
-func up(b *bot.Bot, e *bot.Event) {
+func up(e *bot.Event) {
 	arg := strings.TrimSpace(e.Args)
 	if len(arg) == 0 {
 		return
@@ -35,15 +35,15 @@ func up(b *bot.Bot, e *bot.Event) {
 	}
 	url := fmt.Sprintf("http://%s", arg)
 	if !Probe(url) {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("%s is down from here.", url))
+		e.Bot.Privmsg(e.Target, fmt.Sprintf("%s is down from here.", url))
 		return
 	}
-	b.Conn.Privmsg(e.Target, fmt.Sprintf("%s is up from here.", url))
+	e.Bot.Privmsg(e.Target, fmt.Sprintf("%s is up from here.", url))
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot) {
-	b.AddCommand("up", bot.Command{
+func Register(b bot.Bot) {
+	b.Commands().Add("up", bot.Command{
 		Help:    "check if a web host is up or down",
 		Handler: up,
 		Pub:     true,
