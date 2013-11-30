@@ -9,24 +9,24 @@ import (
 	"github.com/StalkR/goircbot/lib/wunderground"
 )
 
-func conditions(b *bot.Bot, e *bot.Event, APIKey string) {
+func conditions(e *bot.Event, APIKey string) {
 	location := strings.TrimSpace(e.Args)
 	if len(location) == 0 {
 		return
 	}
 	r, err := wunderground.Conditions(APIKey, location)
 	if err != nil {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
+		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
 	}
-	b.Conn.Privmsg(e.Target, r.String())
+	e.Bot.Privmsg(e.Target, r.String())
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, APIKey string) {
-	b.AddCommand("weather", bot.Command{
+func Register(b bot.Bot, APIKey string) {
+	b.Commands().Add("weather", bot.Command{
 		Help:    "get weather conditions from wunderground.com",
-		Handler: func(b *bot.Bot, e *bot.Event) { conditions(b, e, APIKey) },
+		Handler: func(e *bot.Event) { conditions(e, APIKey) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
