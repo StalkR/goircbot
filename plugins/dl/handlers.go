@@ -16,7 +16,7 @@ var (
 	mldonkeyRE     = regexp.MustCompile(`^ed2k://`)
 )
 
-func handleMLDonkey(b *bot.Bot, e *bot.Event, url string) {
+func handleMLDonkey(e *bot.Event, url string) {
 	c, err := mldonkey.New(url)
 	if err != nil {
 		log.Println("dl: mldonkey new:", err)
@@ -30,7 +30,7 @@ func handleMLDonkey(b *bot.Bot, e *bot.Event, url string) {
 			log.Println("dl: mldonkey:", err)
 			return
 		}
-		b.Conn.Privmsg(e.Target, "[MLDonkey] "+stats.String())
+		e.Bot.Privmsg(e.Target, "[MLDonkey] "+stats.String())
 		return
 	}
 	if !mldonkeyRE.MatchString(link) {
@@ -40,10 +40,10 @@ func handleMLDonkey(b *bot.Bot, e *bot.Event, url string) {
 		log.Println("dl: mldonkey add:", err)
 		return
 	}
-	b.Conn.Privmsg(e.Target, "[MLDonkey] Added")
+	e.Bot.Privmsg(e.Target, "[MLDonkey] Added")
 }
 
-func handleTransmission(b *bot.Bot, e *bot.Event, url string) {
+func handleTransmission(e *bot.Event, url string) {
 	c, err := transmission.New(url)
 	if err != nil {
 		log.Println("dl: transmission new:", err)
@@ -57,7 +57,7 @@ func handleTransmission(b *bot.Bot, e *bot.Event, url string) {
 			log.Println("dl: transmission stats:", err)
 			return
 		}
-		b.Conn.Privmsg(e.Target, "[Transmission] "+stats.String())
+		e.Bot.Privmsg(e.Target, "[Transmission] "+stats.String())
 		return
 	}
 	if !transmissionRE.MatchString(link) {
@@ -68,20 +68,20 @@ func handleTransmission(b *bot.Bot, e *bot.Event, url string) {
 		log.Println("dl: transmission add:", err)
 		return
 	}
-	b.Conn.Privmsg(e.Target, "[Transmission] Added: "+name)
+	e.Bot.Privmsg(e.Target, "[Transmission] Added: "+name)
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, mldonkeyURL, transmissionURL string) {
+func Register(b bot.Bot, mldonkeyURL, transmissionURL string) {
 
-	b.AddCommand("dl", bot.Command{
+	b.Commands().Add("dl", bot.Command{
 		Help: "See downloads status or add downloads",
-		Handler: func(b *bot.Bot, e *bot.Event) {
+		Handler: func(e *bot.Event) {
 			if mldonkeyURL != "" {
-				handleMLDonkey(b, e, mldonkeyURL)
+				handleMLDonkey(e, mldonkeyURL)
 			}
 			if transmissionURL != "" {
-				handleTransmission(b, e, transmissionURL)
+				handleTransmission(e, transmissionURL)
 			}
 		},
 		Pub:    true,
