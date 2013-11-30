@@ -27,6 +27,9 @@ func load(oldfile string) *Old {
 func save(oldfile string, o *Old) {
 	o.Lock()
 	defer o.Unlock()
+	if !o.dirty {
+		return
+	}
 	b, err := json.Marshal(o.URLs)
 	if err != nil {
 		log.Println("old: unable to encode old for saving")
@@ -36,4 +39,5 @@ func save(oldfile string, o *Old) {
 		log.Println("old: unable to save old")
 		return
 	}
+	o.dirty = false
 }

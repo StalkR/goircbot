@@ -12,7 +12,8 @@ import (
 // Old represents URLs seen.
 type Old struct {
 	sync.Mutex
-	URLs map[string]Info
+	URLs  map[string]Info
+	dirty bool
 }
 
 // Info represents information about an observed URL.
@@ -23,9 +24,7 @@ type Info struct {
 
 // NewOld returns a new initialized Old.
 func NewOld() *Old {
-	return &Old{
-		URLs: make(map[string]Info),
-	}
+	return &Old{URLs: make(map[string]Info)}
 }
 
 // Old returns info of an URL if it is old, error if it does not exist.
@@ -50,6 +49,7 @@ func (o *Old) Add(url, channel, nick string) error {
 		Nick:    nick,
 		Time:    time.Now(),
 	}
+	o.dirty = true
 	return nil
 }
 
@@ -60,6 +60,7 @@ func (o *Old) Clean(expiry time.Duration) {
 	for url, i := range o.URLs {
 		if time.Since(i.Time) > expiry {
 			delete(o.URLs, url)
+			o.dirty = true
 		}
 	}
 }
