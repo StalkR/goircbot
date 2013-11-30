@@ -16,8 +16,9 @@ type Bot interface {
 	Run()                       // Run bot, reconnect if disconnect.
 	Quit(msg string)            // Quit bot from IRC with a msg.
 	Commands() *Commands        // For plugins to Add/Del commands.
-	Me() *state.Nick            // Shortcut to Conn().Me()
 	Action(t, msg string)       // Shortcut to Conn().Action()
+	Connected() bool            // Shortcut to Conn().Connected()
+	Me() *state.Nick            // Shortcut to Conn().Me()
 	Mode(t string, m ...string) // Shortcut to Conn().Mode()
 	Notice(t, msg string)       // Shortcut to Conn().Notice()
 	Privmsg(t, msg string)      // Shortcut to Conn().Privmsg()
@@ -105,9 +106,13 @@ func (b *BotImpl) Quit(msg string) {
 	b.conn.Quit(msg)
 }
 
-func (b *BotImpl) Commands() *Commands        { return b.commands }
-func (b *BotImpl) Me() *state.Nick            { return b.Conn().Me() }
+// Commands returns the underlying Commands.
+func (b *BotImpl) Commands() *Commands { return b.commands }
+
+// Shortcuts to b.Conn to ease mocking of Bot interface.
 func (b *BotImpl) Action(t, msg string)       { b.Conn().Action(t, msg) }
+func (b *BotImpl) Connected() bool            { return b.Conn().Connected() }
+func (b *BotImpl) Me() *state.Nick            { return b.Conn().Me() }
 func (b *BotImpl) Mode(t string, m ...string) { b.Conn().Mode(t, m...) }
 func (b *BotImpl) Notice(t, msg string)       { b.Conn().Notice(t, msg) }
 func (b *BotImpl) Privmsg(t, msg string)      { b.Conn().Privmsg(t, msg) }
