@@ -41,18 +41,18 @@ func watch(user, repo string, duration time.Duration, notify func(string)) {
 	}
 }
 
-func notify(b *bot.Bot, line string) {
-	if !b.Conn.Connected() {
+func notify(b bot.Bot, line string) {
+	if !b.Connected() {
 		return
 	}
-	for _, channel := range b.Conn.Me().Channels() {
-		b.Conn.Privmsg(channel.Name, line)
+	for _, channel := range b.Me().Channels() {
+		b.Privmsg(channel.Name, line)
 	}
 }
 
 // Watch registers a watcher of user/repos with a bot.
 // If any build fails, it will be announced on all channels.
-func Watch(b *bot.Bot, userRepos []string, duration time.Duration) {
+func Watch(b bot.Bot, userRepos []string, duration time.Duration) {
 	for _, arg := range userRepos {
 		userRepo := strings.SplitN(arg, "/", 2)
 		if len(userRepo) != 2 {
