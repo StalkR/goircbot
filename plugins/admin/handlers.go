@@ -19,7 +19,7 @@ func authorized(e *bot.Event) bool {
 			return true
 		}
 	}
-	log.Printf("admin: %s not authorized for %s", e.Line.Src, e.Args)
+	log.Printf("admin: %s not authorized", e.Line.Src)
 	return false
 }
 
