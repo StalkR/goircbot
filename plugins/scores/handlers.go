@@ -103,9 +103,12 @@ func Register(b *bot.Bot, scoresfile string) {
 		Priv:    true,
 		Hidden:  false})
 
+	// Every minute, save to file.
 	if len(scoresfile) > 0 {
-		b.AddCron("scores-save", bot.Cron{
-			Handler:  func(b *bot.Bot) { save(scoresfile, s) },
-			Duration: time.Minute})
+		go func() {
+			for _ = range time.Tick(time.Minute) {
+				save(scoresfile, s)
+			}
+		}()
 	}
 }
