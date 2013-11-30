@@ -70,7 +70,7 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) *BotIm
 
 	b.commands.Add("help", Command{
 		Help:    "show commands or detailed help",
-		Handler: b.commands.Help,
+		Handler: (b.commands).Help,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
