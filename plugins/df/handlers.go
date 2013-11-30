@@ -29,7 +29,7 @@ func NewAlarm(path string, limit size.Byte) Alarm {
 }
 
 // Monitor monitors a path and notifies when limit is crossed.
-func (a *Alarm) Monitor(b *bot.Bot) {
+func (a *Alarm) Monitor(b bot.Bot) {
 	for ; ; time.Sleep(delay) {
 		total, free, err := disk.Space(a.Path)
 		if err != nil {
@@ -47,8 +47,8 @@ func (a *Alarm) Monitor(b *bot.Bot) {
 }
 
 // Notify notifies disk usage on all channels.
-func (a *Alarm) Notify(b *bot.Bot, total, free int) {
-	if !b.Conn.Connected() {
+func (a *Alarm) Notify(b bot.Bot, total, free int) {
+	if !b.Connected() {
 		return
 	}
 	a.notified = true
@@ -57,12 +57,12 @@ func (a *Alarm) Notify(b *bot.Bot, total, free int) {
 	freeFmt := size.Byte(free).String()
 	line := fmt.Sprintf("Warning: %v has %v free (%v%% of %v used)",
 		a.Path, freeFmt, percent, totalFmt)
-	for _, channel := range b.Conn.Me().Channels() {
-		b.Conn.Privmsg(channel.Name, line)
+	for _, channel := range b.Me().Channels() {
+		b.Privmsg(channel.Name, line)
 	}
 }
 
-func df(b *bot.Bot, e *bot.Event, alarms ...Alarm) {
+func df(e *bot.Event, alarms ...Alarm) {
 	path := strings.TrimSpace(e.Args)
 	// Only allow paths with an alarm.
 	found := false
@@ -78,7 +78,7 @@ func df(b *bot.Bot, e *bot.Event, alarms ...Alarm) {
 
 	total, free, err := disk.Space(path)
 	if err != nil {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %v", err))
+		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %v", err))
 		return
 	}
 	percent := 100 * (total - free) / total
@@ -86,18 +86,18 @@ func df(b *bot.Bot, e *bot.Event, alarms ...Alarm) {
 	freeFmt := size.Byte(free).String()
 	line := fmt.Sprintf("%v has %v free (%v%% of %v used)",
 		path, freeFmt, percent, totalFmt)
-	b.Conn.Privmsg(e.Target, line)
+	e.Bot.Privmsg(e.Target, line)
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, alarms ...Alarm) {
+func Register(b bot.Bot, alarms ...Alarm) {
 	for _, a := range alarms {
 		go a.Monitor(b)
 	}
 
-	b.AddCommand("df", bot.Command{
+	b.Commands().Add("df", bot.Command{
 		Help:    "See disk usage",
-		Handler: func(b *bot.Bot, e *bot.Event) { df(b, e, alarms...) },
+		Handler: func(e *bot.Event) { df(e, alarms...) },
 		Pub:     true,
 		Priv:    false,
 		Hidden:  false})
