@@ -119,22 +119,22 @@ func UserInfo(user string) (Info, error) {
 }
 
 // untappd handles an IRC command to print an Untappd user info.
-func untappd(b *bot.Bot, e *bot.Event) {
+func untappd(e *bot.Event) {
 	user := strings.TrimSpace(e.Args)
 	if len(user) == 0 {
 		return
 	}
 	info, err := UserInfo(user)
 	if err != nil {
-		b.Conn.Privmsg(e.Target, err.Error())
+		e.Bot.Privmsg(e.Target, err.Error())
 		return
 	}
-	b.Conn.Privmsg(e.Target, info.String())
+	e.Bot.Privmsg(e.Target, info.String())
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot) {
-	b.AddCommand("untappd", bot.Command{
+func Register(b bot.Bot) {
+	b.Commands().Add("untappd", bot.Command{
 		Help:    "get stats and activity from an Untappd user",
 		Handler: untappd,
 		Pub:     true,
