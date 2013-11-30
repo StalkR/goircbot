@@ -14,8 +14,8 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func failotron(b *bot.Bot, e *bot.Event, ignore []string) {
-	ch, on := b.Conn.Me().IsOnStr(e.Target)
+func failotron(e *bot.Event, ignore []string) {
+	ch, on := e.Bot.Me().IsOnStr(e.Target)
 	if !on {
 		return
 	}
@@ -38,15 +38,15 @@ func failotron(b *bot.Bot, e *bot.Event, ignore []string) {
 		return
 	}
 	target := humans[rand.Intn(len(humans))]
-	b.Conn.Privmsg(e.Target, fmt.Sprintf("FAIL-O-TRON ===> %s <=== FAIL-O-TRON", target))
+	e.Bot.Privmsg(e.Target, fmt.Sprintf("FAIL-O-TRON ===> %s <=== FAIL-O-TRON", target))
 }
 
 // Register registers the plugin with a bot.
 // Use ignore as a list of nicks to ignore.
-func Register(b *bot.Bot, ignore []string) {
-	b.AddCommand("failotron", bot.Command{
+func Register(b bot.Bot, ignore []string) {
+	b.Commands().Add("failotron", bot.Command{
 		Help:    "find who is going to have the next fail",
-		Handler: func(b *bot.Bot, e *bot.Event) { failotron(b, e, ignore) },
+		Handler: func(e *bot.Event) { failotron(e, ignore) },
 		Pub:     true,
 		Priv:    false,
 		Hidden:  false})
