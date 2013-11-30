@@ -13,7 +13,7 @@ import (
 	"github.com/fluffle/goirc/client"
 )
 
-func parseScore(b *bot.Bot, line *client.Line, s *Scores) {
+func parseScore(b bot.Bot, line *client.Line, s *Scores) {
 	text := strings.TrimSpace(line.Args[1])
 	var modifier int
 	switch {
@@ -43,10 +43,10 @@ func parseScore(b *bot.Bot, line *client.Line, s *Scores) {
 	if thing == line.Nick && modifier == 1 {
 		modifier = -1
 		reply := fmt.Sprintf("Scoring for yourself? %s--", thing)
-		b.Conn.Privmsg(target, reply)
+		b.Privmsg(target, reply)
 	}
 	s.Add(thing, modifier)
-	b.Conn.Privmsg(target, fmt.Sprintf("%s is now %d", thing, s.Score(thing)))
+	b.Privmsg(target, fmt.Sprintf("%s is now %d", thing, s.Score(thing)))
 }
 
 func sanitize(text string) string {
@@ -64,41 +64,31 @@ func removeChars(s string, chars ...string) string {
 	return s
 }
 
-func showScore(b *bot.Bot, e *bot.Event, s *Scores) {
+func showScore(e *bot.Event, s *Scores) {
 	thing := strings.TrimSpace(e.Args)
 	if len(thing) == 0 {
 		return
 	}
-	b.Conn.Privmsg(e.Target, fmt.Sprintf("%s is %d", thing, s.Score(thing)))
-}
-
-func topScores(b *bot.Bot, e *bot.Event, s *Scores) {
-	s.Lock()
-	defer s.Unlock()
-	if len(s.Map) == 0 {
-		b.Conn.Privmsg(e.Target, "no scores yet")
-		return
-	}
-	b.Conn.Privmsg(e.Target, s.String())
+	e.Bot.Privmsg(e.Target, fmt.Sprintf("%s is %d", thing, s.Score(thing)))
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, scoresfile string) {
+func Register(b bot.Bot, scoresfile string) {
 	s := load(scoresfile)
 
-	b.Conn.HandleFunc("privmsg",
+	b.Conn().HandleFunc("privmsg",
 		func(conn *client.Conn, line *client.Line) { parseScore(b, line, s) })
 
-	b.AddCommand("score", bot.Command{
+	b.Commands().Add("score", bot.Command{
 		Help:    "score <thing> - show score of something",
-		Handler: func(b *bot.Bot, e *bot.Event) { showScore(b, e, s) },
+		Handler: func(e *bot.Event) { showScore(e, s) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
 
-	b.AddCommand("scores", bot.Command{
+	b.Commands().Add("scores", bot.Command{
 		Help:    "show top +/- scores",
-		Handler: func(b *bot.Bot, e *bot.Event) { topScores(b, e, s) },
+		Handler: func(e *bot.Event) { e.Bot.Privmsg(e.Target, s.String()) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

@@ -11,6 +11,7 @@ import (
 type Scores struct {
 	sync.Mutex
 	scores map[string]int
+	dirty  bool
 }
 
 // NewScores returns a new initialized Scores.
@@ -45,8 +46,9 @@ func (s *Scores) Score(thing string) int {
 }
 
 // List sorts scores and returns an ordered ScoreList.
-// It assumes the lock has already been taken.
 func (s *Scores) List() *ScoreList {
+	s.Lock()
+	defer s.Unlock()
 	o := make(ScoreList, 0, len(s.scores))
 	for name, value := range s.scores {
 		o = append(o, &ScoreEntry{name, value})
@@ -56,8 +58,13 @@ func (s *Scores) List() *ScoreList {
 }
 
 // String returns formatted top +/- scores and total.
-// It assumes the lock has already been taken.
 func (s *Scores) String() string {
+	s.Lock()
+	if len(s.scores) == 0 {
+		s.Unlock()
+		return "no scores yet"
+	}
+	s.Unlock()
 	l := *s.List()
 	min := 3
 	if len(l) < min {
