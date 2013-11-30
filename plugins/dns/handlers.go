@@ -30,18 +30,18 @@ func Resolve(h string) ([]string, error) {
 	return results, nil
 }
 
-func dns(b *bot.Bot, e *bot.Event) {
+func dns(e *bot.Event) {
 	arg := strings.TrimSpace(e.Args)
 	if len(arg) == 0 {
 		return
 	}
 	results, err := Resolve(arg)
 	if err != nil {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
+		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
 	}
 	if len(results) == 0 {
-		b.Conn.Privmsg(e.Target, "Not found.")
+		e.Bot.Privmsg(e.Target, "Not found.")
 		return
 	}
 	max := len(results)
@@ -49,12 +49,12 @@ func dns(b *bot.Bot, e *bot.Event) {
 		max = 20
 	}
 	reply := fmt.Sprintf("%s: %s", arg, strings.Join(results[:max], ", "))
-	b.Conn.Privmsg(e.Target, reply)
+	e.Bot.Privmsg(e.Target, reply)
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot) {
-	b.AddCommand("dns", bot.Command{
+func Register(b bot.Bot) {
+	b.Commands().Add("dns", bot.Command{
 		Help:    "DNS resolve a host or IP",
 		Handler: dns,
 		Pub:     true,
