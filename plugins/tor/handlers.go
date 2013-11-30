@@ -8,20 +8,20 @@ import (
 	"github.com/StalkR/goircbot/lib/tor"
 )
 
-func torInfo(b *bot.Bot, e *bot.Event, hostPort, key string) {
+func torInfo(e *bot.Event, hostPort, key string) {
 	i, err := tor.Info(hostPort, key)
 	if err != nil {
-		b.Conn.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
+		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
 	}
-	b.Conn.Privmsg(e.Target, i.String())
+	e.Bot.Privmsg(e.Target, i.String())
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, hostPort, key string) {
-	b.AddCommand("tor", bot.Command{
+func Register(b bot.Bot, hostPort, key string) {
+	b.Commands().Add("tor", bot.Command{
 		Help:    "get info on TOR node",
-		Handler: func(b *bot.Bot, e *bot.Event) { torInfo(b, e, hostPort, key) },
+		Handler: func(e *bot.Event) { torInfo(e, hostPort, key) },
 		Pub:     true,
 		Priv:    false,
 		Hidden:  false})
