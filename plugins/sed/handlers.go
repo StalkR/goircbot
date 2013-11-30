@@ -11,7 +11,7 @@ import (
 	"github.com/fluffle/goirc/client"
 )
 
-func watchLine(b *bot.Bot, line *client.Line, bl *Backlog) {
+func watchLine(b bot.Bot, line *client.Line, bl *Backlog) {
 	channel := line.Args[0]
 	nick := line.Nick
 	text := line.Args[1]
@@ -20,7 +20,7 @@ func watchLine(b *bot.Bot, line *client.Line, bl *Backlog) {
 	}
 	r, err := regexp.Compile("^s/([^/]+)/([^/]+)(?:/g?)?")
 	if err != nil {
-		b.Conn.Privmsg(channel, fmt.Sprintf("error: %s", err))
+		b.Privmsg(channel, fmt.Sprintf("error: %s", err))
 		return
 	}
 	m := r.FindSubmatch([]byte(text))
@@ -32,13 +32,13 @@ func watchLine(b *bot.Bot, line *client.Line, bl *Backlog) {
 	if meant == "" {
 		return
 	}
-	b.Conn.Privmsg(channel, fmt.Sprintf("%s meant: %s", nick, meant))
+	b.Privmsg(channel, fmt.Sprintf("%s meant: %s", nick, meant))
 	bl.Store(channel, nick, meant)
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot) {
+func Register(b bot.Bot) {
 	bl := &Backlog{}
-	b.Conn.HandleFunc("privmsg",
+	b.Conn().HandleFunc("privmsg",
 		func(conn *client.Conn, line *client.Line) { watchLine(b, line, bl) })
 }

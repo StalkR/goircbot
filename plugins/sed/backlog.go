@@ -32,6 +32,7 @@ type Backlog struct {
 // Clean maintains a backlog clean by expiring old entries and ensuring maximum of lines.
 func (bl *Backlog) Clean() {
 	bl.Lock()
+	defer bl.Unlock()
 	for channel, cl := range bl.M {
 		for nick, l := range cl {
 			var rm []*list.Element
@@ -55,12 +56,13 @@ func (bl *Backlog) Clean() {
 			delete(bl.M, channel)
 		}
 	}
-	bl.Unlock()
 }
 
 // Store saves a line from a channel/nick into backlog.
 func (bl *Backlog) Store(channel, nick, line string) {
+	defer bl.Clean()
 	bl.Lock()
+	defer bl.Unlock()
 	e := Entry{line, time.Now()}
 	if bl.M == nil {
 		bl.M = map[string]map[string]*list.List{}
@@ -79,8 +81,6 @@ func (bl *Backlog) Store(channel, nick, line string) {
 		l.PushBack(e)
 		bl.M[channel] = map[string]*list.List{nick: l}
 	}
-	bl.Unlock()
-	bl.Clean()
 }
 
 // Search iterates through backlog lines of a channel/nick.
@@ -88,6 +88,7 @@ func (bl *Backlog) Search(channel, nick string) chan string {
 	c := make(chan string)
 	go func() {
 		bl.Lock()
+		defer bl.Unlock()
 		if _, p := bl.M[channel]; p {
 			if _, q := bl.M[channel][nick]; q {
 				l := bl.M[channel][nick]
@@ -98,7 +99,6 @@ func (bl *Backlog) Search(channel, nick string) chan string {
 			}
 		}
 		close(c)
-		bl.Unlock()
 	}()
 	return c
 }
