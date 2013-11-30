@@ -12,16 +12,20 @@ import (
 )
 
 // Bot represents an IRC bot, with IRC client object, settings, commands.
-type Bot struct {
-	Host      string
-	Conn      *client.Conn
-	Quit      chan bool
-	Reconnect bool
-	commands  map[string]Command
+type Bot interface {
+	Run()                       // Run bot, reconnect if disconnect.
+	Quit(msg string)            // Quit bot from IRC with a msg.
+	Commands() *Commands        // For plugins to Add/Del commands.
+	Me() *state.Nick            // Shortcut to Conn().Me()
+	Action(t, msg string)       // Shortcut to Conn().Action()
+	Mode(t string, m ...string) // Shortcut to Conn().Mode()
+	Notice(t, msg string)       // Shortcut to Conn().Notice()
+	Privmsg(t, msg string)      // Shortcut to Conn().Privmsg()
+	Conn() *client.Conn         // Conn returns the underlying goirc client connection.
 }
 
-// NewBot creates a new Bot with a set of parameters.
-func NewBot(host string, ssl bool, nick, ident string, channels []string) *Bot {
+// NewBot creates a new Bot implementation with a set of parameters.
+func NewBot(host string, ssl bool, nick, ident string, channels []string) *BotImpl {
 	hostPort := strings.SplitN(host, ":", 2)
 	cfg := &client.Config{
 		Me:          state.NewNick(nick),
@@ -39,18 +43,16 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) *Bot {
 	cfg.Me.Name = nick
 
 	conn := client.Client(cfg)
-	b := &Bot{
-		Host:      host,
-		Conn:      conn,
-		Quit:      make(chan bool),
-		Reconnect: true,
-		commands:  make(map[string]Command),
+	conn.EnableStateTracking()
+	b := &BotImpl{
+		conn:      conn,
+		reconnect: true,
+		quit:      make(chan bool),
+		commands:  NewCommands(),
 	}
 
-	b.Conn.EnableStateTracking()
-
 	// Join channels on connect and mark ourselves as a Bot.
-	b.Conn.HandleFunc("connected",
+	conn.HandleFunc("connected",
 		func(conn *client.Conn, line *client.Line) {
 			for _, channel := range channels {
 				conn.Join(channel)
@@ -59,15 +61,15 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) *Bot {
 		})
 
 	// Signal disconnect to Bot.Run so it can reconnect.
-	b.Conn.HandleFunc("disconnected",
-		func(conn *client.Conn, line *client.Line) { b.Quit <- true })
+	conn.HandleFunc("disconnected",
+		func(conn *client.Conn, line *client.Line) { b.quit <- true })
 
-	b.Conn.HandleFunc("privmsg",
-		func(conn *client.Conn, line *client.Line) { handleCommand(b, line) })
+	conn.HandleFunc("privmsg",
+		func(conn *client.Conn, line *client.Line) { b.commands.Handle(b, line) })
 
-	b.AddCommand("help", Command{
-		Help:    "show commands and detailed help",
-		Handler: handleHelp,
+	b.commands.Add("help", Command{
+		Help:    "show commands or detailed help",
+		Handler: b.commands.Help,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
@@ -75,17 +77,38 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) *Bot {
 	return b
 }
 
-// Run starts a configured Bot.
-func (b *Bot) Run() {
-	// Reconnect loop, unless we want to exit.
-	for b.Reconnect {
-		if err := b.Conn.Connect(); err != nil {
-			log.Println("Connection error:", err, "- reconnecting in 1min")
+// BotImpl implements Bot.
+type BotImpl struct {
+	conn      *client.Conn
+	reconnect bool
+	quit      chan bool
+	commands  *Commands
+}
+
+// Run starts the Bot by connecting it to IRC. It automatically reconnects.
+func (b *BotImpl) Run() {
+	for b.reconnect {
+		if err := b.Conn().Connect(); err != nil {
+			log.Println("Connection error:", err, "- reconnecting in 1 minute")
 			time.Sleep(time.Minute)
 			continue
 		}
 
 		// Wait on quit channel for a disconnect event.
-		<-b.Quit
+		<-b.quit
 	}
 }
+
+// Quit quits the bot from IRC (and no reconnect).
+func (b *BotImpl) Quit(msg string) {
+	b.reconnect = false
+	b.conn.Quit(msg)
+}
+
+func (b *BotImpl) Commands() *Commands        { return b.commands }
+func (b *BotImpl) Me() *state.Nick            { return b.Conn().Me() }
+func (b *BotImpl) Action(t, msg string)       { b.Conn().Action(t, msg) }
+func (b *BotImpl) Mode(t string, m ...string) { b.Conn().Mode(t, m...) }
+func (b *BotImpl) Notice(t, msg string)       { b.Conn().Notice(t, msg) }
+func (b *BotImpl) Privmsg(t, msg string)      { b.Conn().Privmsg(t, msg) }
+func (b *BotImpl) Conn() *client.Conn         { return b.conn }
