@@ -13,7 +13,7 @@ import (
 )
 
 // bw handles command to display either all darkstat or a single one by name.
-func bw(b *bot.Bot, e *bot.Event, c map[string]*darkstat.Conn) {
+func bw(e *bot.Event, c map[string]*darkstat.Conn) {
 	name := strings.TrimSpace(e.Args)
 	var stats string
 	var err error
@@ -24,10 +24,10 @@ func bw(b *bot.Bot, e *bot.Event, c map[string]*darkstat.Conn) {
 	}
 	if err != nil {
 		log.Print("darkstat: error: ", err)
-		b.Conn.Privmsg(e.Target, "darkstat: failed (see logs)")
+		e.Bot.Privmsg(e.Target, "darkstat: failed (see logs)")
 		return
 	}
-	b.Conn.Privmsg(e.Target, stats)
+	e.Bot.Privmsg(e.Target, stats)
 }
 
 // single formats bandwidth stats for a single darkstat.
@@ -58,7 +58,7 @@ func multiple(c map[string]*darkstat.Conn) (string, error) {
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, URLs map[string]string) {
+func Register(b bot.Bot, URLs map[string]string) {
 	c := make(map[string]*darkstat.Conn)
 	for name, url := range URLs {
 		ds, err := darkstat.New(url)
@@ -68,9 +68,9 @@ func Register(b *bot.Bot, URLs map[string]string) {
 		c[name] = ds
 	}
 
-	b.AddCommand("bw", bot.Command{
+	b.Commands().Add("bw", bot.Command{
 		Help:    "See current bandwidth stats from darkstat",
-		Handler: func(b *bot.Bot, e *bot.Event) { bw(b, e, c) },
+		Handler: func(e *bot.Event) { bw(e, c) },
 		Pub:     true,
 		Priv:    false,
 		Hidden:  false})
