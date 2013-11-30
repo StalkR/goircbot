@@ -9,7 +9,7 @@ import (
 	"github.com/StalkR/goircbot/lib/google/search"
 )
 
-func find(b *bot.Bot, e *bot.Event, key, cx string) {
+func find(e *bot.Event, key, cx string) {
 	term := strings.TrimSpace(e.Args)
 	if len(term) == 0 {
 		return
@@ -20,17 +20,17 @@ func find(b *bot.Bot, e *bot.Event, key, cx string) {
 		return
 	}
 	if len(r.Items) == 0 {
-		b.Conn.Privmsg(e.Target, "No result.")
+		e.Bot.Privmsg(e.Target, "No result.")
 		return
 	}
-	b.Conn.Privmsg(e.Target, r.Items[0].String())
+	e.Bot.Privmsg(e.Target, r.Items[0].String())
 }
 
 // Register registers the plugin with a bot.
-func Register(b *bot.Bot, key, cx string) {
-	b.AddCommand("search", bot.Command{
+func Register(b bot.Bot, key, cx string) {
+	b.Commands().Add("search", bot.Command{
 		Help:    "search the Web with Google",
-		Handler: func(b *bot.Bot, e *bot.Event) { find(b, e, key, cx) },
+		Handler: func(e *bot.Event) { find(e, key, cx) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
