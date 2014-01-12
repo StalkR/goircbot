@@ -1,6 +1,6 @@
 # Go IRC Bot
 
-[![Build Status][1]][2] [![Go Walker][3]][4]
+[![Build Status][1]][2] [![Godoc][3]][4]
 
 ## Acquire and build
 `go get github.com/StalkR/goircbot`
@@ -35,12 +35,12 @@ It uses [fluffle/goirc][6] ([doc][7]). Very good!
 ## Bugs, comments, questions
 Create a [new issue][8] or email [goircbot@stalkr.net][9].
 
-[1]: https://secure.travis-ci.org/StalkR/goircbot.png
-[2]: http://www.travis-ci.org/StalkR/goircbot
-[3]: http://gowalker.org/api/v1/badge
-[4]: http://gowalker.org/github.com/StalkR/aecache
-[5]: http://github.com/StalkR/goircbot
-[6]: http://github.com/fluffle/goirc
-[7]: http://gowalker.org/github.com/fluffle/goirc
+[1]: https://api.travis-ci.org/StalkR/goircbot.png
+[2]: https://travis-ci.org/StalkR/goircbot
+[3]: https://godoc.org/github.com/StalkR/goircbot?status.png
+[4]: https://godoc.org/github.com/StalkR/goircbot
+[5]: https://github.com/StalkR/goircbot
+[6]: https://github.com/fluffle/goirc
+[7]: https://godoc.org/github.com/fluffle/goirc
 [8]: https://github.com/StalkR/goircbot/issues/new
 [9]: mailto:goircbot@stalkr.net
