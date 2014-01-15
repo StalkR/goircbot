@@ -26,7 +26,7 @@ type Bot interface {
 }
 
 // NewBot creates a new Bot implementation with a set of parameters.
-func NewBot(host string, ssl bool, nick, ident string, channels []string) *BotImpl {
+func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 	hostPort := strings.SplitN(host, ":", 2)
 	cfg := &client.Config{
 		Me:          state.NewNick(nick),
