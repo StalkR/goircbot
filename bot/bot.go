@@ -4,6 +4,7 @@ package bot
 import (
 	"log"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/StalkR/goircbot/lib/tls"
@@ -50,12 +51,15 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 		reconnect: true,
 		quit:      make(chan bool),
 		commands:  NewCommands(),
+		channels:  channels,
 	}
 
 	// Join channels on connect and mark ourselves as a Bot.
 	conn.HandleFunc("connected",
 		func(conn *client.Conn, line *client.Line) {
-			for _, channel := range channels {
+			b.channelsMu.Lock()
+			defer b.channelsMu.Unlock()
+			for _, channel := range b.channels {
 				conn.Join(channel)
 			}
 			conn.Mode(conn.Me().Nick, "+B")
@@ -67,6 +71,21 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 
 	conn.HandleFunc("privmsg",
 		func(conn *client.Conn, line *client.Line) { b.commands.Handle(b, line) })
+
+	conn.HandleFunc("join",
+		func(conn *client.Conn, line *client.Line) {
+			if line.Nick == conn.Me().Nick { b.addChannel(line.Args[0]) }
+		})
+
+	conn.HandleFunc("part",
+		func(conn *client.Conn, line *client.Line) {
+			if line.Nick == conn.Me().Nick { b.removeChannel(line.Args[0]) }
+		})
+
+	conn.HandleFunc("kick",
+		func(conn *client.Conn, line *client.Line) {
+			if line.Args[1] == conn.Me().Nick { b.removeChannel(line.Args[0]) }
+		})
 
 	b.commands.Add("help", Command{
 		Help:    "show commands or detailed help",
@@ -80,10 +99,33 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 
 // BotImpl implements Bot.
 type BotImpl struct {
-	conn      *client.Conn
-	reconnect bool
-	quit      chan bool
-	commands  *Commands
+	conn       *client.Conn
+	reconnect  bool
+	quit       chan bool
+	commands   *Commands
+	channels   []string
+	channelsMu sync.Mutex
+}
+
+func (b *BotImpl) addChannel(ch string) {
+	b.channelsMu.Lock()
+	defer b.channelsMu.Unlock()
+	for _, s := range b.channels {
+		if s == ch {return}
+	}
+	b.channels = append(b.channels, ch)
+}
+
+func (b *BotImpl) removeChannel(ch string) {
+	b.channelsMu.Lock()
+	defer b.channelsMu.Unlock()
+	newChannels := make([]string, 0, len(b.channels))
+	for _, s := range b.channels {
+		if s != ch {
+			newChannels = append(newChannels, s)
+		}
+	}
+	b.channels = newChannels
 }
 
 // Run starts the Bot by connecting it to IRC. It automatically reconnects.
