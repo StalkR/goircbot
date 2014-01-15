@@ -88,11 +88,11 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 
 // BotImpl implements Bot.
 type BotImpl struct {
-	conn       *client.Conn
-	reconnect  bool
-	quit       chan bool
-	commands   *Commands
-	channels   []string
+	conn      *client.Conn
+	reconnect bool
+	quit      chan bool
+	commands  *Commands
+	channels  []string
 }
 
 // Run starts the Bot by connecting it to IRC. It automatically reconnects.
