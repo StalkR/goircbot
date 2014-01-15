@@ -4,7 +4,6 @@ package bot
 import (
 	"log"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/StalkR/goircbot/lib/tls"
@@ -57,8 +56,6 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 	// Join channels on connect and mark ourselves as a Bot.
 	conn.HandleFunc("connected",
 		func(conn *client.Conn, line *client.Line) {
-			b.channelsMu.Lock()
-			defer b.channelsMu.Unlock()
 			for _, channel := range b.channels {
 				conn.Join(channel)
 			}
@@ -67,25 +64,13 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 
 	// Signal disconnect to Bot.Run so it can reconnect.
 	conn.HandleFunc("disconnected",
-		func(conn *client.Conn, line *client.Line) { b.quit <- true })
+		func(conn *client.Conn, line *client.Line) {
+			b.updateChannels(conn.Me().Channels())
+			b.quit <- true
+		})
 
 	conn.HandleFunc("privmsg",
 		func(conn *client.Conn, line *client.Line) { b.commands.Handle(b, line) })
-
-	conn.HandleFunc("join",
-		func(conn *client.Conn, line *client.Line) {
-			if line.Nick == conn.Me().Nick { b.addChannel(line.Args[0]) }
-		})
-
-	conn.HandleFunc("part",
-		func(conn *client.Conn, line *client.Line) {
-			if line.Nick == conn.Me().Nick { b.removeChannel(line.Args[0]) }
-		})
-
-	conn.HandleFunc("kick",
-		func(conn *client.Conn, line *client.Line) {
-			if line.Args[1] == conn.Me().Nick { b.removeChannel(line.Args[0]) }
-		})
 
 	b.commands.Add("help", Command{
 		Help:    "show commands or detailed help",
@@ -104,26 +89,12 @@ type BotImpl struct {
 	quit       chan bool
 	commands   *Commands
 	channels   []string
-	channelsMu sync.Mutex
 }
 
-func (b *BotImpl) addChannel(ch string) {
-	b.channelsMu.Lock()
-	defer b.channelsMu.Unlock()
-	for _, s := range b.channels {
-		if s == ch {return}
-	}
-	b.channels = append(b.channels, ch)
-}
-
-func (b *BotImpl) removeChannel(ch string) {
-	b.channelsMu.Lock()
-	defer b.channelsMu.Unlock()
-	newChannels := make([]string, 0, len(b.channels))
-	for _, s := range b.channels {
-		if s != ch {
-			newChannels = append(newChannels, s)
-		}
+func (b *BotImpl) updateChannels(channels []*state.Channel) {
+	newChannels := make([]string, 0, len(channels))
+	for _, ch := range channels {
+		newChannels = append(newChannels, ch.Name)
 	}
 	b.channels = newChannels
 }
