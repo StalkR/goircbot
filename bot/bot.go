@@ -50,12 +50,13 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 		reconnect: true,
 		quit:      make(chan bool),
 		commands:  NewCommands(),
+		channels:  channels,
 	}
 
 	// Join channels on connect and mark ourselves as a Bot.
 	conn.HandleFunc("connected",
 		func(conn *client.Conn, line *client.Line) {
-			for _, channel := range channels {
+			for _, channel := range b.channels {
 				conn.Join(channel)
 			}
 			conn.Mode(conn.Me().Nick, "+B")
@@ -63,7 +64,14 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 
 	// Signal disconnect to Bot.Run so it can reconnect.
 	conn.HandleFunc("disconnected",
-		func(conn *client.Conn, line *client.Line) { b.quit <- true })
+		func(conn *client.Conn, line *client.Line) {
+			channels := conn.Me().Channels()
+			b.channels = make([]string, 0, len(channels))
+			for _, ch := range channels {
+				b.channels = append(b.channels, ch.Name)
+			}
+			b.quit <- true
+		})
 
 	conn.HandleFunc("privmsg",
 		func(conn *client.Conn, line *client.Line) { b.commands.Handle(b, line) })
@@ -84,6 +92,7 @@ type BotImpl struct {
 	reconnect bool
 	quit      chan bool
 	commands  *Commands
+	channels  []string
 }
 
 // Run starts the Bot by connecting it to IRC. It automatically reconnects.
