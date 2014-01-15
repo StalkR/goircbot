@@ -66,7 +66,7 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 	conn.HandleFunc("disconnected",
 		func(conn *client.Conn, line *client.Line) {
 			channels := conn.Me().Channels()
-			b.channels := make([]string, 0, len(channels))
+			b.channels = make([]string, 0, len(channels))
 			for _, ch := range channels {
 				b.channels = append(b.channels, ch.Name)
 			}
