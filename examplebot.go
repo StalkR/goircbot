@@ -35,11 +35,11 @@ import (
 )
 
 var (
-	host     *string = flag.String("host", "irc.example.com", "Server host[:port]")
-	ssl      *bool   = flag.Bool("ssl", true, "Enable SSL")
-	nick     *string = flag.String("nick", "goircbot", "Bot nick")
-	ident    *string = flag.String("ident", "goircbot", "Bot ident")
-	channels *string = flag.String("channels", "", "Channels to join (separated by comma)")
+	host     = flag.String("host", "irc.example.com", "Server host[:port]")
+	ssl      = flag.Bool("ssl", true, "Enable SSL")
+	nick     = flag.String("nick", "goircbot", "Bot nick")
+	ident    = flag.String("ident", "goircbot", "Bot ident")
+	channels = flag.String("channels", "", "Channels to join (separated by comma)")
 
 	ignore = []string{"bot"}
 )
