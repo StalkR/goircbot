@@ -2,49 +2,45 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
 	"github.com/StalkR/goircbot/lib/mldonkey"
 )
 
-func usage() {
-	fmt.Printf("Usage: %v <MLDonkey URL> (stats|add <URL>)\n", os.Args[0])
-	os.Exit(1)
-}
+var (
+	url   = flag.String("url", "", "MLDonkey URL.")
+	stats = flag.Bool("stats", false, "Show stats.")
+	add   = flag.String("add", "", "Add link by URL.")
+)
 
 func main() {
-	if len(os.Args) < 3 {
-		usage()
-	}
-
-	c, err := mldonkey.New(os.Args[1])
-	if err != nil {
-		fmt.Println("Error:", err)
+	flag.Parse()
+	if *url == "" {
+		flag.Usage()
 		os.Exit(1)
 	}
-
-	switch os.Args[2] {
-
-	case "stats":
+	c, err := mldonkey.New(*url)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v", err)
+		os.Exit(1)
+	}
+	if *stats {
 		stats, err := c.Stats()
 		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Fprintf(os.Stderr, "Error: %v", err)
 			os.Exit(1)
 		}
 		fmt.Println(stats.String())
-
-	case "add":
-		if len(os.Args) < 4 {
-			usage()
-		}
-		if err := c.Add(os.Args[3]); err != nil {
-			fmt.Println("Error:", err)
+	} else if *add != "" {
+		if err := c.Add(*add); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v", err)
 			os.Exit(1)
 		}
 		fmt.Println("Link added.")
-
-	default:
-		usage()
+	} else {
+		flag.Usage()
+		os.Exit(1)
 	}
 }
