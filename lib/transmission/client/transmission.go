@@ -2,50 +2,46 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
 	"github.com/StalkR/goircbot/lib/transmission"
 )
 
-func usage() {
-	fmt.Printf("Usage: %v <Transmission URL> (stats|add <URL>)\n", os.Args[0])
-	os.Exit(1)
-}
+var (
+	url   = flag.String("url", "", "Transmission URL.")
+	stats = flag.Bool("stats", false, "Show stats.")
+	add   = flag.String("add", "", "Add link by URL.")
+)
 
 func main() {
-	if len(os.Args) < 3 {
-		usage()
-	}
-
-	c, err := transmission.New(os.Args[1])
-	if err != nil {
-		fmt.Println("Error:", err)
+	flag.Parse()
+	if *url == "" {
+		flag.Usage()
 		os.Exit(1)
 	}
-
-	switch os.Args[2] {
-
-	case "stats":
+	c, err := transmission.New(*url)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v", err)
+		os.Exit(1)
+	}
+	if *stats {
 		stats, err := c.Stats()
 		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Fprintf(os.Stderr, "Error: %v", err)
 			os.Exit(1)
 		}
 		fmt.Println(stats.String())
-
-	case "add":
-		if len(os.Args) < 4 {
-			usage()
-		}
-		name, err := c.Add(os.Args[3])
+	} else if *add != "" {
+		name, err := c.Add(*add)
 		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Fprintf(os.Stderr, "Error: %v", err)
 			os.Exit(1)
 		}
 		fmt.Println("Torrent added: ", name)
-
-	default:
-		usage()
+	} else {
+		flag.Usage()
+		os.Exit(1)
 	}
 }
