@@ -2,6 +2,7 @@
 package tls
 
 import (
+	_ "crypto/sha512" // https://codereview.appspot.com/84700045
 	"crypto/tls"
 	"crypto/x509"
 	"flag"
