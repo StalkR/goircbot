@@ -84,6 +84,13 @@ func doMode(e *bot.Event, sign, mode string) {
 		strings.Repeat(mode, len(args)), strings.Join(args, " ")))
 }
 
+func nick(e *bot.Event) {
+	if !authorized(e) || e.Args == "" {
+		return
+	}
+	e.Bot.Conn().Nick(e.Args)
+}
+
 func quit(e *bot.Event) {
 	if !authorized(e) {
 		return
@@ -140,6 +147,13 @@ func Register(b bot.Bot, admins []string) {
 	b.Commands().Add("devoice", bot.Command{
 		Help:    "devoice [<target>]",
 		Handler: func(e *bot.Event) { doMode(e, "-", "v") },
+		Pub:     true,
+		Priv:    true,
+		Hidden:  true,
+	})
+	b.Commands().Add("nick", bot.Command{
+		Help:    "nick <nickname>",
+		Handler: nick,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  true,
