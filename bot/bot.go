@@ -20,6 +20,7 @@ type Bot interface {
 	Connected() bool            // Shortcut to Conn().Connected()
 	Me() *state.Nick            // Shortcut to Conn().Me()
 	Mode(t string, m ...string) // Shortcut to Conn().Mode()
+	Nick(nick string)           // Shortcut to Conn().Nick()
 	Notice(t, msg string)       // Shortcut to Conn().Notice()
 	Privmsg(t, msg string)      // Shortcut to Conn().Privmsg()
 	Conn() *client.Conn         // Conn returns the underlying goirc client connection.
@@ -123,6 +124,7 @@ func (b *BotImpl) Action(t, msg string)       { b.Conn().Action(t, msg) }
 func (b *BotImpl) Connected() bool            { return b.Conn().Connected() }
 func (b *BotImpl) Me() *state.Nick            { return b.Conn().Me() }
 func (b *BotImpl) Mode(t string, m ...string) { b.Conn().Mode(t, m...) }
+func (b *BotImpl) Nick(nick string)           { b.Conn().Nick(nick) }
 func (b *BotImpl) Notice(t, msg string)       { b.Conn().Notice(t, msg) }
 func (b *BotImpl) Privmsg(t, msg string)      { b.Conn().Privmsg(t, msg) }
 func (b *BotImpl) Conn() *client.Conn         { return b.conn }
