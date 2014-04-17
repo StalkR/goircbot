@@ -35,11 +35,6 @@ It uses [fluffle/goirc][6] ([doc][7]). Very good!
 ## Bugs, comments, questions
 Create a [new issue][8] or email [goircbot@stalkr.net][9].
 
-## Contributors
-Thanks to:
-
- - [gelraen][10] for auto-rejoin channels after disconnect ([#1][11])
-
 [1]: https://api.travis-ci.org/StalkR/goircbot.png
 [2]: https://travis-ci.org/StalkR/goircbot
 [3]: https://godoc.org/github.com/StalkR/goircbot?status.png
@@ -49,5 +44,3 @@ Thanks to:
 [7]: https://godoc.org/github.com/fluffle/goirc
 [8]: https://github.com/StalkR/goircbot/issues/new
 [9]: mailto:goircbot@stalkr.net
-[10]: https://github.com/gelraen
-[11]: https://github.com/StalkR/goircbot/pull/1
