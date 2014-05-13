@@ -21,6 +21,7 @@ type Event struct {
 // A command can be triggered
 //   - in public on a channel with: /msg #chan !cmd [args]
 //     or directly at a bot: /msg #chan bot: cmd [args]
+//     or for plugins with All=true, every message.
 //   - in private in a query: /msg bot cmd [args]
 func (s *Commands) Handle(b Bot, line *client.Line) {
 	words := strings.Split(line.Args[1], " ")
@@ -38,7 +39,16 @@ func (s *Commands) Handle(b Bot, line *client.Line) {
 				return
 			}
 		default:
-			return // Not a command.
+			// Message wasn't directed at bot, see if any plugins want to receive all messages.
+			args := strings.Join(words[1:], " ")
+			s.Lock()
+			defer s.Unlock()
+			for _, c := range s.cmds {
+				if c.All {
+					go c.Handler(&Event{Bot: b, Line: line, Target: target, Args: args})
+				}
+			}
+			return
 		}
 	} else {
 		pub = false
