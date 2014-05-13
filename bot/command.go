@@ -12,6 +12,7 @@ type Command struct {
 	Pub     bool    // Command can be accessed publicly on a channel.
 	Priv    bool    // Command can be accessed privately in query.
 	Hidden  bool    // Hide command from list of all available commands.
+	All     bool    // Send all messages to Handler.
 }
 
 // String formats a command with its attributes for display in help.
@@ -25,6 +26,9 @@ func (c *Command) String() string {
 	}
 	if c.Hidden {
 		opts = append(opts, "hidden")
+	}
+	if c.All {
+		opts = append(opts, "all")
 	}
 	return fmt.Sprintf("%s (%s)", c.Help, strings.Join(opts, "+"))
 }
