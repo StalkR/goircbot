@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"time"
 
 	"github.com/StalkR/goircbot/lib/transport"
 )
@@ -46,6 +48,7 @@ func (e APIError) Error() string {
 type Weather struct {
 	Display       Location `json:"display_location"`
 	Observation   Location `json:"observation_location"`
+	TZ            string   `json:"local_tz_long"`
 	Weather       string   `json:"weather"`
 	TempF         float64  `json:"temp_f"`
 	TempC         float64  `json:"temp_c"`
@@ -70,10 +73,25 @@ type Location struct {
 	Elevation      string `json:"elevation"`
 }
 
+// Time returns local time at location.
+func (w *Weather) Time() (time.Time, error) {
+	loc, err := time.LoadLocation(w.TZ)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("wunderground: invalid location %s: %v", w.TZ, err)
+	}
+	return time.Now().In(loc), nil
+}
+
 // String formats a weather result on one line.
 func (w *Weather) String() string {
-	return fmt.Sprintf("%v: %v (%.2f°C), humidity %v, wind %v (%v %.2f km/h)",
-		w.Display.Full, w.Weather, w.TempC, w.Humidity, w.Wind, w.WindDirection, w.WindKPH)
+	var ts string
+	if t, err := w.Time(); err != nil {
+		log.Print(err)
+	} else {
+		ts = fmt.Sprintf(" - %s", t.Format(time.RFC1123))
+	}
+	return fmt.Sprintf("%v: %v (%.2f°C), humidity %v, wind %v (%v %.2f km/h)%s",
+		w.Display.Full, w.Weather, w.TempC, w.Humidity, w.Wind, w.WindDirection, w.WindKPH, ts)
 }
 
 // Conditions requests weather conditions for a location.
