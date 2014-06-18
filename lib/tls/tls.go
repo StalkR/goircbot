@@ -2,7 +2,6 @@
 package tls
 
 import (
-	_ "crypto/sha512" // https://codereview.appspot.com/84700045
 	"crypto/tls"
 	"crypto/x509"
 	"flag"
@@ -14,8 +13,8 @@ import (
 var (
 	cacerts = flag.String("cacerts", "",
 		"Root CA PEM files (separated by comma), if empty use system default")
-	once                     = sync.Once{}
-	rootCerts *x509.CertPool = nil
+	once      = sync.Once{}
+	rootCerts *x509.CertPool
 )
 
 // Config takes an optional server name (for SNI) and returns a TLS config with Root CAs set.
