@@ -13,17 +13,20 @@ import (
 
 // Bot represents an IRC bot, with IRC client object, settings, commands.
 type Bot interface {
-	Run()                       // Run bot, reconnect if disconnect.
-	Quit(msg string)            // Quit bot from IRC with a msg.
-	Commands() *Commands        // For plugins to Add/Del commands.
-	Action(t, msg string)       // Shortcut to Conn().Action()
-	Connected() bool            // Shortcut to Conn().Connected()
-	Me() *state.Nick            // Shortcut to Conn().Me()
-	Mode(t string, m ...string) // Shortcut to Conn().Mode()
-	Nick(nick string)           // Shortcut to Conn().Nick()
-	Notice(t, msg string)       // Shortcut to Conn().Notice()
-	Privmsg(t, msg string)      // Shortcut to Conn().Privmsg()
-	Conn() *client.Conn         // Conn returns the underlying goirc client connection.
+	Run()                                                     // Run bot, reconnect if disconnect.
+	Quit(msg string)                                          // Quit bot from IRC with a msg.
+	Commands() *Commands                                      // For plugins to Add/Del commands.
+	Action(t, msg string)                                     // Shortcut to Conn().Action()
+	Connected() bool                                          // Shortcut to Conn().Connected()
+	HandleFunc(n string, h client.HandlerFunc) client.Remover // Shortcut to Conn().HandleFunc()
+	Join(c string)                                            // Shortcut to Conn().Join()
+	Me() *state.Nick                                          // Shortcut to Conn().Me()
+	Mode(t string, m ...string)                               // Shortcut to Conn().Mode()
+	Nick(nick string)                                         // Shortcut to Conn().Nick()
+	Notice(t, msg string)                                     // Shortcut to Conn().Notice()
+	Part(c string, m ...string)                               // Shortcut to Conn().Part()
+	Privmsg(t, msg string)                                    // Shortcut to Conn().Privmsg()
+	Conn() *client.Conn                                       // Conn returns the underlying goirc client connection.
 }
 
 // NewBot creates a new Bot implementation with a set of parameters.
@@ -120,11 +123,16 @@ func (b *BotImpl) Quit(msg string) {
 func (b *BotImpl) Commands() *Commands { return b.commands }
 
 // Shortcuts to b.Conn to ease mocking of Bot interface.
-func (b *BotImpl) Action(t, msg string)       { b.Conn().Action(t, msg) }
-func (b *BotImpl) Connected() bool            { return b.Conn().Connected() }
+func (b *BotImpl) Action(t, msg string) { b.Conn().Action(t, msg) }
+func (b *BotImpl) Connected() bool      { return b.Conn().Connected() }
+func (b *BotImpl) HandleFunc(n string, h client.HandlerFunc) client.Remover {
+	return b.Conn().HandleFunc(n, h)
+}
+func (b *BotImpl) Join(c string)              { b.Conn().Join(c) }
 func (b *BotImpl) Me() *state.Nick            { return b.Conn().Me() }
 func (b *BotImpl) Mode(t string, m ...string) { b.Conn().Mode(t, m...) }
 func (b *BotImpl) Nick(nick string)           { b.Conn().Nick(nick) }
 func (b *BotImpl) Notice(t, msg string)       { b.Conn().Notice(t, msg) }
+func (b *BotImpl) Part(c string, m ...string) { b.Conn().Part(c, m...) }
 func (b *BotImpl) Privmsg(t, msg string)      { b.Conn().Privmsg(t, msg) }
 func (b *BotImpl) Conn() *client.Conn         { return b.conn }
