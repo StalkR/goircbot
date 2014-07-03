@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	twitterRE = regexp.MustCompile(`^https?://twitter\.com/.*?/status/\d+(#|$)`)
-	tweetRE   = regexp.MustCompile(`<p class="js-tweet-text[^"]*">(.*?)</p>`)
+	twitterRE = regexp.MustCompile(`^https?://twitter\.com/.*?/status/\d+(/photo/\d+)?(#|$)`)
+	tweetRE   = regexp.MustCompile(`(?s)<div class="permalink-inner[^"]*">.*?<p class="js-tweet-text[^"]*">(.*?)</p>`)
 )
 
 type Twitter struct{}
