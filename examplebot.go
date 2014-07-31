@@ -9,6 +9,7 @@ import (
 	"github.com/StalkR/goircbot/bot"
 	"github.com/StalkR/goircbot/lib/size"
 	"github.com/StalkR/goircbot/plugins/admin"
+	"github.com/StalkR/goircbot/plugins/battleroyale"
 	"github.com/StalkR/goircbot/plugins/darkstat"
 	"github.com/StalkR/goircbot/plugins/df"
 	"github.com/StalkR/goircbot/plugins/dl"
@@ -49,6 +50,9 @@ func main() {
 	flag.Parse()
 	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
 	admin.Register(b, []string{"nick!ident@host"})
+	battleroyale.Register(b, map[string]string{
+		"name": "playerid",
+	})
 	darkstat.Register(b, map[string]string{
 		"public":  "http://darkstat.public.com",
 		"private": "https://user:pass@darkstat.private.com",
