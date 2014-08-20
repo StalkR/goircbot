@@ -16,6 +16,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/dns"
 	"github.com/StalkR/goircbot/plugins/failotron"
 	"github.com/StalkR/goircbot/plugins/geo"
+	"github.com/StalkR/goircbot/plugins/golang"
 	"github.com/StalkR/goircbot/plugins/imdb"
 	"github.com/StalkR/goircbot/plugins/mac"
 	"github.com/StalkR/goircbot/plugins/old"
@@ -62,6 +63,7 @@ func main() {
 	dns.Register(b)
 	failotron.Register(b, ignore)
 	geo.Register(b)
+	golang.Register(b)
 	imdb.Register(b)
 	mac.Register(b)
 	old.Register(b, "/tmp/old", ignore)
