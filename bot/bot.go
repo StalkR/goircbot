@@ -27,6 +27,7 @@ type Bot interface {
 	Part(c string, m ...string)                               // Shortcut to Conn().Part()
 	Privmsg(t, msg string)                                    // Shortcut to Conn().Privmsg()
 	Conn() *client.Conn                                       // Conn returns the underlying goirc client connection.
+	Channels() []string                                       // Channels returns list of channels which bot has joined.
 }
 
 // NewBot creates a new Bot implementation with a set of parameters.
@@ -136,3 +137,10 @@ func (b *BotImpl) Notice(t, msg string)       { b.Conn().Notice(t, msg) }
 func (b *BotImpl) Part(c string, m ...string) { b.Conn().Part(c, m...) }
 func (b *BotImpl) Privmsg(t, msg string)      { b.Conn().Privmsg(t, msg) }
 func (b *BotImpl) Conn() *client.Conn         { return b.conn }
+func (b *BotImpl) Channels() []string {
+	var channels []string
+	for _, ch := range b.Conn().Me().Channels() {
+		channels = append(channels, ch.Name)
+	}
+	return channels
+}
