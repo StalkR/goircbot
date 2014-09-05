@@ -10,6 +10,7 @@ import (
 	"github.com/StalkR/goircbot/lib/size"
 	"github.com/StalkR/goircbot/plugins/admin"
 	"github.com/StalkR/goircbot/plugins/battleroyale"
+	"github.com/StalkR/goircbot/plugins/cdecl"
 	"github.com/StalkR/goircbot/plugins/darkstat"
 	"github.com/StalkR/goircbot/plugins/df"
 	"github.com/StalkR/goircbot/plugins/dl"
@@ -54,6 +55,7 @@ func main() {
 	battleroyale.Register(b, map[string]string{
 		"name": "playerid",
 	})
+	cdecl.Register(b)
 	darkstat.Register(b, map[string]string{
 		"public":  "http://darkstat.public.com",
 		"private": "https://user:pass@darkstat.private.com",
