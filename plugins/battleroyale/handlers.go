@@ -3,73 +3,55 @@ package battleroyale
 
 import (
 	"fmt"
-	"log"
-	"reflect"
 	"strings"
-	"time"
 
 	"github.com/StalkR/goircbot/bot"
 	"github.com/StalkR/goircbot/lib/nohl"
 )
 
-func br(e *bot.Event, s *Scoreboard) {
+func br(e *bot.Event, players map[string]string) {
 	name := strings.TrimSpace(e.Args)
 	if len(name) == 0 {
-		var n []string
-		for _, name := range s.Players() {
-			n = append(n, nohl.Nick(e.Bot, e.Target, name))
-		}
-		e.Bot.Privmsg(e.Target, fmt.Sprintf("Players: %s", strings.Join(n, ", ")))
+		brAll(e, players)
 		return
 	}
-	r, err := s.Get(name)
+	var p *playerInfo
+	var err error
+	if uid, ok := players[name]; ok {
+		p, err = scoreByUID(uid)
+	} else {
+		p, err = scoreByName(name)
+	}
 	if err != nil {
 		e.Bot.Privmsg(e.Target, err.Error())
 		return
 	}
-	e.Bot.Privmsg(e.Target, fmt.Sprintf("%s: %s",
-		nohl.Nick(e.Bot, e.Target, name), r.String()))
+	name = nohl.Nick(e.Bot, e.Target, name)
+	e.Bot.Privmsg(e.Target, fmt.Sprintf("%s: %d wins, %d kills, %d loss, %d points, K/D %.2f, W/L %.2f, max kill distance %.2f",
+		name, p.Wins, p.Kills, p.Loss, p.Points, p.KillDeathRatio, p.WinRate, p.MaxKillDistance))
+}
+
+func brAll(e *bot.Event, players map[string]string) {
+	var o []string
+	for name, uid := range players {
+		p, err := scoreByUID(uid)
+		if err != nil {
+			e.Bot.Privmsg(e.Target, err.Error())
+			return
+		}
+		name = nohl.Nick(e.Bot, e.Target, name)
+		o = append(o, fmt.Sprintf("%s (%d W, %d K, %d L, %d pts)",
+			name, p.Wins, p.Kills, p.Loss, p.Points))
+	}
+	e.Bot.Privmsg(e.Target, strings.Join(o, ", "))
 }
 
 // Register registers the plugin with a bot.
 func Register(b bot.Bot, players map[string]string) {
-	s := NewScoreboard(players)
-	go refresh(b, s)
 	b.Commands().Add("br", bot.Command{
 		Help:    "see player ranking on Battle Royale",
-		Handler: func(e *bot.Event) { br(e, s) },
+		Handler: func(e *bot.Event) { br(e, players) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
-}
-
-func refresh(b bot.Bot, s *Scoreboard) {
-	var prev map[string]score
-	for ; ; <-time.Tick(time.Hour) {
-		if err := s.Refresh(); err != nil {
-			log.Printf("battleroyale: refresh error: %v", err)
-		}
-		log.Print("battleroyale: scores refreshed")
-		if prev == nil {
-			prev = s.Status()
-			continue
-		}
-		current := s.Status()
-		for name, newscore := range current {
-			oldscore, ok := prev[name]
-			if !ok || !reflect.DeepEqual(oldscore, newscore) {
-				notify(b, fmt.Sprintf("New score for %s: %s", name, newscore.String()))
-			}
-		}
-		prev = current
-	}
-}
-
-func notify(b bot.Bot, line string) {
-	if !b.Connected() {
-		return
-	}
-	for _, channel := range b.Me().Channels() {
-		b.Privmsg(channel.Name, line)
-	}
 }
