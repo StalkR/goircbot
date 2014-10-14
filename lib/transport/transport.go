@@ -16,7 +16,7 @@ import (
 	"github.com/StalkR/goircbot/lib/tls"
 )
 
-var timeout = flag.Duration("http_timeout", 5*time.Second, "Timeout for HTTP(S) connections.")
+var timeout = flag.Duration("http_timeout", 10*time.Second, "Timeout for HTTP(S) connections.")
 
 // ByURL returns an transport given an URL for use with a client.
 // It extracts the hostname from URL and give it to TLS for SNI.
