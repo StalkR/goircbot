@@ -24,33 +24,46 @@ type Event struct {
 //   - in private in a query: /msg bot cmd [args]
 func (s *Commands) Handle(b Bot, line *client.Line) {
 	words := strings.Split(line.Args[1], " ")
-	var pub bool
+	var direct, indirect, private bool
 	var target string
+
 	if strings.HasPrefix(line.Args[0], "#") {
-		pub = true
 		target = line.Args[0]
 		switch {
 		case strings.HasPrefix(words[0], "!"):
+			indirect = true
 			words[0] = words[0][1:]
-		case words[0] == b.Me().Nick+":":
+
+		case words[0] == b.Me().Nick+":" || words[0] == b.Me().Nick+",":
+			direct = true
 			words = words[1:]
-			if len(words) <= 0 {
+			if len(words) < 1 {
 				return
 			}
+
 		default:
 			return // Not a command.
 		}
 	} else {
-		pub = false
+		private = true
 		target = line.Nick
 	}
-	priv := !pub
+
 	args := strings.Join(words[1:], " ")
+
 	s.Lock()
 	defer s.Unlock()
+
 	for name, c := range s.cmds {
-		if words[0] == name && (pub && c.Pub || priv && c.Priv) {
+		if words[0] != name {
+			continue
+		}
+		direct = direct && c.Pub
+		indirect = indirect && c.Pub && !c.NoExclamation
+		private = private && c.Priv
+		if direct || indirect || private {
 			go c.Handler(&Event{Bot: b, Line: line, Target: target, Args: args})
+			break
 		}
 	}
 }
