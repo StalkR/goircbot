@@ -21,6 +21,9 @@ func (c *Command) String() string {
 	if c.Pub {
 		opts = append(opts, "pub")
 	}
+	if c.NoExclamation {
+		opts = append(opts, "noexcl")
+	}
 	if c.Priv {
 		opts = append(opts, "priv")
 	}

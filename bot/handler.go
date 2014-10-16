@@ -21,6 +21,7 @@ type Event struct {
 // A command can be triggered
 //   - in public on a channel with: /msg #chan !cmd [args]
 //     or directly at a bot: /msg #chan bot: cmd [args]
+//     works also with a comma: /msg #chan bot, cmd [args]
 //   - in private in a query: /msg bot cmd [args]
 func (s *Commands) Handle(b Bot, line *client.Line) {
 	words := strings.Split(line.Args[1], " ")
@@ -54,16 +55,12 @@ func (s *Commands) Handle(b Bot, line *client.Line) {
 	s.Lock()
 	defer s.Unlock()
 
-	for name, c := range s.cmds {
-		if words[0] != name {
-			continue
-		}
+	if c, present := s.cmds[words[0]]; present {
 		direct = direct && c.Pub
 		indirect = indirect && c.Pub && !c.NoExclamation
 		private = private && c.Priv
 		if direct || indirect || private {
 			go c.Handler(&Event{Bot: b, Line: line, Target: target, Args: args})
-			break
 		}
 	}
 }
