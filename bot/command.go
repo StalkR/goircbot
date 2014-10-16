@@ -7,11 +7,12 @@ import (
 
 // Command represents a command that plugins can add.
 type Command struct {
-	Help    string  // Help string for help command.
-	Handler Handler // Handler to call.
-	Pub     bool    // Command can be accessed publicly on a channel.
-	Priv    bool    // Command can be accessed privately in query.
-	Hidden  bool    // Hide command from list of all available commands.
+	Help          string  // Help string for help command.
+	Handler       Handler // Handler to call.
+	Pub           bool    // Command can be accessed publicly on a channel.
+	NoExclamation bool    // Disallow calling command as "!command".
+	Priv          bool    // Command can be accessed privately in query.
+	Hidden        bool    // Hide command from list of all available commands.
 }
 
 // String formats a command with its attributes for display in help.
@@ -19,6 +20,9 @@ func (c *Command) String() string {
 	var opts []string
 	if c.Pub {
 		opts = append(opts, "pub")
+	}
+	if c.NoExclamation {
+		opts = append(opts, "noexcl")
 	}
 	if c.Priv {
 		opts = append(opts, "priv")
