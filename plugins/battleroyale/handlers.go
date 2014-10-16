@@ -3,6 +3,7 @@ package battleroyale
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
@@ -27,21 +28,25 @@ func br(e *bot.Event, players map[string]string) {
 		return
 	}
 	name = nohl.Nick(e.Bot, e.Target, name)
-	e.Bot.Privmsg(e.Target, fmt.Sprintf("%s: %d wins, %d kills, %d loss, %d points, K/D %.2f, W/L %.2f, max kill distance %.2f",
-		name, p.Wins, p.Kills, p.Loss, p.Points, p.KillDeathRatio, p.WinRate, p.MaxKillDistance))
+	e.Bot.Privmsg(e.Target, fmt.Sprintf("%s: %s", name, p.String()))
 }
 
 func brAll(e *bot.Event, players map[string]string) {
-	var o []string
+	var l []*playerInfo
 	for name, uid := range players {
 		p, err := scoreByUID(uid)
 		if err != nil {
 			e.Bot.Privmsg(e.Target, err.Error())
 			return
 		}
-		name = nohl.Nick(e.Bot, e.Target, name)
-		o = append(o, fmt.Sprintf("%s (%d W, %d K, %d L, %d pts)",
-			name, p.Wins, p.Kills, p.Loss, p.Points))
+		p.Name = name // override steam name with player name
+		l = append(l, p)
+	}
+	sort.Sort(sort.Reverse(byPoints(l)))
+	var o []string
+	for _, p := range l {
+		name := nohl.Nick(e.Bot, e.Target, p.Name)
+		o = append(o, fmt.Sprintf("%s (%s)", name, p.Short()))
 	}
 	e.Bot.Privmsg(e.Target, strings.Join(o, ", "))
 }
