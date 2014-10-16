@@ -55,12 +55,14 @@ func (s *Commands) Handle(b Bot, line *client.Line) {
 	s.Lock()
 	defer s.Unlock()
 
-	if c, present := s.cmds[words[0]]; present {
-		direct = direct && c.Pub
-		indirect = indirect && c.Pub && !c.NoExclamation
-		private = private && c.Priv
-		if direct || indirect || private {
-			go c.Handler(&Event{Bot: b, Line: line, Target: target, Args: args})
-		}
+	c, present := s.cmds[words[0]]
+	if !present {
+		return
+	}
+	direct = direct && c.Pub
+	indirect = indirect && c.Pub && !c.NoExclamation
+	private = private && c.Priv
+	if direct || indirect || private {
+		go c.Handler(&Event{Bot: b, Line: line, Target: target, Args: args})
 	}
 }
