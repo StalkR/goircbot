@@ -36,6 +36,9 @@ func brAll(e *bot.Event, players map[string]string) {
 	for name, uid := range players {
 		p, err := scoreByUID(uid)
 		if err != nil {
+			if err == errNotFound {
+				continue
+			}
 			e.Bot.Privmsg(e.Target, err.Error())
 			return
 		}

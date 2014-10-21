@@ -2,6 +2,7 @@ package battleroyale
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 
@@ -53,6 +54,8 @@ func scoreByUID(uid string) (*playerInfo, error) {
 	return p, nil
 }
 
+var errNotFound = errors.New("not found")
+
 func getPlayerInfo(u url.Values) (*playerInfo, error) {
 	c, err := transport.Client(scoreURL)
 	if err != nil {
@@ -68,7 +71,7 @@ func getPlayerInfo(u url.Values) (*playerInfo, error) {
 		return nil, err
 	}
 	if len(p) != 1 {
-		return nil, fmt.Errorf("not found")
+		return nil, errNotFound
 	}
 	return p[0], nil
 }
