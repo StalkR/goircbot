@@ -2,6 +2,8 @@
 package nohl
 
 import (
+	"strings"
+
 	"github.com/StalkR/goircbot/bot"
 )
 
@@ -17,4 +19,13 @@ func Nick(b bot.Bot, channel, nick string) string {
 		return nick
 	}
 	return nick[:len(nick)-1] + "*"
+}
+
+// String sanitizes words in string in case any is a nick present on the channel.
+func String(b bot.Bot, channel, s string) string {
+	a := strings.Split(s, " ")
+	for i, w := range a {
+		a[i] = Nick(b, channel, w)
+	}
+	return strings.Join(a, " ")
 }
