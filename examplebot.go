@@ -22,6 +22,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/mac"
 	"github.com/StalkR/goircbot/plugins/old"
 	"github.com/StalkR/goircbot/plugins/ping"
+	"github.com/StalkR/goircbot/plugins/quotes"
 	"github.com/StalkR/goircbot/plugins/renick"
 	"github.com/StalkR/goircbot/plugins/scores"
 	"github.com/StalkR/goircbot/plugins/search"
@@ -70,6 +71,7 @@ func main() {
 	mac.Register(b)
 	old.Register(b, "/tmp/old", ignore)
 	ping.Register(b)
+	quotes.Register(b, "/tmp/quotes")
 	renick.Register(b, *nick)
 	scores.Register(b, "/tmp/scores")
 	search.Register(b, "<key>", "<cx>")
