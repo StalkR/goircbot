@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/StalkR/goircbot/lib/transport"
 )
@@ -40,11 +43,11 @@ func (b byPoints) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
 func (b byPoints) Less(i, j int) bool { return b[i].Points < b[j].Points }
 
 func scoreByName(name string) (*playerInfo, error) {
-	return getPlayerInfo(url.Values{"Count": {"1"}, "Name": {name}})
+	return getPlayerInfoRetry(url.Values{"Count": {"1"}, "Name": {name}})
 }
 
 func scoreByUID(uid string) (*playerInfo, error) {
-	p, err := getPlayerInfo(url.Values{"Count": {"1"}, "Id": {uid}})
+	p, err := getPlayerInfoRetry(url.Values{"Count": {"1"}, "Id": {uid}})
 	if err != nil {
 		return nil, err
 	}
@@ -56,6 +59,21 @@ func scoreByUID(uid string) (*playerInfo, error) {
 
 var errNotFound = errors.New("not found")
 
+const maxTries = 50
+
+// Remote server sometimes returns a 500 or just times out and we need to retry.
+func getPlayerInfoRetry(u url.Values) (p *playerInfo, err error) {
+	for i := 0; i < maxTries; i++ {
+		p, err = getPlayerInfo(u)
+		if err == nil || err == errNotFound {
+			return
+		}
+		log.Printf("battleroyale: %v, retry (%d/%d)", err, i+1, maxTries)
+		time.Sleep(time.Second)
+	}
+	return
+}
+
 func getPlayerInfo(u url.Values) (*playerInfo, error) {
 	c, err := transport.Client(scoreURL)
 	if err != nil {
@@ -66,6 +84,9 @@ func getPlayerInfo(u url.Values) (*playerInfo, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status %d", resp.StatusCode)
+	}
 	var p []*playerInfo
 	if err := json.NewDecoder(resp.Body).Decode(&p); err != nil {
 		return nil, err
