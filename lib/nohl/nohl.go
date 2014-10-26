@@ -2,6 +2,7 @@
 package nohl
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
@@ -25,6 +26,10 @@ func Nick(b bot.Bot, channel, nick string) string {
 func String(b bot.Bot, channel, s string) string {
 	a := strings.Split(s, " ")
 	for i, w := range a {
+		if len(w) > 2 && strings.HasPrefix(w, "<") && strings.HasSuffix(w, ">") {
+			a[i] = fmt.Sprintf("<%s>", Nick(b, channel, w[1:len(w)-1]))
+			continue
+		}
 		a[i] = Nick(b, channel, w)
 	}
 	return strings.Join(a, " ")
