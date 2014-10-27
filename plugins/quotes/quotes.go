@@ -104,10 +104,13 @@ func (q *Quotes) Empty() bool {
 	return len(q.quotes) == 0
 }
 
-// Random picks a random quote - must not be empty.
+// Random picks a random quote (empty if no quotes).
 func (q *Quotes) Random() Quote {
 	q.Lock()
 	defer q.Unlock()
+	if len(q.quotes) == 0 {
+		return Quote{}
+	}
 	var ids []string
 	for id := range q.quotes {
 		ids = append(ids, id)
