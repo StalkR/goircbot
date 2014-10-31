@@ -2,10 +2,10 @@
 package nohl
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
+	"github.com/fluffle/goirc/state"
 )
 
 // Nick sanitizes a nick if it is present on the channel, otherwise unchanged.
@@ -24,13 +24,17 @@ func Nick(b bot.Bot, channel, nick string) string {
 
 // String sanitizes words in string in case any is a nick present on the channel.
 func String(b bot.Bot, channel, s string) string {
-	a := strings.Split(s, " ")
-	for i, w := range a {
-		if len(w) > 2 && strings.HasPrefix(w, "<") && strings.HasSuffix(w, ">") {
-			a[i] = fmt.Sprintf("<%s>", Nick(b, channel, w[1:len(w)-1]))
-			continue
+	var c *state.Channel
+	for _, e := range b.Me().Channels() {
+		if e.Name == channel {
+			c = e
 		}
-		a[i] = Nick(b, channel, w)
 	}
-	return strings.Join(a, " ")
+	if c == nil {
+		return s // channel not found (e.g. bot not on it)
+	}
+	for _, n := range c.Nicks() {
+		s = strings.Replace(s, n.Nick, n.Nick[:len(n.Nick)-1]+"*", -1)
+	}
+	return s
 }
