@@ -28,13 +28,6 @@ func (q Quote) String() string {
 	return fmt.Sprintf("%s [#%d]", q.Text, q.ID)
 }
 
-// ByID implements sort.Interface for []Quote based on the ID field.
-type ByID []Quote
-
-func (s ByID) Len() int           { return len(s) }
-func (s ByID) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-func (s ByID) Less(i, j int) bool { return s[i].ID < s[j].ID }
-
 // Quotes is the main structure to hold quotes in the plugin.
 type Quotes struct {
 	sync.Mutex
@@ -95,6 +88,15 @@ func (q *Quotes) Search(term string) []Quote {
 		results[i], results[j] = results[j], results[i]
 	}
 	return results
+}
+
+// Get obtains a quote by its ID, boolean if found.
+func (q *Quotes) Get(id int) (Quote, bool) {
+	q.Lock()
+	defer q.Unlock()
+	ids := strconv.Itoa(id)
+	r, present := q.quotes[ids]
+	return r, present
 }
 
 // Empty returns whether there are no quotes yet.

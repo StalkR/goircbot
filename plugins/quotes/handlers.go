@@ -43,6 +43,15 @@ func search(e *bot.Event, q *Quotes) {
 		e.Bot.Privmsg(e.Target, nohl.String(e.Bot, e.Target, q.Random().String()))
 		return
 	}
+	if id, err := strconv.Atoi(term[1:]); strings.HasPrefix(term, "#") && err == nil {
+		r, found := q.Get(id)
+		if !found {
+			e.Bot.Privmsg(e.Target, "not found")
+			return
+		}
+		e.Bot.Privmsg(e.Target, nohl.String(e.Bot, e.Target, r.String()))
+		return
+	}
 	lastResults = q.Search(term)
 	lastPos = 0
 	if len(lastResults) == 0 {
