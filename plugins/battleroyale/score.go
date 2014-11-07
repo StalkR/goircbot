@@ -59,7 +59,7 @@ func scoreByUID(uid string) (*playerInfo, error) {
 
 var errNotFound = errors.New("not found")
 
-const maxTries = 50
+const maxTries = 5
 
 // Remote server sometimes returns a 500 or just times out and we need to retry.
 func getPlayerInfoRetry(u url.Values) (p *playerInfo, err error) {

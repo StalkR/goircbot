@@ -37,13 +37,17 @@ func brAll(e *bot.Event, players map[string]string) {
 		p, err := scoreByUID(uid)
 		if err != nil {
 			if err == errNotFound {
-				continue
+				continue // player has no stats yet
 			}
 			e.Bot.Privmsg(e.Target, err.Error())
 			return
 		}
 		p.Name = name // override steam name with player name
 		l = append(l, p)
+	}
+	if len(l) == 0 {
+		e.Bot.Privmsg(e.Target, "no player has stats yet")
+		return
 	}
 	sort.Sort(sort.Reverse(byPoints(l)))
 	var o []string
