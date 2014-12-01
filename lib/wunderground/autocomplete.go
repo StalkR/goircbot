@@ -1,6 +1,7 @@
 package wunderground
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -46,6 +47,7 @@ func AutoComplete(query string) ([]ACElement, error) {
 	if err != nil {
 		return nil, err
 	}
+	contents = bytes.Replace(contents, []byte("\\'"), []byte("'"), -1)
 	r := ACResult{}
 	err = json.Unmarshal(contents, &r)
 	if err != nil {

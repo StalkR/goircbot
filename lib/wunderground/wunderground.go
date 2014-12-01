@@ -2,6 +2,7 @@
 package wunderground
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -125,6 +126,7 @@ func (a *ACElement) Conditions(APIKey string) (*Weather, error) {
 	if err != nil {
 		return nil, err
 	}
+	contents = bytes.Replace(contents, []byte("\\'"), []byte("'"), -1)
 	r := ConditionResult{}
 	err = json.Unmarshal(contents, &r)
 	if err != nil {
