@@ -6,7 +6,7 @@ import (
 	"regexp"
 )
 
-var titleRE = regexp.MustCompile(`<title[^>]*>([^<]+)<`)
+var titleRE = regexp.MustCompile(`(?i)<title[^>]*>([^<]+)<`)
 
 type Default struct{}
 
