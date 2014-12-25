@@ -1,9 +1,1 @@
 language: go
-
-before_install:
- - go get github.com/fluffle/goirc
- # fluffle/goirc defaults to go1 branch but goircbot is based on master branch
- - "cd ~/gopath/src/github.com/fluffle/goirc && git checkout master && cd - || exit 1"
- - go install github.com/fluffle/goirc
- # goirc/fix is broken (build errors)
- - "rm -rf ~/gopath/src/github.com/fluffle/goirc/fix"
