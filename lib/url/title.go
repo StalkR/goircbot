@@ -2,6 +2,7 @@
 package url
 
 import (
+	"io"
 	"io/ioutil"
 
 	"github.com/StalkR/goircbot/lib/transport"
@@ -18,7 +19,9 @@ func Title(url string) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
-	contents, err := ioutil.ReadAll(resp.Body)
+	// Fetch maximum 1MB to avoid denial of service.
+	lr := &io.LimitedReader{R: resp.Body, N: 1 << 20}
+	contents, err := ioutil.ReadAll(lr)
 	if err != nil {
 		return "", err
 	}
