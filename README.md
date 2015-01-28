@@ -35,7 +35,7 @@ It uses [fluffle/goirc][6] ([doc][7]). Very good!
 ## Bugs, comments, questions
 Create a [new issue][8] or email [goircbot@stalkr.net][9].
 
-[1]: https://api.travis-ci.org/StalkR/goircbot.png
+[1]: https://api.travis-ci.org/StalkR/goircbot.png?branch=master
 [2]: https://travis-ci.org/StalkR/goircbot
 [3]: https://godoc.org/github.com/StalkR/goircbot?status.png
 [4]: https://godoc.org/github.com/StalkR/goircbot
