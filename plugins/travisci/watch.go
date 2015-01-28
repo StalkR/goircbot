@@ -45,8 +45,8 @@ func notify(b bot.Bot, line string) {
 	if !b.Connected() {
 		return
 	}
-	for _, channel := range b.Me().Channels() {
-		b.Privmsg(channel.Name, line)
+	for _, channel := range b.Channels() {
+		b.Privmsg(channel, line)
 	}
 }
 

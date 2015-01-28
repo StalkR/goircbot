@@ -3,6 +3,7 @@ package bot
 
 import (
 	"log"
+	"sort"
 	"strings"
 	"time"
 
@@ -34,7 +35,7 @@ type Bot interface {
 func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 	hostPort := strings.SplitN(host, ":", 2)
 	cfg := &client.Config{
-		Me:          state.NewNick(nick),
+		Me:          &state.Nick{Nick: nick},
 		NewNick:     func(s string) string { return s + "_" },
 		PingFreq:    3 * time.Minute,
 		QuitMessage: "I have to go.",
@@ -70,11 +71,7 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 	// Signal disconnect to Bot.Run so it can reconnect.
 	conn.HandleFunc("disconnected",
 		func(conn *client.Conn, line *client.Line) {
-			channels := conn.Me().Channels()
-			b.channels = make([]string, 0, len(channels))
-			for _, ch := range channels {
-				b.channels = append(b.channels, ch.Name)
-			}
+			b.channels = b.Channels()
 			b.quit <- true
 		})
 
@@ -139,8 +136,9 @@ func (b *BotImpl) Privmsg(t, msg string)      { b.Conn().Privmsg(t, msg) }
 func (b *BotImpl) Conn() *client.Conn         { return b.conn }
 func (b *BotImpl) Channels() []string {
 	var channels []string
-	for _, ch := range b.Conn().Me().Channels() {
-		channels = append(channels, ch.Name)
+	for name := range b.Conn().Me().Channels {
+		channels = append(channels, name)
 	}
+	sort.Strings(channels)
 	return channels
 }
