@@ -15,24 +15,24 @@ func init() {
 }
 
 func failotron(e *bot.Event, ignore []string) {
-	ch, on := e.Bot.Me().IsOnStr(e.Target)
-	if !on {
+	st := e.Bot.Conn().StateTracker()
+	ch := st.GetChannel(e.Target)
+	if ch == nil {
 		return
 	}
 	ignoremap := make(map[string]bool)
 	for _, nick := range ignore {
 		ignoremap[nick] = true
 	}
-	nicks := ch.Nicks()
-	humans := make([]string, 0, len(nicks))
-	for _, nick := range nicks {
-		if nick.Modes.Bot {
+	var humans []string
+	for nick := range ch.Nicks {
+		if n := st.GetNick(nick); n == nil || n.Modes.Bot {
 			continue
 		}
-		if _, present := ignoremap[nick.Nick]; present {
+		if _, present := ignoremap[nick]; present {
 			continue
 		}
-		humans = append(humans, nick.Nick)
+		humans = append(humans, nick)
 	}
 	if len(humans) == 0 {
 		return

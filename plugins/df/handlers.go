@@ -57,8 +57,8 @@ func (a *Alarm) Notify(b bot.Bot, total, free int) {
 	freeFmt := size.Byte(free).String()
 	line := fmt.Sprintf("Warning: %v has %v free (%v%% of %v used)",
 		a.Path, freeFmt, percent, totalFmt)
-	for _, channel := range b.Me().Channels() {
-		b.Privmsg(channel.Name, line)
+	for _, channel := range b.Channels() {
+		b.Privmsg(channel, line)
 	}
 }
 
