@@ -71,7 +71,14 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 	// Signal disconnect to Bot.Run so it can reconnect.
 	conn.HandleFunc("disconnected",
 		func(conn *client.Conn, line *client.Line) {
-			b.channels = b.Channels()
+			channels := b.Channels()
+			// On the first disconnect, we will remember channels. Then state is
+			// reinitialized and another connection is attempted. If that one fails,
+			// we end up with an empty state, so no channels and we do not want to
+			// save that, it does not make much sense. So ignore empty values.
+			if len(channels) > 0 {
+				b.channels = b.Channels()
+			}
 			b.quit <- true
 		})
 
