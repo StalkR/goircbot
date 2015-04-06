@@ -37,6 +37,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/urltitle"
 	"github.com/StalkR/goircbot/plugins/whoami"
 	"github.com/StalkR/goircbot/plugins/wunderground"
+	"github.com/fluffle/goirc/logging/glog"
 )
 
 var (
@@ -51,6 +52,7 @@ var (
 
 func main() {
 	flag.Parse()
+	glog.Init()
 	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
 	admin.Register(b, []string{"nick!ident@host"})
 	battleroyale.Register(b, map[string]string{
