@@ -58,10 +58,7 @@ func topidle(e *bot.Event, ignore []string) {
 		e.Bot.Conn().Whois(nick)
 	}
 
-	select {
-	case <-time.After(10 * time.Second):
-	case <-done:
-	}
+	<-done
 	if len(m) == 0 {
 		return
 	}
