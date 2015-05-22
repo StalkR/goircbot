@@ -9,6 +9,10 @@ import (
 	"github.com/StalkR/goircbot/lib/spiritofmetal"
 )
 
+// TODO(StalkR): search on more sites if no result, in order:
+// - http://www.metal-archives.com/search?searchString=Converge*&type=band_name
+// - http://www.metalorgie.com/recherche?q=Converge
+
 func metal(e *bot.Event) {
 	name := strings.TrimSpace(e.Args)
 	if len(name) == 0 {
