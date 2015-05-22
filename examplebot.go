@@ -22,6 +22,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/failotron"
 	"github.com/StalkR/goircbot/plugins/geo"
 	"github.com/StalkR/goircbot/plugins/golang"
+	"github.com/StalkR/goircbot/plugins/idle"
 	"github.com/StalkR/goircbot/plugins/imdb"
 	"github.com/StalkR/goircbot/plugins/mac"
 	"github.com/StalkR/goircbot/plugins/metal"
@@ -78,6 +79,7 @@ func main() {
 	failotron.Register(b, ignore)
 	geo.Register(b)
 	golang.Register(b)
+	idle.Register(b, ignore)
 	imdb.Register(b)
 	mac.Register(b)
 	metal.Register(b)
