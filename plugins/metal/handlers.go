@@ -23,11 +23,19 @@ func metal(e *bot.Event) {
 		e.Bot.Privmsg(e.Target, "no band found")
 		return
 	}
-	var found []string
+	var results []string
+	hidden := 0
 	for _, band := range bands {
-		found = append(found, band.String())
+		if len(strings.Join(results, ", ")) > 200 {
+			hidden++
+			continue
+		}
+		results = append(results, band.String())
 	}
-	e.Bot.Privmsg(e.Target, strings.Join(found, ", "))
+	if hidden > 0 {
+		results = append(results, fmt.Sprintf("... (%d more)", hidden))
+	}
+	e.Bot.Privmsg(e.Target, strings.Join(results, ", "))
 }
 
 // Register registers the plugin with a bot.
