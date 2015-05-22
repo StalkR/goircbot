@@ -19,7 +19,11 @@ func define(e *bot.Event) {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
 	}
-	e.Bot.Privmsg(e.Target, r.String())
+	def := r.String()
+	if len(def) > 200 {
+		def = def[:200] + "..."
+	}
+	e.Bot.Privmsg(e.Target, def)
 }
 
 // Register registers the plugin with a bot.

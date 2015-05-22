@@ -55,9 +55,6 @@ func (d *Definition) String() string {
 	def := d.Definition
 	def = strings.Replace(def, "\r", "", -1)
 	def = strings.Replace(def, "\n", " ", -1)
-	if len(def) > 200 {
-		def = def[:200] + "..."
-	}
 	return fmt.Sprintf("%s: %s", d.Word, def)
 }
 
