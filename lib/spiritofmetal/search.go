@@ -21,7 +21,7 @@ type Band struct {
 
 // String formats a band information.
 func (b Band) String() string {
-	return fmt.Sprintf("%s (%s-%s)", b.Name, b.Genre, b.Country)
+	return fmt.Sprintf("%s (%s/%s)", b.Name, b.Genre, b.Country)
 }
 
 const baseURL = "http://www.spirit-of-metal.com/find.php"
