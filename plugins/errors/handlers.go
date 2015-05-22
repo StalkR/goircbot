@@ -44,7 +44,7 @@ func Register(b bot.Bot, dir string) error {
 		Priv:    true,
 		Hidden:  false})
 	b.Commands().Add("errno", bot.Command{
-		Help:    "get Windows status code information",
+		Help:    "get Linux error code information",
 		Handler: func(e *bot.Event) { handle(e, errnos) },
 		Pub:     true,
 		Priv:    true,
