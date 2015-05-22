@@ -36,9 +36,10 @@ func topidle(e *bot.Event, ignore []string) {
 		return
 	}
 
+	infos := make(map[string]time.Duration)
+	received := make(map[string]struct{})
 	done := make(chan struct{})
-	m := make(map[string]time.Duration)
-	defer e.Bot.Conn().HandleFunc("317",
+	defer e.Bot.Conn().HandleFunc("317", // Idle & sign on time
 		func(conn *client.Conn, line *client.Line) {
 			r := strings.Split(line.Raw, " ")
 			if len(r) < 5 {
@@ -48,23 +49,40 @@ func topidle(e *bot.Event, ignore []string) {
 			if err != nil {
 				return
 			}
-			m[r[3]] = time.Duration(seconds) * time.Second
-			if len(m) == len(nicks) {
+			infos[r[3]] = time.Duration(seconds) * time.Second
+		}).Remove()
+	defer e.Bot.Conn().HandleFunc("318", // End of whois
+		func(conn *client.Conn, line *client.Line) {
+			r := strings.Split(line.Raw, " ")
+			if len(r) < 4 {
+				return
+			}
+			received[r[3]] = struct{}{}
+			if len(received) == len(nicks) {
 				close(done)
 			}
 		}).Remove()
 
+	// Temporarily disable flood protection or it's too slow
+	e.Bot.Conn().Config().Flood = true
+	defer func() {
+		e.Bot.Conn().Config().Flood = false
+	}()
+
 	for _, nick := range nicks {
 		e.Bot.Conn().Whois(nick)
 	}
+	select {
+	case <-time.After(10 * time.Second):
+	case <-done:
+	}
 
-	<-done
-	if len(m) == 0 {
+	if len(infos) == 0 {
 		return
 	}
 
 	var idlers []idler
-	for nick, idle := range m {
+	for nick, idle := range infos {
 		idlers = append(idlers, idler{Nick: nick, Idle: idle})
 	}
 	sort.Sort(byIdle(idlers))
