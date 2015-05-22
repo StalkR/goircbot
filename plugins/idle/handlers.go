@@ -89,7 +89,7 @@ type byIdle []idler
 
 func (a byIdle) Len() int           { return len(a) }
 func (a byIdle) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a byIdle) Less(i, j int) bool { return a[i].Idle < a[j].Idle }
+func (a byIdle) Less(i, j int) bool { return a[i].Idle > a[j].Idle }
 
 // Register registers the plugin with a bot.
 // Use ignore as a list of nicks to ignore.
