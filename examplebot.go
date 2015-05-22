@@ -3,6 +3,7 @@ package main
 
 import (
 	"flag"
+	"log"
 	"strings"
 	"time"
 
@@ -15,6 +16,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/df"
 	"github.com/StalkR/goircbot/plugins/dl"
 	"github.com/StalkR/goircbot/plugins/dns"
+	"github.com/StalkR/goircbot/plugins/errors"
 	"github.com/StalkR/goircbot/plugins/failotron"
 	"github.com/StalkR/goircbot/plugins/geo"
 	"github.com/StalkR/goircbot/plugins/golang"
@@ -67,6 +69,9 @@ func main() {
 	df.Register(b, df.NewAlarm(`/`, 10*size.GB))
 	dl.Register(b, "", "")
 	dns.Register(b)
+	if err := errors.Register(b, "plugins/errors"); err != nil {
+		log.Fatal(err)
+	}
 	failotron.Register(b, ignore)
 	geo.Register(b)
 	golang.Register(b)
