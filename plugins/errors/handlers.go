@@ -1,10 +1,6 @@
 // Package errors implements a plugin to get Linux & Windows error and status information.
 package errors
 
-//go:generate go run gen/build.go -f gen/winerrors.txt -v winerrors -p errors -o winerrors.go
-//go:generate go run gen/build.go -f gen/ntstatus.txt -v ntstatus -p errors -o ntstatus.go
-//go:generate go run gen/build.go -f gen/errnos.txt -v errnos -p errors -o errnos.go
-
 import (
 	"path/filepath"
 	"strings"
