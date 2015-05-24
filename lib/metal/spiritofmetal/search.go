@@ -9,20 +9,9 @@ import (
 	"net/url"
 	"regexp"
 
+	"github.com/StalkR/goircbot/lib/metal/band"
 	"github.com/StalkR/goircbot/lib/transport"
 )
-
-// A Band represents a band search result.
-type Band struct {
-	Name    string
-	Genre   string
-	Country string
-}
-
-// String formats a band information.
-func (b Band) String() string {
-	return fmt.Sprintf("%s (%s/%s)", b.Name, b.Genre, b.Country)
-}
 
 const baseURL = "http://www.spirit-of-metal.com/find.php"
 
@@ -33,7 +22,7 @@ var (
 )
 
 // Search finds bands by name.
-func Search(name string) ([]Band, error) {
+func Search(name string) ([]band.Band, error) {
 	client, err := transport.Client(baseURL)
 	if err != nil {
 		return nil, err
@@ -53,7 +42,7 @@ func Search(name string) ([]Band, error) {
 	if section == "" {
 		return nil, errors.New("spiritofmetal: results section not found")
 	}
-	var results []Band
+	var results []band.Band
 	for _, r := range resultRE.FindAllStringSubmatch(section, -1) {
 		name := html.UnescapeString(r[1])
 		// Some names are "Band (UK)", strip country to have "Band".
@@ -61,7 +50,7 @@ func Search(name string) ([]Band, error) {
 		if nameCountry != nil {
 			name = nameCountry[1]
 		}
-		results = append(results, Band{
+		results = append(results, band.Band{
 			Name:    name,
 			Genre:   html.UnescapeString(r[2]),
 			Country: html.UnescapeString(r[3]),

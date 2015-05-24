@@ -6,19 +6,15 @@ import (
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/spiritofmetal"
+	"github.com/StalkR/goircbot/lib/metal"
 )
 
-// TODO(StalkR): search on more sites if no result, in order:
-// - http://www.metal-archives.com/search?searchString=Converge*&type=band_name
-// - http://www.metalorgie.com/recherche?q=Converge
-
-func metal(e *bot.Event) {
+func search(e *bot.Event) {
 	name := strings.TrimSpace(e.Args)
 	if len(name) == 0 {
 		return
 	}
-	bands, err := spiritofmetal.Search(name)
+	bands, err := metal.Search(name)
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
@@ -46,7 +42,7 @@ func metal(e *bot.Event) {
 func Register(b bot.Bot) {
 	b.Commands().Add("metal", bot.Command{
 		Help:    "get metal band information",
-		Handler: metal,
+		Handler: search,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

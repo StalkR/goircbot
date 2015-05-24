@@ -1,4 +1,4 @@
-// Binary client searches for bands on spiritofmetal.
+// Binary client searches for bands on metalorgie.
 package main
 
 import (
@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/StalkR/goircbot/lib/spiritofmetal"
+	"github.com/StalkR/goircbot/lib/metal/metalorgie"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 		fmt.Printf("Usage: %v <band>\n", os.Args[0])
 		os.Exit(1)
 	}
-	bands, err := spiritofmetal.Search(os.Args[1])
+	bands, err := metalorgie.Search(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
