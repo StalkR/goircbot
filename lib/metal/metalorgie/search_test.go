@@ -4,19 +4,19 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/StalkR/goircbot/lib/metal/band"
+	"github.com/StalkR/goircbot/lib/metal"
 )
 
 func TestSearch(t *testing.T) {
 	for _, tt := range []struct {
 		name string
-		want []band.Band
+		want []metal.Band
 	}{
 		{
 			name: "Conv",
-			want: []band.Band{
-				band.Band{Name: "Converge", Genre: "Hardcore Chaotique / Punk / Metal", Country: "USA"},
-				band.Band{Name: "Convict", Genre: "Punk Rock / Pop Punk", Country: "Belgique"},
+			want: []metal.Band{
+				metal.Band{Name: "Converge", Genre: "Hardcore Chaotique / Punk / Metal", Country: "USA"},
+				metal.Band{Name: "Convict", Genre: "Punk Rock / Pop Punk", Country: "Belgique"},
 			},
 		},
 		{

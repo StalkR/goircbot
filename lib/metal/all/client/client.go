@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/StalkR/goircbot/lib/metal"
+	"github.com/StalkR/goircbot/lib/metal/all"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 		fmt.Printf("Usage: %v <band>\n", os.Args[0])
 		os.Exit(1)
 	}
-	bands, err := metal.Search(os.Args[1])
+	bands, err := all.Search(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}

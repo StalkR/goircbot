@@ -6,15 +6,15 @@ import (
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/metal"
+	"github.com/StalkR/goircbot/lib/metal/all"
 )
 
-func search(e *bot.Event) {
+func metal(e *bot.Event) {
 	name := strings.TrimSpace(e.Args)
 	if len(name) == 0 {
 		return
 	}
-	bands, err := metal.Search(name)
+	bands, err := all.Search(name)
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
@@ -42,7 +42,7 @@ func search(e *bot.Event) {
 func Register(b bot.Bot) {
 	b.Commands().Add("metal", bot.Command{
 		Help:    "get metal band information",
-		Handler: search,
+		Handler: metal,
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})

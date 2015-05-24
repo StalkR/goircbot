@@ -1,15 +1,15 @@
-// Package metal is a library to search for metal bands on multiple sites.
-package metal
+// Package all is a library to search for metal bands on all known sites.
+package all
 
 import (
-	"github.com/StalkR/goircbot/lib/metal/band"
+	"github.com/StalkR/goircbot/lib/metal"
 	"github.com/StalkR/goircbot/lib/metal/metalarchives"
 	"github.com/StalkR/goircbot/lib/metal/metalorgie"
 	"github.com/StalkR/goircbot/lib/metal/spiritofmetal"
 )
 
 // Search finds bands by name.
-func Search(name string) ([]band.Band, error) {
+func Search(name string) ([]metal.Band, error) {
 	bands, err := spiritofmetal.Search(name)
 	if err != nil {
 		return nil, err

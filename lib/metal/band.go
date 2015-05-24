@@ -1,5 +1,5 @@
-// Package band is a common library to represent metal bands.
-package band
+// Package metal is a library to represent metal bands.
+package metal
 
 import "fmt"
 

@@ -4,26 +4,26 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/StalkR/goircbot/lib/metal/band"
+	"github.com/StalkR/goircbot/lib/metal"
 )
 
 func TestSearch(t *testing.T) {
 	for _, tt := range []struct {
 		name string
-		want []band.Band
+		want []metal.Band
 	}{
 		{
 			name: "Convergence",
-			want: []band.Band{
-				band.Band{Name: "Convergence", Genre: "Atmospheric/Industrial Dark/Death Metal", Country: "Austria"},
-				band.Band{Name: "Convergence", Genre: "Melodic Death Metal (early), Nu-metal/Alternative Rock (later)", Country: "Italy"},
-				band.Band{Name: "Convergence from Within", Genre: "Death Metal", Country: "United States"},
+			want: []metal.Band{
+				metal.Band{Name: "Convergence", Genre: "Atmospheric/Industrial Dark/Death Metal", Country: "Austria"},
+				metal.Band{Name: "Convergence", Genre: "Melodic Death Metal (early), Nu-metal/Alternative Rock (later)", Country: "Italy"},
+				metal.Band{Name: "Convergence from Within", Genre: "Death Metal", Country: "United States"},
 			},
 		},
 		{
 			name: "Psycroptic",
-			want: []band.Band{
-				band.Band{Name: "Psycroptic", Genre: "Technical Death Metal", Country: "Australia"},
+			want: []metal.Band{
+				metal.Band{Name: "Psycroptic", Genre: "Technical Death Metal", Country: "Australia"},
 			},
 		},
 		{

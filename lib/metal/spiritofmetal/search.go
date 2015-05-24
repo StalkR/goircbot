@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"regexp"
 
-	"github.com/StalkR/goircbot/lib/metal/band"
+	"github.com/StalkR/goircbot/lib/metal"
 	"github.com/StalkR/goircbot/lib/transport"
 )
 
@@ -22,7 +22,7 @@ var (
 )
 
 // Search finds bands by name.
-func Search(name string) ([]band.Band, error) {
+func Search(name string) ([]metal.Band, error) {
 	client, err := transport.Client(baseURL)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func Search(name string) ([]band.Band, error) {
 	if section == "" {
 		return nil, errors.New("spiritofmetal: results section not found")
 	}
-	var results []band.Band
+	var results []metal.Band
 	for _, r := range resultRE.FindAllStringSubmatch(section, -1) {
 		name := html.UnescapeString(r[1])
 		// Some names are "Band (UK)", strip country to have "Band".
@@ -50,7 +50,7 @@ func Search(name string) ([]band.Band, error) {
 		if nameCountry != nil {
 			name = nameCountry[1]
 		}
-		results = append(results, band.Band{
+		results = append(results, metal.Band{
 			Name:    name,
 			Genre:   html.UnescapeString(r[2]),
 			Country: html.UnescapeString(r[3]),
