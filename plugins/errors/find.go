@@ -6,40 +6,50 @@ import (
 	"strings"
 )
 
-func find(table [][]string, arg string) string {
-	if r := findName(table, arg); r != nil {
-		return fmt.Sprintf("%s (%s): %s", r[0], r[1], r[2])
+type info struct {
+	id   uint32
+	name string
+	doc  string
+}
+
+func (i info) String() string {
+	return fmt.Sprintf("%d/0x%08x (%s): %s", i.id, i.id, i.name, i.doc)
+}
+
+func find(table []info, arg string) (info, error) {
+	if r, err := findName(table, arg); err == nil {
+		return r, nil
 	}
 	code, err := atoi(arg)
 	if err != nil {
-		return fmt.Sprintf("%s: not found", arg)
+		return info{}, fmt.Errorf("%s: not found", arg)
 	}
-	r := findCode(table, code)
-	if r == nil {
-		return fmt.Sprintf("%s: not found", arg)
+	r, err := findCode(table, code)
+	if err != nil {
+		return info{}, err
 	}
-	return fmt.Sprintf("%s (%s): %s", r[0], r[1], r[2])
+	return r, nil
 }
 
-func findName(table [][]string, name string) []string {
+func findName(table []info, name string) (info, error) {
 	for _, r := range table {
-		if name == r[1] {
-			return r
+		if name == r.name {
+			return r, nil
 		}
 	}
-	return nil
+	return info{}, fmt.Errorf("%s: not found", name)
 }
 
-func findCode(table [][]string, code uint64) []string {
+func findCode(table []info, code uint32) (info, error) {
 	for _, r := range table {
-		if i, err := atoi(r[0]); err == nil && code == i {
-			return r
+		if code == r.id {
+			return r, nil
 		}
 	}
-	return nil
+	return info{}, fmt.Errorf("%s: not found", code)
 }
 
-func atoi(s string) (uint64, error) {
+func atoi(s string) (uint32, error) {
 	base := 10
 	if strings.HasPrefix(s, "0x") {
 		s = s[2:]
@@ -48,5 +58,9 @@ func atoi(s string) (uint64, error) {
 		s = s[2:]
 		base = 16
 	}
-	return strconv.ParseUint(s, base, 64)
+	r, err := strconv.ParseUint(s, base, 32)
+	if err != nil {
+		return 0, err
+	}
+	return uint32(r), nil
 }

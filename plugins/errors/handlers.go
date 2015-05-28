@@ -2,35 +2,26 @@
 package errors
 
 import (
-	"path/filepath"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
 )
 
-func handle(e *bot.Event, table [][]string) {
+func handle(e *bot.Event, table []info) {
 	arg := strings.TrimSpace(e.Args)
 	if len(arg) == 0 {
 		return
 	}
-	e.Bot.Privmsg(e.Target, find(table, arg))
+	r, err := find(table, arg)
+	if err != nil {
+		e.Bot.Privmsg(e.Target, err.Error())
+		return
+	}
+	e.Bot.Privmsg(e.Target, r.String())
 }
 
 // Register registers the plugin with a bot.
-func Register(b bot.Bot, dir string) error {
-	winerrors, err := parse(filepath.Join(dir, "winerrors.txt"))
-	if err != nil {
-		return err
-	}
-	ntstatus, err := parse(filepath.Join(dir, "ntstatus.txt"))
-	if err != nil {
-		return err
-	}
-	errnos, err := parse(filepath.Join(dir, "errnos.txt"))
-	if err != nil {
-		return err
-	}
-
+func Register(b bot.Bot) error {
 	b.Commands().Add("error", bot.Command{
 		Help:    "get Windows error code information",
 		Handler: func(e *bot.Event) { handle(e, winerrors) },

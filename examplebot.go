@@ -3,9 +3,6 @@ package main
 
 import (
 	"flag"
-	"log"
-	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -72,10 +69,7 @@ func main() {
 	df.Register(b, df.NewAlarm(`/`, 10*size.GB))
 	dl.Register(b, "", "")
 	dns.Register(b)
-	errorsDir := filepath.Join(os.Getenv("GOPATH"), "src", "github.com", "StalkR", "goircbot", "plugins", "errors")
-	if err := errors.Register(b, errorsDir); err != nil {
-		log.Fatal(err)
-	}
+	errors.Register(b)
 	failotron.Register(b, ignore)
 	geo.Register(b)
 	golang.Register(b)
