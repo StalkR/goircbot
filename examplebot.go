@@ -3,12 +3,14 @@ package main
 
 import (
 	"flag"
+	"log"
 	"strings"
 	"time"
 
 	"github.com/StalkR/goircbot/bot"
 	"github.com/StalkR/goircbot/lib/size"
 	"github.com/StalkR/goircbot/plugins/admin"
+	"github.com/StalkR/goircbot/plugins/asm"
 	"github.com/StalkR/goircbot/plugins/battleroyale"
 	"github.com/StalkR/goircbot/plugins/cdecl"
 	"github.com/StalkR/goircbot/plugins/darkstat"
@@ -58,6 +60,9 @@ func main() {
 	glog.Init()
 	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
 	admin.Register(b, []string{"nick!ident@host"})
+	if err := asm.Register(b); err != nil {
+		log.Fatal(err)
+	}
 	battleroyale.Register(b, map[string]string{
 		"name": "playerid",
 	})
