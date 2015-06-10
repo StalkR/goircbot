@@ -16,7 +16,7 @@ func explain(e *bot.Event, mnemonics map[string]string) {
 	}
 	desc, ok := mnemonics[instr]
 	if !ok {
-		e.Bot.Privmsg(e.Target, fmt.Sprintf("%s: not found in x86/x86-64 reference", instr))
+		e.Bot.Privmsg(e.Target, "not found")
 		return
 	}
 	e.Bot.Privmsg(e.Target, fmt.Sprintf("%s: %s", instr, desc))
