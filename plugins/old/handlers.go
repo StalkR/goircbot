@@ -16,7 +16,7 @@ import (
 
 var (
 	linkRE    = regexp.MustCompile(`(?:^|\s)(https?://[^\s]+)`)
-	backlogRE = regexp.MustCompile("<[+%@&~]?[a-zA-Z0-9_`^\\[\\]-]+>")
+	backlogRE = regexp.MustCompile("<[+%@&~ ]?[a-zA-Z0-9_`^\\[\\]-]+>")
 )
 
 func readURLs(b bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
