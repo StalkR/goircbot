@@ -29,6 +29,6 @@ func Register(b bot.Bot) {
 		Help:    "explain an x86/x86-64 assembly instruction",
 		Handler: explain,
 		Pub:     true,
-		Priv:    false,
+		Priv:    true,
 		Hidden:  false})
 }
