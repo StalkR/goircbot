@@ -3,7 +3,6 @@ package main
 
 import (
 	"flag"
-	"log"
 	"strings"
 	"time"
 
@@ -60,9 +59,7 @@ func main() {
 	glog.Init()
 	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
 	admin.Register(b, []string{"nick!ident@host"})
-	if err := asm.Register(b); err != nil {
-		log.Fatal(err)
-	}
+	asm.Register(b)
 	battleroyale.Register(b, map[string]string{
 		"name": "playerid",
 	})

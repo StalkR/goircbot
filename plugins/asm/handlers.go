@@ -1,4 +1,6 @@
 // Package asm is a plugin to explain x86/x86-64 assembly instructions.
+//go:generate go run generate/mnemonics.go -p asm -v mnemonics -o mnemonics.go
+//go:generate gofmt -w mnemonics.go
 package asm
 
 import (
@@ -6,10 +8,9 @@ import (
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/x86"
 )
 
-func explain(e *bot.Event, mnemonics map[string]string) {
+func explain(e *bot.Event) {
 	instr := strings.ToUpper(strings.TrimSpace(e.Args))
 	if len(instr) == 0 {
 		return
@@ -23,18 +24,11 @@ func explain(e *bot.Event, mnemonics map[string]string) {
 }
 
 // Register registers the plugin with a bot.
-func Register(b bot.Bot) error {
-	ref, err := x86.New()
-	if err != nil {
-		return err
-	}
-	mnemonics := ref.Mnemonics()
-
+func Register(b bot.Bot) {
 	b.Commands().Add("asm", bot.Command{
 		Help:    "explain an x86/x86-64 assembly instruction",
-		Handler: func(e *bot.Event) { explain(e, mnemonics) },
+		Handler: explain,
 		Pub:     true,
 		Priv:    false,
 		Hidden:  false})
-	return nil
 }
