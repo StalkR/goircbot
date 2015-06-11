@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -22,7 +23,7 @@ func find(table []info, arg string) (info, error) {
 	}
 	code, err := atoi(arg)
 	if err != nil {
-		return info{}, fmt.Errorf("%s: not found", arg)
+		return info{}, errors.New("not found")
 	}
 	r, err := findCode(table, code)
 	if err != nil {
@@ -37,7 +38,7 @@ func findName(table []info, name string) (info, error) {
 			return r, nil
 		}
 	}
-	return info{}, fmt.Errorf("%s: not found", name)
+	return info{}, errors.New("not found")
 }
 
 func findCode(table []info, code uint32) (info, error) {
@@ -46,7 +47,7 @@ func findCode(table []info, code uint32) (info, error) {
 			return r, nil
 		}
 	}
-	return info{}, fmt.Errorf("%s: not found", code)
+	return info{}, errors.New("not found")
 }
 
 func atoi(s string) (uint32, error) {
