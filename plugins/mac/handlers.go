@@ -1,8 +1,9 @@
 // Package mac implements a plugin to find the orgainzation behind a MAC
 // address using IEEE public OUI.
+package mac
+
 //go:generate go run generate/ieeeoui.go -p mac -v ieeeoui -o ieeeoui.go
 //go:generate gofmt -w ieeeoui.go
-package mac
 
 import (
 	"errors"

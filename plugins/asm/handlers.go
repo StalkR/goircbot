@@ -1,7 +1,8 @@
 // Package asm is a plugin to explain x86/x86-64 assembly instructions.
+package asm
+
 //go:generate go run generate/mnemonics.go -p asm -v mnemonics -o mnemonics.go
 //go:generate gofmt -w mnemonics.go
-package asm
 
 import (
 	"fmt"
