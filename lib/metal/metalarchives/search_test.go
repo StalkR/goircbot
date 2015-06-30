@@ -15,7 +15,7 @@ func TestSearch(t *testing.T) {
 		{
 			name: "Convergence",
 			want: []metal.Band{
-				metal.Band{Name: "Convergence", Genre: "Atmospheric/Industrial Dark/Death Metal", Country: "Austria"},
+				metal.Band{Name: "Convergence", Genre: "Atmospheric/Industrial Death Metal", Country: "Austria"},
 				metal.Band{Name: "Convergence", Genre: "Melodic Death Metal (early), Nu-metal/Alternative Rock (later)", Country: "Italy"},
 				metal.Band{Name: "Convergence from Within", Genre: "Death Metal", Country: "United States"},
 			},
