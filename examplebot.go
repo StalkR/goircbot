@@ -22,6 +22,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/golang"
 	"github.com/StalkR/goircbot/plugins/idle"
 	"github.com/StalkR/goircbot/plugins/imdb"
+	"github.com/StalkR/goircbot/plugins/invite"
 	"github.com/StalkR/goircbot/plugins/mac"
 	"github.com/StalkR/goircbot/plugins/metal"
 	"github.com/StalkR/goircbot/plugins/old"
@@ -77,6 +78,7 @@ func main() {
 	golang.Register(b)
 	idle.Register(b, ignore)
 	imdb.Register(b)
+	invite.Register(b)
 	mac.Register(b)
 	metal.Register(b)
 	old.Register(b, "/tmp/old", ignore)
