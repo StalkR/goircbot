@@ -20,6 +20,7 @@ type Bot interface {
 	Action(t, msg string)                                     // Shortcut to Conn().Action()
 	Connected() bool                                          // Shortcut to Conn().Connected()
 	HandleFunc(n string, h client.HandlerFunc) client.Remover // Shortcut to Conn().HandleFunc()
+	Invite(nick, channel string)                              // Shortcut to Conn().Nick()
 	Join(c string)                                            // Shortcut to Conn().Join()
 	Me() *state.Nick                                          // Shortcut to Conn().Me()
 	Mode(t string, m ...string)                               // Shortcut to Conn().Mode()
@@ -137,14 +138,15 @@ func (b *BotImpl) Connected() bool      { return b.Conn().Connected() }
 func (b *BotImpl) HandleFunc(n string, h client.HandlerFunc) client.Remover {
 	return b.Conn().HandleFunc(n, h)
 }
-func (b *BotImpl) Join(c string)              { b.Conn().Join(c) }
-func (b *BotImpl) Me() *state.Nick            { return b.Conn().Me() }
-func (b *BotImpl) Mode(t string, m ...string) { b.Conn().Mode(t, m...) }
-func (b *BotImpl) Nick(nick string)           { b.Conn().Nick(nick) }
-func (b *BotImpl) Notice(t, msg string)       { b.Conn().Notice(t, msg) }
-func (b *BotImpl) Part(c string, m ...string) { b.Conn().Part(c, m...) }
-func (b *BotImpl) Privmsg(t, msg string)      { b.Conn().Privmsg(t, msg) }
-func (b *BotImpl) Conn() *client.Conn         { return b.conn }
+func (b *BotImpl) Invite(nick, channel string) { b.Conn().Invite(nick, channel) }
+func (b *BotImpl) Join(c string)               { b.Conn().Join(c) }
+func (b *BotImpl) Me() *state.Nick             { return b.Conn().Me() }
+func (b *BotImpl) Mode(t string, m ...string)  { b.Conn().Mode(t, m...) }
+func (b *BotImpl) Nick(nick string)            { b.Conn().Nick(nick) }
+func (b *BotImpl) Notice(t, msg string)        { b.Conn().Notice(t, msg) }
+func (b *BotImpl) Part(c string, m ...string)  { b.Conn().Part(c, m...) }
+func (b *BotImpl) Privmsg(t, msg string)       { b.Conn().Privmsg(t, msg) }
+func (b *BotImpl) Conn() *client.Conn          { return b.conn }
 func (b *BotImpl) Channels() []string {
 	var channels []string
 	for name := range b.Conn().Me().Channels {
