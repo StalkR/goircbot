@@ -1,6 +1,7 @@
 // Package followers implements a plugin which invites specified people to join channels the bot joins.
-// Note: it assumes that RPL_TOPIC is a response to joining a channel; if the bot is
-// manually asking for a topic it will send the invites anyway.
+// It assumes that servers reply to a succesful join with RPL_CHANNELMODEIS (324).
+// It's not in RFC but it's pretty popular behaviour.
+// Note: it WILL invite the followers if RPL_CHANNELMODEIS is sent because of other event.
 package followers
 
 import (
@@ -16,7 +17,7 @@ func Register(b bot.Bot) *Guru {
 	g := &Guru{
 		followers: make(map[string]struct{}),
 	}
-	g.remover = b.HandleFunc(replyTopic, func(_ *client.Conn, line *client.Line) {
+	g.remover = b.HandleFunc(rplChannelModeIs, func(_ *client.Conn, line *client.Line) {
 		g.handleJoin(b, line)
 	})
 	return g
@@ -50,13 +51,13 @@ func (g *Guru) Close() {
 	g.remover.Remove()
 }
 
-const replyTopic = "332"
+const rplChannelModeIs = "324"
 
 // handleJoin invites followers to channel joined by the bot.
 func (g *Guru) handleJoin(b bot.Bot, line *client.Line) {
 	g.RLock()
 	defer g.RUnlock()
-	channel := line.Args[0]
+	channel := line.Args[1]
 	for follower := range g.followers {
 		b.Invite(follower, channel)
 	}
