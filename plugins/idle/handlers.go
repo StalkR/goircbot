@@ -12,28 +12,13 @@ import (
 	"github.com/fluffle/goirc/client"
 )
 
-func topidle(e *bot.Event, ignore []string) {
-	st := e.Bot.Conn().StateTracker()
-	ch := st.GetChannel(e.Target)
-	if ch == nil {
-		return
-	}
-	ignoremap := make(map[string]bool)
-	for _, nick := range ignore {
-		ignoremap[nick] = true
-	}
-	var nicks []string
-	for nick := range ch.Nicks {
-		if n := st.GetNick(nick); n == nil || n.Modes.Bot {
-			continue
-		}
-		if _, present := ignoremap[nick]; present {
-			continue
-		}
-		nicks = append(nicks, nick)
-	}
-	if len(nicks) == 0 {
-		return
+const timeout = 10 * time.Second
+
+func getIdle(e *bot.Event, nicks []string) []idler {
+	nickSet := make(map[string]struct{})
+	for _, nick := range nicks {
+		// IRC nicks are case insensitive
+		nickSet[strings.ToLower(nick)] = struct{}{}
 	}
 
 	infos := make(map[string]time.Duration)
@@ -58,7 +43,7 @@ func topidle(e *bot.Event, ignore []string) {
 				return
 			}
 			received[r[3]] = struct{}{}
-			if len(received) == len(nicks) {
+			if len(received) == len(nickSet) {
 				close(done)
 			}
 		}).Remove()
@@ -69,23 +54,65 @@ func topidle(e *bot.Event, ignore []string) {
 		e.Bot.Conn().Config().Flood = false
 	}()
 
-	for _, nick := range nicks {
+	for nick := range nickSet {
 		e.Bot.Conn().Whois(nick)
 	}
 	select {
-	case <-time.After(10 * time.Second):
+	case <-time.After(timeout):
 	case <-done:
-	}
-
-	if len(infos) == 0 {
-		return
 	}
 
 	var idlers []idler
 	for nick, idle := range infos {
+		// check if we did request idle for that nick otherwise ignore
+		if _, ok := nickSet[strings.ToLower(nick)]; !ok {
+			continue
+		}
 		idlers = append(idlers, idler{Nick: nick, Idle: idle})
 	}
 	sort.Sort(byIdle(idlers))
+	return idlers
+}
+
+func handleIdle(e *bot.Event) {
+	nick := strings.TrimSpace(e.Args)
+	if len(nick) == 0 || strings.Contains(nick, " ") {
+		return
+	}
+	idlers := getIdle(e, []string{nick})
+	if len(idlers) != 1 {
+		return
+	}
+	e.Bot.Privmsg(e.Target, fmt.Sprintf("%s idle %s", idlers[0].Nick, idlers[0].Idle.String()))
+}
+
+func handleTopidle(e *bot.Event, ignore []string) {
+	st := e.Bot.Conn().StateTracker()
+	ch := st.GetChannel(e.Target)
+	if ch == nil {
+		return
+	}
+	ignoremap := make(map[string]bool)
+	for _, nick := range ignore {
+		ignoremap[nick] = true
+	}
+	var nicks []string
+	for nick := range ch.Nicks {
+		if n := st.GetNick(nick); n == nil || n.Modes.Bot {
+			continue
+		}
+		if _, present := ignoremap[nick]; present {
+			continue
+		}
+		nicks = append(nicks, nick)
+	}
+	if len(nicks) == 0 {
+		return
+	}
+	idlers := getIdle(e, nicks)
+	if len(idlers) == 0 {
+		return
+	}
 	top := 3
 	if len(idlers) < top {
 		top = len(idlers)
@@ -109,9 +136,15 @@ func (a byIdle) Less(i, j int) bool { return a[i].Idle > a[j].Idle }
 // Register registers the plugin with a bot.
 // Use ignore as a list of nicks to ignore.
 func Register(b bot.Bot, ignore []string) {
+	b.Commands().Add("idle", bot.Command{
+		Help:    "get idle time of a user",
+		Handler: func(e *bot.Event) { handleIdle(e) },
+		Pub:     true,
+		Priv:    true,
+		Hidden:  false})
 	b.Commands().Add("topidle", bot.Command{
 		Help:    "top idlers on the channel",
-		Handler: func(e *bot.Event) { topidle(e, ignore) },
+		Handler: func(e *bot.Event) { handleTopidle(e, ignore) },
 		Pub:     true,
 		Priv:    false,
 		Hidden:  false})
