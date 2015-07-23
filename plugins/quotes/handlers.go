@@ -88,7 +88,7 @@ func Register(b bot.Bot, f string) {
 		Hidden:  false})
 
 	b.Commands().Add("delquote", bot.Command{
-		Help:    "add a quote",
+		Help:    "del a quote",
 		Handler: func(e *bot.Event) { del(e, q) },
 		Pub:     true,
 		Priv:    false,
