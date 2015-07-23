@@ -58,6 +58,8 @@ func Watch(b bot.Bot, userRepos []string, duration time.Duration) {
 		if len(userRepo) != 2 {
 			panic("invalid user/repo: " + arg)
 		}
-		go watch(userRepo[0], userRepo[1], duration, func(line string) { notify(b, line) })
+		go watch(userRepo[0], userRepo[1], duration, func(line string) {
+			notify(b, line)
+		})
 	}
 }
