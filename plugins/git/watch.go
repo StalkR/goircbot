@@ -10,15 +10,15 @@ import (
 func watch(repo string, duration time.Duration, notify func(string)) {
 	last := ""
 	for ; ; time.Sleep(duration) {
-		msg, err := lastLog(repo)
+		commit, err := lastLog(repo)
 		if err != nil {
 			log.Printf("git: error watching %s: %s", repo, err)
 			continue
 		}
-		if msg != last && last != "" {
-			notify(msg)
+		if commit.Msg != last && last != "" {
+			notify(commit.String())
 		}
-		last = msg
+		last = commit.Msg
 	}
 }
 
