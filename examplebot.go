@@ -18,6 +18,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/errors"
 	"github.com/StalkR/goircbot/plugins/failotron"
 	"github.com/StalkR/goircbot/plugins/geo"
+	"github.com/StalkR/goircbot/plugins/git"
 	"github.com/StalkR/goircbot/plugins/golang"
 	"github.com/StalkR/goircbot/plugins/idle"
 	"github.com/StalkR/goircbot/plugins/imdb"
@@ -71,6 +72,9 @@ func main() {
 	errors.Register(b)
 	failotron.Register(b, ignore)
 	geo.Register(b)
+	git.Register(b, map[string]string{
+		"linux": "https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log/",
+	})
 	golang.Register(b)
 	idle.Register(b, ignore)
 	imdb.Register(b)
