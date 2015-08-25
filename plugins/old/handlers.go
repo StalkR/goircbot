@@ -17,6 +17,7 @@ import (
 var (
 	linkRE    = regexp.MustCompile(`(?:^|\s)(https?://[^\s]+)`)
 	backlogRE = regexp.MustCompile("<[+%@&~ ]?[a-zA-Z0-9_`^\\[\\]-]+>")
+	silenceRE = regexp.MustCompile(`(^|\s)tg(\)|\s|$)`) // Line ignored if matched.
 )
 
 func readURLs(b bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
@@ -28,7 +29,7 @@ func readURLs(b bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
 		return
 	}
 	text := line.Args[1]
-	if backlogRE.MatchString(text) {
+	if backlogRE.MatchString(text) || silenceRE.MatchString(text) {
 		return
 	}
 
