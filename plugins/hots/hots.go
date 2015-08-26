@@ -35,7 +35,7 @@ func (s *Stats) String() string {
 	}
 	qm := fmt.Sprintf("Quick Match: %s %d (MMR %d)", s.QuickMatch.Medal, s.QuickMatch.Score, s.QuickMatch.MMR)
 	if s.QuickMatch.Medal == "" {
-		hl = "Quick Match: n/a"
+		qm = "Quick Match: n/a"
 	}
 	return fmt.Sprintf("%s, %s, %s - %s?PlayerID=%d", tl, hl, qm, statsURL, s.PlayerID)
 }
