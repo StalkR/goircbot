@@ -71,9 +71,9 @@ func get(id int) ([]byte, error) {
 
 var (
 	playerIDRE   = regexp.MustCompile(`<link href="https://www\.hotslogs\.com/Player/Profile\?PlayerID=(\d+)"`)
-	teamLeagueRE = regexp.MustCompile(`<th>Team League</th>.*?<span>(.*?) (\d+) \(Current MMR: (\d+)\)</span>`)
-	heroLeagueRE = regexp.MustCompile(`<th>Hero League</th>.*?<span>(.*?) (\d+) \(Current MMR: (\d+)\)</span>`)
-	quickMatchRE = regexp.MustCompile(`<th>Quick Match</th>.*?<span>(.*?) (\d+) \(Current MMR: (\d+)\)</span>`)
+	teamLeagueRE = regexp.MustCompile(`<th>Team League</th><td><img[^>]*>[^<]*<span>(\w+) (\d+) \(Current MMR: (\d+)\)</span>`)
+	heroLeagueRE = regexp.MustCompile(`<th>Hero League</th><td><img[^>]*>[^<]*<span>(\w+) (\d+) \(Current MMR: (\d+)\)</span>`)
+	quickMatchRE = regexp.MustCompile(`<th>Quick Match</th><td><img[^>]*>[^<]*<span>(\w+) (\d+) \(Current MMR: (\d+)\)</span>`)
 )
 
 func parse(page string) (*Stats, error) {
