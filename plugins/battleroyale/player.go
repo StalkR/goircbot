@@ -38,7 +38,7 @@ type player struct {
 func (p player) String() string {
 	kd := float64(p.Kills) / float64(p.Losses)
 	wl := float64(p.Kills) / float64(p.Wins+p.Losses)
-	return fmt.Sprintf("#%d %s, %d wins, %d kills, %d losses, K/D %.2f, W/L %.2f, %s play time, favourite match type %s - %s tg",
+	return fmt.Sprintf("#%d %s, %d wins, %d kills, %d losses, K/D %.2f, W/L %.2f, %s play time, favourite match type %s %s",
 		p.GlobalRank, p.RankText, p.Wins, p.Kills, p.Losses, kd, wl, p.TotalPlayTime, p.FavouriteMatchType, p.URL())
 }
 
