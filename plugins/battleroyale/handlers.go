@@ -12,12 +12,20 @@ import (
 )
 
 func br(e *bot.Event, players map[string]uint64) {
-	name := strings.TrimSpace(e.Args)
+	name := strings.ToLower(strings.TrimSpace(e.Args))
 	if len(name) == 0 {
 		brAll(e, players)
 		return
 	}
-	steamID, ok := players[name]
+	// case-insensitive find
+	steamID, ok := func() (uint64, bool) {
+		for p, id := range players {
+			if strings.ToLower(p) == name {
+				return id, true
+			}
+		}
+		return 0, false
+	}()
 	if !ok {
 		parsed, err := strconv.ParseUint(name, 10, 64)
 		if err != nil {
