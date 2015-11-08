@@ -58,9 +58,17 @@ func (p player) URL() string {
 
 type byGlobalRank []player
 
-func (a byGlobalRank) Len() int           { return len(a) }
-func (a byGlobalRank) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a byGlobalRank) Less(i, j int) bool { return a[i].GlobalRank < a[j].GlobalRank }
+func (a byGlobalRank) Len() int      { return len(a) }
+func (a byGlobalRank) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a byGlobalRank) Less(i, j int) bool {
+	if a[i].GlobalRank == 0 {
+		return false
+	}
+	if a[j].GlobalRank == 0 {
+		return true
+	}
+	return a[i].GlobalRank < a[j].GlobalRank
+}
 
 func viewPlayer(steamID uint64) (*player, error) {
 	viewPlayerURL := player{SteamID: steamID}.URL()
