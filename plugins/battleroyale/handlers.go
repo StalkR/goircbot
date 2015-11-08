@@ -62,7 +62,7 @@ func brAll(e *bot.Event, players map[string]uint64) {
 		e.Bot.Privmsg(e.Target, "no player has stats yet")
 		return
 	}
-	sort.Sort(sort.Reverse(byGlobalRank(s)))
+	sort.Sort(byGlobalRank(s))
 	var o []string
 	for _, p := range s {
 		name := nohl.Nick(e.Bot, e.Target, p.Name)
