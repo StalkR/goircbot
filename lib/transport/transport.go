@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	neturl "net/url"
+	"strings"
 	"time"
 
 	"github.com/StalkR/goircbot/lib/tls"
@@ -42,6 +43,11 @@ func Client(url string) (*http.Client, error) {
 
 func timeoutDialer(d time.Duration) func(net, addr string) (net.Conn, error) {
 	return func(netw, addr string) (net.Conn, error) {
+		host := strings.Split(addr, ":")[0]
+		// force IPv4 for YouTube as they carelessly block wide IPv6 ranges
+		if host == "youtube.com" || host == "www.youtube.com" {
+			netw = "tcp4"
+		}
 		return net.DialTimeout(netw, addr, d)
 	}
 }
