@@ -28,18 +28,17 @@ type player struct {
 	Kills               int
 	TotalDistanceMoved  string
 	// WinPercent = Wins/RoundsPlayed
-	WinPoints          float64
-	KillPoints         float64
-	TotalPoints        float64
-	FavouriteMatchType string
+	WinPoints   float64
+	KillPoints  float64
+	TotalPoints float64
 	// AverageKillsPerMatch = Kills/RoundsPlayed
 }
 
 func (p player) String() string {
 	kd := float64(p.Kills) / float64(p.Losses)
 	wl := float64(p.Kills) / float64(p.Wins+p.Losses)
-	return fmt.Sprintf("#%d %s, %d wins, %d kills, %d losses, K/D %.2f, W/L %.2f, %s play time, favourite match type %s %s",
-		p.GlobalRank, p.RankText, p.Wins, p.Kills, p.Losses, kd, wl, p.TotalPlayTime, p.FavouriteMatchType, p.URL())
+	return fmt.Sprintf("#%d %s, %d wins, %d kills, %d losses, K/D %.2f, W/L %.2f, %s play time %s",
+		p.GlobalRank, p.RankText, p.Wins, p.Kills, p.Losses, kd, wl, p.TotalPlayTime, p.URL())
 }
 
 func (p player) Short() string {
@@ -96,13 +95,13 @@ var (
 	nameRE     = regexp.MustCompile(`<h4>([^<]+)</h4>`)
 	ranktextRE = regexp.MustCompile(`<span class="ranktext"[^>]*>([^<]+)</span>`)
 	brRankRE   = regexp.MustCompile(`<span class="br_rank">(\d+)</span>`)
-	statboxRE  = regexp.MustCompile(`<div class="statbox2">\s*([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br/>([^<]+)<br/>\s*</div>`)
+	statboxRE  = regexp.MustCompile(`<div class="statbox2">\s*([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br />([^<]+)<br/>\s*</div>`)
 )
 
 var errNotFound = errors.New("battleroyale: player not found")
 
 func parseViewPlayer(page string) (*player, error) {
-	if strings.Contains(page, "No player records found with id") {
+	if strings.Contains(page, "No player profile found") {
 		return nil, errNotFound
 	}
 	p := &player{}
@@ -157,8 +156,7 @@ func parseViewPlayer(page string) (*player, error) {
 	// 10 Win Points
 	// 11 Kill Points
 	// 12 Total Points
-	// 13 Favourite match type
-	// 14 Average Kills / Match
+	// 13 Average Kills / Match
 	p.TotalPlayTime, err = time.ParseDuration(strings.Replace(m[1], " ", "", -1))
 	if err != nil {
 		return nil, err
@@ -196,6 +194,5 @@ func parseViewPlayer(page string) (*player, error) {
 	if err != nil {
 		return nil, err
 	}
-	p.FavouriteMatchType = m[13]
 	return p, nil
 }

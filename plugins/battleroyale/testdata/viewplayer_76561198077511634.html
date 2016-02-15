@@ -1,93 +1,141 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="icon" href="images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Battle Royale Leaderboards</title>
+    <link rel="icon" href="images/favicon.ico">
+    
+    <title>BR Leaderboards - Hardcore</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/custom.css" rel="stylesheet">
-    <link href="css/site_style.css" rel="stylesheet">
+    <link href="css/custom.css?ver=2" rel="stylesheet">
+    <link href="css/site_style.css?ver=2" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
+
+    <script src="js/sorttable.js"></script>
   </head>
 
   <body>
-
+  
     <script src="js/jquery.min.js"></script>
 
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <script>
+      $("#ToggleNavScript").click(function() {
+        $('.navbar-collapse').collapse('toggle');
+      });
+      $( document ).ready(function() {
+          $('.navbar-collapse').collapse('toggle');
+          $('.navbar-collapse').collapse('toggle');
+      });
+    </script>  
 
-      <div class="container">
-        <div class="navbar-header pull-left">
-          <a class="navbar-brand" href="index.php">Arma III BR Leaderboards</a>
-        </div>
-        <div id="navbar">
-          <ul class="nav navbar-nav">
-            <li><a href="index.php">Home</a></li>
-            <li><a href="index.php?page=faq">FAQ</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Rankings <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="index.php?page=top25&type=3">Top 25 Ranking</a></li>
-                <li><a href="index.php?page=top25&type=12">Top 25 Win Points</a></li>
-                <li><a href="index.php?page=top25&type=13">Top 25 Kill Points</a></li>
-                <!--<li><a href="index.php?page=top25&type=12">Top 25 Ranking gained (Last 24h)</a></li>
-                <li><a href="index.php?page=top25&type=13">Top 25 Ranking gained (Last week)</a></li>-->
-                <li role="separator" class="divider"></li>
-                <li><a href="index.php?page=top25&type=1">Top 25 Most kills</a></li>
-                <li><a href="index.php?page=top25&type=4">Top 25 Longest Kills</a></li>
-                <li><a href="index.php?page=top25&type=5">Top 25 Most kills/match</a></li>
-                <li><a href="index.php?page=top25&type=6">Top 25 Highest Avg. kills/match</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="index.php?page=top25&type=2">Top 25 Most wins</a></li>
-                <li><a href="index.php?page=top25&type=7">Top 25 Win Percentage</a></li>
-                <li><a href="index.php?page=top25&type=8">Top 25 Most playtime</a></li>
-                <li><a href="index.php?page=top25&type=9">Top 25 Highest Avg. Survival Time</a></li>
-                <li><a href="index.php?page=top25&type=10">Top 25 Highest Avg. Placement</a></li>
-                <li><a href="index.php?page=top25&type=11">Top 25 Most Matches played</a></li>
-                <li><a href="index.php?page=top25&type=14">Top 25 Highest Avg. Survival %</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="index.php?page=statistics">Global Statistics</a></li>
-                <li><a href="index.php?page=drift">Drift logs</a></li>
-              </ul>
-            </li>
-            <li><a href="index.php?page=matches">Matches</a></li>
-          </ul>
-          <form class="navbar-form navbar-left" role="search" action="misc/searchredirect.php" method="get">
-            <div class="form-group">
-              <input type="text" class="form-control text-custom" placeholder="IGN or SteamID" name="nick">
+
+    <nav class="navbar navbar-default navbar-static-top" style="z-index: 5000;">
+          <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" style="float: left;">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+              
+              	<!--<a class="navbar-brand" href="index.php">-->
+
+				<div style="width:300px;height:50px;">
+					<div id="spacer" style="width:10px;float:left;">&nbsp;</div>		
+					<div id="upper">
+						<a href="index.php" style="text-decoration: none;">
+							<span class="br_bigtext" style="color:#a22;font-size: 1.7em;">BR Leaderboards</span>
+						</a>
+					</div>
+
+					<div id="spacer" style="width:10px;float:left;">&nbsp;</div>
+					<div id="lower">
+						<a href="index.php" style="text-decoration: none;">
+							<div class="br_medtext" style="color:#fff;position:relative;top:-3px;font-size:1.3em;float:left;">
+								Season 1
+							</div>
+						</a>
+
+						
+						<div id="spacer" style="width:55px;float:left;">&nbsp;</div>
+
+						<a href="../leaderboard/" class="lb_typelink_vis br_medtext">HC</a>
+
+						<div id="spacer" style="width:20px;float:left;">&nbsp;</div>
+
+						<a href=../leaderboard_reg/index.php?page=viewplayer&amp;id=76561198077511634 class="lb_typelink_unvis br_medtext">REG</a>
+					</div>
+				</div>
+				<!--</a>-->
+              
             </div>
-            <button type="submit" class="btn btn-default">Search</button>
-          </form>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="index.php?page=contact">Contact</a></li>
-            <li><a href="index.php?page=bugs">Bugs</a></li>
-            <li><a href="index.php?page=feedback">Feedback</a></li>
-            <li><a href="index.php?page=profile">LOGIN</a></li>
-          </ul>
-        </div>
-      </div>
+            <div class="navbar-collapse collapse in" aria-expanded="true">
+              <ul class="nav navbar-nav">
+                <li><a href="index.php?page=faq">FAQ</a></li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Rankings <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="index.php?page=top25&amp;type=3">Top 25 Ranking</a></li>
+                    <li><a href="index.php?page=top25&amp;type=12">Top 25 Win Points</a></li>
+                    <li><a href="index.php?page=top25&amp;type=13">Top 25 Kill Points</a></li>
+                    <!--<li><a href="index.php?page=top25&type=12">Top 25 Ranking gained (Last 24h)</a></li>
+                    <li><a href="index.php?page=top25&type=13">Top 25 Ranking gained (Last week)</a></li>-->
+                    <li role="separator" class="divider"></li>
+                    <li><a href="index.php?page=top25&amp;type=1">Top 25 Most kills</a></li>
+                    <li><a href="index.php?page=top25&amp;type=4">Top 25 Longest Kills</a></li>
+                    <li><a href="index.php?page=top25&amp;type=5">Top 25 Most kills/match</a></li>
+                    <li><a href="index.php?page=top25&amp;type=6">Top 25 Highest Avg. kills/match</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="index.php?page=top25&amp;type=2">Top 25 Most wins</a></li>
+                    <li><a href="index.php?page=top25&amp;type=7">Top 25 Win Percentage</a></li>
+                     <!--<li><a href="index.php?page=top25&amp;type=8">Top 25 Most playtime</a></li>-->
+                    <li><a href="index.php?page=top25&amp;type=9">Top 25 Highest Avg. Survival Time</a></li>
+                    <li><a href="index.php?page=top25&amp;type=10">Top 25 Highest Avg. Placement</a></li>
+                    <li><a href="index.php?page=top25&amp;type=11">Top 25 Most Matches played</a></li>
+                    <li><a href="index.php?page=top25&amp;type=14">Top 25 Highest Avg. Survival %</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="index.php?page=statistics">Global Statistics</a></li>
+                    <li><a href="index.php?page=drift">Drift logs</a></li>
+                  </ul>
+                </li>
+                <li><a href="index.php?page=matches">Matches</a></li>
+              </ul>
 
-    </nav>
+              <form class="navbar-form navbar-left" role="search" action="misc/searchredirect.php" method="get">
+                <div class="form-group">
+                  <input type="text" class="form-control text-custom" placeholder="IGN or SteamID" name="nick">
+                </div>
+                <button type="submit" class="btn btn-default">Search</button>
+              </form>
+
+              <ul class="nav navbar-nav">
+                <li><a href="index.php?page=contact">Contact</a></li>
+                <li><a href="index.php?page=feedback">Feedback</a></li>
+                <li><a href="index.php?page=profile">LOGIN</a></li>
+                              </ul>
+            </div>
+          </div>
+
+        </nav>
 
     <div class="container"> <div class="alert alert-warning" role="alert" style="height:25px;line-height:0px;">
-	Expect a data wipe after the kill distance bugs have been fixed.
+	Notice: Non-solo games are worth only 10% of the points!
 </div>
 <!--[if IE]>
 	<br>
 	<div class="alert alert-danger" role="alert">
 		Internet explorer is not supported and you will have trouble trying to browse this site with IE!
 	</div>
-<![endif]--><br><br>
-
+<![endif]--><br>
+    
 	    <div id="profilecontainer">
 	    	<div id="profileboxleft">
 				<div id="profilesocial">
 					<div class="steaminfo" style="width:185px;height:30px;">
-						<img class="img-rounded" src="avatars/76561198077511634.png" width="150"><br /><h4>WeTarDidSmurf</h4><span class="ranktext" style="color: rgb(170,0,170);">Champion</span><h5 style="color: #666;">Global Rank</h5><span class="br_rank">1</span><br><br>					</div>
+						<img class="img-rounded" src="avatars/default.png" width="150"><br /><h4>WeTarDidSmurf</h4><span class="ranktext" style="color: rgb(74,143,40);">Seasoned</span><h5 style="color: #666;">Global Rank</h5><span class="br_rank">170</span><br><br>					</div>
 				</div>
 	    		<div id="profileinfowrapper">
 					<div id="profileinfo">
@@ -95,11 +143,11 @@
 							<dt class="br_bigtext">Bio</dt>
 							<dd class="br_biotext"><i>
 								This is temporary profile filler material. You can write what you want here as long as it does not exceed two hundred and fifty five characters! Hate speech and advertisement will result in a permanent ban from Battle Royale.							</i></dd>
-
+							
 							<dt class="br_texthidden">Social Links</dt>
 							<dd class="br_bigtext">
 								<div class="socialicons">
-									<a class="socialImage" href="http://steamcommunity.com/profiles/76561198077511634"><img src="images/icons/steam.png" width="32"></a><a class="socialImage" href="http://twitter.com/WeTarDidSmurf"><img src="images/icons/twitter.png" width="32"></a><a class="socialImage" href="http://twitch.tv/www.twitch.tv/wetardidsmurf"><img src="images/icons/twitch.png" width="32"></a><img class="greyImage socialImage" src="images/icons/youtube.png" width="32">								</div>
+									<a class="socialImage" href="http://steamcommunity.com/profiles/76561198077511634"><img src="images/icons/steam.png" width="32"></a><img class="greyImage socialImage" src="images/icons/twitter.png" width="32"><img class="greyImage socialImage" src="images/icons/twitch.png" width="32"><img class="greyImage socialImage" src="images/icons/youtube.png" width="32">								</div>
 							</dd>
 						</dl>
 					</div>
@@ -119,19 +167,23 @@
 		    			Win Points<br />
 		    			Kill Points<br />
 		    			Total Points<br />
-		    			Favourite match type<br />
 		    			Average Kills / Match<br />
 					</div>
 					<div class="statbox2">
-						33h 4m 20s<br />49<br />40m 29s<br />5<br />21<br />28<br />100<br />478.78 km<br />42.86%<br />1538.35<br />1404.2<br />1819.19<br />100 % Regular<br/>2.04<br/>					</div>
+						18h 39m 17s<br />24<br />41m 52s<br />7<br />7<br />17<br />48<br />229.37 km<br />29.17%<br />1448.88<br />1356.54<br />1720.19<br />2<br/>					</div>
 				</div>
 	    	</div>
 	    	<div style="height: 50px;"></div>
 	    	<div class="v-separator"></div>
 	    	<div id="profileboxright">
-				<div class="br_bigtext">Rank History</div>
+				<div class="br_bigtext">Rating History</div>
+				<div style="margin-left: 60px; top: 35px; position: relative;z-index: 1;">
+					<a id="g_all" class="btn btn-xs btn-warning" style="z-index: 10;" onclick="drawChart(1)">All time</a>
+					<a id="g_month" class="btn btn-xs btn-success" style="z-index: 10;" onclick="drawChart(2)">1 Month</a>
+					<a id="g_week" class="btn btn-xs btn-success" style="z-index: 10;" onclick="drawChart(3)">1 Week</a>
+					<a id="g_day" class="btn btn-xs btn-success" style="z-index: 10;" onclick="drawChart(4)">1 Day</a>
+				</div>
 	    		<div id="chart_div"></div>
-
 				<div class="statboxwrapper2">
 	    		<h3 class="br_bigtext">Most used weapons</h3>
 	    			<br />
@@ -143,8 +195,8 @@
 						  	<th>Total kills</th>
 						  </tr>
 						</thead>
-						<tbody>
-							<tr><td>1</td><td>MX 6.5 mm</td><td>20</td></tr><tr><td>2</td><td>Katiba 6.5mm</td><td>12</td></tr><tr><td>3</td><td>MX 3GL 6.5 mm</td><td>11</td></tr><tr><td>4</td><td>M4A1 (Desert)</td><td>7</td></tr><tr><td>5</td><td>CZ750 w/ Harris Bipod (Black)</td><td>5</td></tr>						</tbody>
+						<tbody> 
+							<tr><td>1</td><td>Katiba 6.5mm</td><td>15</td></tr><tr><td>2</td><td>MX 6.5 mm</td><td>12</td></tr><tr><td>3</td><td>M4A1 AFG (Black)</td><td>10</td></tr><tr><td>4</td><td>Lee Enfield MkIII (Rail)</td><td>6</td></tr><tr><td>5</td><td>Mk16 Mod 0 CQC</td><td>4</td></tr>						</tbody>
 					</table>
 									</div>
 				<div class="statboxwrapper3">
@@ -153,17 +205,17 @@
 							<thead>
 							  <tr>
 							  	<th>#</th>
+							  	<th>Length</th>
 							  	<th>Weapon</th>
-							  	<th>Total kills</th>
 							  	<th>Player</th>
 							  	<th>UID</th>
 							  </tr>
 							</thead>
-							<tbody>
-								<tr><td>1</td><td>806.54m</td><td>MX 3GL 6.5 mm</td><td><a href="index.php?page=viewplayer&id=76561198044110384">Nick (2)</a></td><td><a href="index.php?page=viewmatch&id=JSScACgCBHKu">JSScACgCBHKu</a></td></tr><tr><td>2</td><td>470.89m</td><td>Lee Enfield MkIII (Rail)</td><td><a href="index.php?page=viewplayer&id=76561198121117476">Godfather93</a></td><td><a href="index.php?page=viewmatch&id=h7a621GO0icP">h7a621GO0icP</a></td></tr><tr><td>3</td><td>403.11m</td><td>Mk17 Standard</td><td><a href="index.php?page=viewplayer&id=76561198004838826">m4sAK4do</a></td><td><a href="index.php?page=viewmatch&id=orcy8AOqbE4J">orcy8AOqbE4J</a></td></tr><tr><td>4</td><td>341.26m</td><td>Mk17 Standard</td><td><a href="index.php?page=viewplayer&id=76561198059158956">Armin</a></td><td><a href="index.php?page=viewmatch&id=orcy8AOqbE4J">orcy8AOqbE4J</a></td></tr><tr><td>5</td><td>309.9m</td><td>Katiba 6.5mm</td><td><a href="index.php?page=viewplayer&id=76561198085682177">DieNicely</a></td><td><a href="index.php?page=viewmatch&id=IVoAnEfxDpZ1">IVoAnEfxDpZ1</a></td></tr>							</tbody>
+							<tbody> 
+								<tr><td>1</td><td>497.42m</td><td>Lee Enfield MkIII (Rail)</td><td><a href="index.php?page=viewplayer&id=76561198063811754">Гражданин Иван</a></td><td><a href="index.php?page=viewmatch&id=pWI8yahJyE8B">pWI8yahJyE8B</a></td></tr><tr><td>2</td><td>448.9m</td><td>M4A1 AFG (Black)</td><td><a href="index.php?page=viewplayer&id=76561198009823409">HandyHomer</a></td><td><a href="index.php?page=viewmatch&id=zwwHRKMP5Rzh">zwwHRKMP5Rzh</a></td></tr><tr><td>3</td><td>319.81m</td><td>Katiba 6.5mm</td><td><a href="index.php?page=viewplayer&id=76561198014571985">187Clyde</a></td><td><a href="index.php?page=viewmatch&id=Kp2rxKozBVV6">Kp2rxKozBVV6</a></td></tr><tr><td>4</td><td>311.3m</td><td>Lee Enfield MkIII (Rail)</td><td><a href="index.php?page=viewplayer&id=76561198086416914">NeverDieAlone</a></td><td><a href="index.php?page=viewmatch&id=pWI8yahJyE8B">pWI8yahJyE8B</a></td></tr><tr><td>5</td><td>267.29m</td><td>CZ550  w/  Rail</td><td><a href="index.php?page=viewplayer&id=76561198037510519">Force</a></td><td><a href="index.php?page=viewmatch&id=mNmy45hekV7D">mNmy45hekV7D</a></td></tr>							</tbody>
 						</table>
-										</div>
-		</div>
+										</div>							
+		</div>		
     	</div>
 		<div id="br_matches">
 			<h3 class="br_bigtext">Latest Matches</h3>
@@ -172,9 +224,9 @@
 				<thead>
 				  <tr>
 					<th>#</th>
-					<th>Kills</th>
-					<th>Time survived</th>
 					<th>Place</th>
+					<th>Time survived</th>
+					<th>Kills</th>
 					<th>Win Points gained</th>
 					<th>Kill Points gained</th>
 					<th>Ranking gained</th>
@@ -183,8 +235,8 @@
 					<th>UID</th>
 				  </tr>
 				</thead>
-				<tbody id="tblbody">
-					<tr class="own_nobold"><td>49</td><td>2</td><td>49 minutes 57 seconds</td><td>1</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>16.58</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>10.36</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>18.65</td><td>1819.19</td><td>2015-11-03 00:32:53</td><td><a href="index.php?page=viewmatch&id=XOfaVaM8GR4n">XOfaVaM8GR4n</a></td></tr><tr><td>48</td><td>8</td><td>40 minutes 14 seconds</td><td>2</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>8.26</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>20.34</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>12.33</td><td>1800.54</td><td>2015-11-02 15:02:03</td><td><a href="index.php?page=viewmatch&id=kqjhVnkwK5IC">kqjhVnkwK5IC</a></td></tr><tr><td>47</td><td>4</td><td>42 minutes 41 seconds</td><td>5</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>3.51</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>23.36</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>8.18</td><td>1788.22</td><td>2015-11-02 14:20:01</td><td><a href="index.php?page=viewmatch&id=jIiMXolLezEv">jIiMXolLezEv</a></td></tr><tr><td>46</td><td>0</td><td>24 minutes 34 seconds</td><td>16</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-13.17</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-17.74</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-16.72</td><td>1780.04</td><td>2015-11-02 13:48:43</td><td><a href="index.php?page=viewmatch&id=7cQ1Hk6os288">7cQ1Hk6os288</a></td></tr><tr><td>45</td><td>0</td><td>36 minutes 8 seconds</td><td>8</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-2.97</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-12.84</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-5.54</td><td>1796.75</td><td>2015-11-02 13:05:16</td><td><a href="index.php?page=viewmatch&id=WUQTpKBLF5ix">WUQTpKBLF5ix</a></td></tr><tr class="own_nobold"><td>44</td><td>3</td><td>50 minutes 33 seconds</td><td>1</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>12.99</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>13.66</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>15.72</td><td>1802.3</td><td>2015-11-02 12:18:59</td><td><a href="index.php?page=viewmatch&id=63Ac7QIquwCZ">63Ac7QIquwCZ</a></td></tr><tr class="own_nobold"><td>43</td><td>6</td><td>39 minutes 32 seconds</td><td>1</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>12.24</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>16.81</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>15.61</td><td>1786.58</td><td>2015-11-02 11:14:24</td><td><a href="index.php?page=viewmatch&id=orcy8AOqbE4J">orcy8AOqbE4J</a></td></tr><tr><td>42</td><td>0</td><td>4 minutes 38 seconds</td><td>30</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-26.18</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-23.2</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-30.82</td><td>1770.97</td><td>2015-11-02 10:27:38</td><td><a href="index.php?page=viewmatch&id=mwr9KtejXrHK">mwr9KtejXrHK</a></td></tr><tr class="own_nobold"><td>41</td><td>3</td><td>51 minutes 55 seconds</td><td>1</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>13.46</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>11.44</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>15.74</td><td>1801.79</td><td>2015-11-02 09:41:39</td><td><a href="index.php?page=viewmatch&id=qJFl9YGVLyGj">qJFl9YGVLyGj</a></td></tr><tr><td>40</td><td>0</td><td>39 minutes 17 seconds</td><td>6</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>1.09</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-7.97</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-0.5</td><td>1786.04</td><td>2015-11-02 08:40:20</td><td><a href="index.php?page=viewmatch&id=QgdZBJnbsD4E">QgdZBJnbsD4E</a></td></tr>				</tbody>
+				<tbody id="tblbody"> 
+					<tr><td>29</td><td>3</td><td>52 minutes 52 seconds</td><td>2</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>15.87</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>15.3</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>18.93</td><td>1720.19</td><td>2016-02-14 09:00:47</td><td><a href="index.php?page=viewmatch&id=mNmy45hekV7D">[Altis|HC][SOLO][EU8]</a></td></tr><tr class="own_nobold"><td>28</td><td>1</td><td>42 minutes 55 seconds</td><td>4</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>3.93</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>5.78</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>5.09</td><td>1701.26</td><td>2016-02-14 07:59:43</td><td><a href="index.php?page=viewmatch&id=pWI8yahJyE8B">[Altis|Hardcore][EU4]</a></td></tr><tr><td>27</td><td>2</td><td>55 minutes 52 seconds</td><td>0</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>28.73</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>0.89</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>28.91</td><td>1696.17</td><td>2016-02-14 07:02:50</td><td><a href="index.php?page=viewmatch&id=8TRCkKdwI4UU">[Altis|HC][SOLO][UK1]</a></td></tr><tr><td>26</td><td>5</td><td>51 minutes 23 seconds</td><td>0</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>20.65</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-1.35</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>20.38</td><td>1667.26</td><td>2016-02-13 23:48:51</td><td><a href="index.php?page=viewmatch&id=Tqk9KXMk60pf">[Altis|HC][SOLO][EU8]</a></td></tr><tr><td>25</td><td>15</td><td>20 minutes 23 seconds</td><td>0</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-2.85</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-9.98</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-4.84</td><td>1646.88</td><td>2016-02-13 01:25:16</td><td><a href="index.php?page=viewmatch&id=jHWQt2gWfWKI">[Altis|HC][SOLO][EU10]</a></td></tr><tr><td>24</td><td>44</td><td>5 minutes 10 seconds</td><td>0</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-3.64</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-3.29</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-4.3</td><td>1651.72</td><td>2016-02-13 01:16:51</td><td><a href="index.php?page=viewmatch&id=KlyDZde1su3k">[Altis|Hardcore][UK3]</a></td></tr><tr><td>23</td><td>12</td><td>30 minutes 58 seconds</td><td>0</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-1.69</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-13.26</td><td><span class="glyphicon glyphicon-chevron-down text-danger" style="position: relative;top: 3px;"></span>-4.35</td><td>1656.02</td><td>2016-02-12 21:55:15</td><td><a href="index.php?page=viewmatch&id=eIEOKTjgeXHf">[Altis|HC][SOLO][EU8]</a></td></tr><tr><td>22</td><td>12</td><td>35 minutes 39 seconds</td><td>1</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>2.99</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>6.37</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>4.26</td><td>1660.37</td><td>2016-02-07 22:16:00</td><td><a href="index.php?page=viewmatch&id=7xWXBJgHo4H4">[Altis|HC][SOLO][UK1]</a></td></tr><tr class="own_nobold"><td>21</td><td>1</td><td>47 minutes 23 seconds</td><td>5</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>61.47</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>70.84</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>75.64</td><td>1656.1</td><td>2016-02-07 19:46:59</td><td><a href="index.php?page=viewmatch&id=F4Dk8M2iLKYO">[Bozcaada|HC][SOLO][US17]</a></td></tr><tr class="own_nobold"><td>20</td><td>1</td><td>52 minutes 5 seconds</td><td>4</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>6.04</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>3.76</td><td><span class="glyphicon glyphicon-chevron-up text-success" style="position: relative;top: 3px;"></span>6.79</td><td>1580.47</td><td>2016-02-06 23:11:44</td><td><a href="index.php?page=viewmatch&id=Kp2rxKozBVV6">[Altis|Hardcore][EU4]</a></td></tr>				</tbody>
 			</table>
 			<div class='loadtr' id='loadtr'>
 			Load more matches!
@@ -194,20 +246,30 @@
 		<br>
 
 		<script>
-			var rankdata = [[1,1233.02,"1446155379"],[2,1281.78,"1446159308"],[3,1343.43,"1446168237"],[4,1397.48,"1446173034"],[5,1418.51,"1446176795"],[6,1458.47,"1446181582"],[7,1479.88,"1446184867"],[8,1512.67,"1446187929"],[9,1528.34,"1446231567"],[10,1533.49,"1446234746"],[11,1562.46,"1446237145"],[12,1590.06,"1446240246"],[13,1613.44,"1446243474"],[14,1623.63,"1446252887"],[15,1624.3,"1446255560"],[16,1645.95,"1446257925"],[17,1647.92,"1446260490"],[18,1649.08,"1446262883"],[19,1658.1,"1446266058"],[20,1678.36,"1446277774"],[21,1685.23,"1446281324"],[22,1700.67,"1446284817"],[23,1705.14,"1446288966"],[24,1699.67,"1446291721"],[25,1704.71,"1446327217"],[26,1684.63,"1446330038"],[27,1701.63,"1446333464"],[28,1710.57,"1446337114"],[29,1716.86,"1446340266"],[30,1732.27,"1446343355"],[31,1749.51,"1446346721"],[32,1763.38,"1446350596"],[33,1761.69,"1446353913"],[34,1764.5,"1446357180"],[35,1778.1,"1446363465"],[36,1791.34,"1446366348"],[37,1805.39,"1446370468"],[38,1782.24,"1446411517"],[39,1786.54,"1446449170"],[40,1786.04,"1446453620"],[41,1801.79,"1446457299"],[42,1770.97,"1446460058"],[43,1786.58,"1446462864"],[44,1802.3,"1446466739"],[45,1796.75,"1446469516"],[46,1780.04,"1446472123"],[47,1788.22,"1446474001"],[48,1800.54,"1446476523"],[49,1819.19,"1446510773"]];
-			var cur = 10;
-			var gamecount = 39;
-			var sid = "76561198077511634";
+			var rankdata = [[1,1200,"1451956814"],[2,1207.78,"1451962198"],[3,1207.78,"1451976474"],[4,1289.41,"1452027463"],[5,1420.13,"1452035819"],[6,1417.64,"1452073846"],[7,1407.44,"1452078766"],[8,1407.44,"1452079043"],[9,1467.55,"1452381513"],[10,1475.6,"1452384895"],[11,1475.6,"1453089262"],[12,1479.51,"1453573767"],[13,1488.13,"1453577603"],[14,1492.19,"1453582188"],[15,1492.19,"1453611905"],[16,1525.71,"1453661956"],[17,1533.87,"1454267828"],[18,1570.68,"1454288478"],[19,1573.68,"1454291819"],[20,1580.47,"1454800304"],[21,1656.1,"1454874419"],[22,1660.37,"1454883360"],[23,1656.02,"1455314115"],[24,1651.72,"1455326211"],[25,1646.88,"1455326716"],[26,1667.26,"1455407331"],[27,1696.17,"1455433370"],[28,1701.26,"1455436783"],[29,1720.19,"1455440447"]];
+			var cur = 10; 
+			var gamecount = 19; 
+			var sid = "76561198077511634"; 
 		</script>
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<script type="text/javascript" src="js/rankgraph.js"></script>
-		<script src="js/matchload_profile.js"></script>
+		<script src="js/matchload_profile.js?v=2"></script>
 		<br><br>
-<small>Page generated in 1.1805 seconds.</small>	<script src="js/bootstrap.min.js"></script>
+<small>Page generated in 0.0494 seconds.</small>	<script src="js/bootstrap.min.js"></script>
 	<script>
 	    $(document).ready(function () {
 	        $('.dropdown-toggle').dropdown();
 	    });
+
+	    var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-50418274-1']);
+          _gaq.push(['_trackPageview']);
+
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
 	</script>
   </body>
 </html>
