@@ -4,6 +4,7 @@ import (
 	"errors"
 	"html"
 	"regexp"
+	"strings"
 )
 
 var (
@@ -22,5 +23,10 @@ func (p *Twitter) Parse(body string) (string, error) {
 	if text == nil {
 		return "", errors.New("url: twitter: cannot parse tweet")
 	}
-	return Trim(html.UnescapeString(StripTags(text[1]))), nil
+	s := StripTags(text[1])
+	// unescape would replace &nbsp; by \u00a0 but we prefer normal space \u0020
+	s = strings.Replace(s, "&nbsp;", " ", -1)
+	s = html.UnescapeString(s)
+	s = Trim(s)
+	return s, nil
 }

@@ -28,11 +28,11 @@ func TestTwitterParse(t *testing.T) {
 	}{
 		{
 			url:  "https://twitter.com/BenLaurie/status/331442973009133568",
-			want: `Google Public DNS now checks DNSSEC for you by default. http://googleonlinesecurity.blogspot.co.uk/2013/03/google-public-dns-now-supports-dnssec.html ….`,
+			want: `Google Public DNS now checks DNSSEC for you by default. http://googleonlinesecurity.blogspot.co.uk/2013/03/google-public-dns-now-supports-dnssec.html ….`,
 		},
 		{
 			url:  "https://twitter.com/supersat/status/331445098552369153",
-			want: `@BenLaurie but no DNSSEC for http://google.com ? :(`,
+			want: `@BenLaurie but no DNSSEC for http://google.com ? :(`,
 		},
 		{
 			url:  "https://twitter.com/newsoft/status/484274141852622848",
@@ -40,7 +40,7 @@ func TestTwitterParse(t *testing.T) {
 		},
 		{
 			url:  "https://twitter.com/element14/status/476395971472265216/photo/1",
-			want: `There's a new #Arduino coming ! Have you seen it yet? http://ow.ly/xM7BJ  pic.twitter.com/KV3hhRCi52`,
+			want: `There's a new #Arduino coming ! Have you seen it yet? http://ow.ly/xM7BJ pic.twitter.com/KV3hhRCi52`,
 		},
 	} {
 		got, err := Title(tt.url)
