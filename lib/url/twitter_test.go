@@ -40,7 +40,11 @@ func TestTwitterParse(t *testing.T) {
 		},
 		{
 			url:  "https://twitter.com/element14/status/476395971472265216/photo/1",
-			want: `There's a new #Arduino coming ! Have you seen it yet? http://ow.ly/xM7BJ pic.twitter.com/KV3hhRCi52`,
+			want: `There's a new #Arduino coming ! Have you seen it yet? http://ow.ly/xM7BJ http://pic.twitter.com/KV3hhRCi52`,
+		},
+		{
+			url:  "https://twitter.com/DefConBeanBag1/status/761690424423571456/photo/1",
+			want: "I want to break free... #DEFCON2016 @defcon @thedarktangent http://pic.twitter.com/egTrO0ja7q",
 		},
 	} {
 		got, err := Title(tt.url)
