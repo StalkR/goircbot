@@ -36,8 +36,8 @@ func goCmd(e *bot.Event) {
 }
 
 const (
-	fmtURL = "http://play.golang.org/fmt"
-	runURL = "http://play.golang.org/compile"
+	fmtURL = "https://play.golang.org/fmt"
+	runURL = "https://play.golang.org/compile"
 )
 
 type runResult struct {
