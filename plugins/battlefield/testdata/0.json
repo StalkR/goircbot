@@ -1,0 +1,8 @@
+{
+ "jsonrpc": "2.0",
+ "id": "",
+ "error": {
+  "message": "Internal Error: java.util.NoSuchElementException",
+  "code": -32603
+ }
+}
