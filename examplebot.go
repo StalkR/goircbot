@@ -67,7 +67,7 @@ func main() {
 	asm.Register(b)
 	if err := battlefield.Register(b, "account@ea.com", "password",
 		map[string]uint64{
-			"playerName": ID, // persona ID
+			"playerName": 123456789, // persona ID
 		}); err != nil {
 		log.Fatal(err)
 	}
