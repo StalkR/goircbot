@@ -27,6 +27,7 @@ func ByURL(url string) (*http.Transport, error) {
 		return nil, err
 	}
 	return &http.Transport{
+		Proxy:           http.ProxyFromEnvironment,
 		Dial:            timeoutDialer(*timeout),
 		TLSClientConfig: tls.Config(u.Host),
 	}, nil
