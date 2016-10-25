@@ -31,7 +31,7 @@ func NewSession(email, password string) *Session {
 }
 
 // Login logs in on EA then to Battlefield companion.
-// It returns an ID which can be used in subsequent requests to the companion API.
+// It obtains the gateway session ID needed to talk to the companion API.
 func (s *Session) Login() error {
 	if err := s.connectAuthInit(); err != nil {
 		return err
