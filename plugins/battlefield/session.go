@@ -72,7 +72,10 @@ func (s *Session) connectAuthInit() error {
 	if err != nil {
 		return err
 	}
-	if u.Host+u.Path != "signin.ea.com/p/web/login" {
+	target := u.Host + u.Path
+	switch target {
+	case "signin.ea.com/p/web/login", "signin.ea.com/p/web2/login":
+	default:
 		return fmt.Errorf("battlefield: expected redirect to signin.ea.com/p/web/login, got %s%s", u.Host, u.Path)
 	}
 	fid := u.Query().Get("fid")
