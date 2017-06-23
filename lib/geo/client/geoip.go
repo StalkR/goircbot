@@ -13,7 +13,7 @@ func main() {
 		fmt.Printf("Usage: %v <ip|host>\n", os.Args[0])
 		os.Exit(1)
 	}
-	g, err := geo.Location(os.Args[1])
+	g, err := geo.Locate(os.Args[1])
 	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)

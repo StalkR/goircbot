@@ -14,12 +14,12 @@ func locate(e *bot.Event) {
 	if len(addr) == 0 {
 		return
 	}
-	g, err := geo.Location(addr)
+	r, err := geo.Locate(addr)
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
 	}
-	e.Bot.Privmsg(e.Target, g.String())
+	e.Bot.Privmsg(e.Target, r.String())
 }
 
 // Register registers the plugin with a bot.
