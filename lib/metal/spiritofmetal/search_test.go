@@ -16,16 +16,14 @@ func TestSearch(t *testing.T) {
 			name: "converge",
 			want: []metal.Band{
 				metal.Band{Name: "Converge", Genre: "Hardcore", Country: "USA"},
-				metal.Band{Name: "Convergence", Genre: "Melodic Death", Country: "Italy"},
 				metal.Band{Name: "Convergence", Genre: "Death Dark", Country: "Austria"},
+				metal.Band{Name: "Convergence", Genre: "Melodic Death", Country: "Italy"},
 				metal.Band{Name: "Convergence From Within", Genre: "Death Metal", Country: "USA"},
 			},
 		},
 		{
 			name: "sdfgiousdfg",
-			want: []metal.Band{
-				metal.Band{Name: "Sidious", Genre: "Symphonic Death Black", Country: "United-Kingdom"},
-			},
+			want: nil,
 		},
 	} {
 		got, err := Search(tt.name)

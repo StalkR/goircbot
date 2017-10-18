@@ -2,7 +2,6 @@
 package spiritofmetal
 
 import (
-	"errors"
 	"fmt"
 	"html"
 	"io/ioutil"
@@ -13,11 +12,10 @@ import (
 	"github.com/StalkR/goircbot/lib/transport"
 )
 
-const baseURL = "http://www.spirit-of-metal.com/find.php"
+const baseURL = "http://www.spirit-of-metal.com/liste_groupe.php"
 
 var (
-	sectionRE     = regexp.MustCompile(`(?s)<div[^>]*><h1[^>]*>Results in the bands section(.*?)</div></div>`)
-	resultRE      = regexp.MustCompile(`(?s)<ul[^>]*>\s*<a[^>]*>([^<]+)</a>\s*\(([^-]+)-([^)]+)\)\s*</ul>`)
+	resultRE      = regexp.MustCompile(`(?s)<div class=col-xs-9><h3>([^<]+)</h3>(.*?) - (.*?) <BR> `)
 	nameCountryRE = regexp.MustCompile(`^(.*?) \([A-Z]+\)$`)
 )
 
@@ -27,7 +25,7 @@ func Search(name string) ([]metal.Band, error) {
 	if err != nil {
 		return nil, err
 	}
-	u := url.Values{"search": {"all"}, "nom": {name}}
+	u := url.Values{"recherche_groupe": {name}}
 	resp, err := client.Get(fmt.Sprintf("%s?%s", baseURL, u.Encode()))
 	if err != nil {
 		return nil, err
@@ -37,13 +35,8 @@ func Search(name string) ([]metal.Band, error) {
 	if err != nil {
 		return nil, err
 	}
-	s := string(b)
-	section := sectionRE.FindString(s)
-	if section == "" {
-		return nil, errors.New("spiritofmetal: results section not found")
-	}
 	var results []metal.Band
-	for _, r := range resultRE.FindAllStringSubmatch(section, -1) {
+	for _, r := range resultRE.FindAllStringSubmatch(string(b), -1) {
 		name := html.UnescapeString(r[1])
 		// Some names are "Band (UK)", strip country to have "Band".
 		nameCountry := nameCountryRE.FindStringSubmatch(name)
