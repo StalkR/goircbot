@@ -116,10 +116,6 @@ func (b *BotImpl) Run() {
 
 		// Wait on quit channel for a disconnect event.
 		<-b.quit
-		// Give goirc time to finish shutdown before starting Connect
-		// or we can race and have Connect() before initialise.
-		// Yes, goirc should add another mutex for that.
-		time.Sleep(time.Second)
 	}
 }
 
