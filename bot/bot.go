@@ -34,6 +34,11 @@ type Bot interface {
 
 // NewBot creates a new Bot implementation with a set of parameters.
 func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
+	return NewBotWithProxy(host, ssl, nick, ident, channels, "")
+}
+
+// NewBotWithProxy creates a new Bot implementation with a set of parameters and a proxy.
+func NewBotWithProxy(host string, ssl bool, nick, ident string, channels []string, proxy string) Bot {
 	hostPort := strings.SplitN(host, ":", 2)
 	cfg := &client.Config{
 		Me:          &state.Nick{Nick: nick},
@@ -46,6 +51,7 @@ func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
 		Version:     "Powered by GoIRCBot",
 		Recover:     (*client.Conn).LogPanic,
 		SplitLen:    450,
+		Proxy:       proxy,
 	}
 	cfg.Me.Ident = ident
 	cfg.Me.Name = nick
