@@ -69,10 +69,10 @@ func NewBotWithProxy(host string, ssl bool, nick, ident string, channels []strin
 	// Join channels on connect and mark ourselves as a Bot.
 	conn.HandleFunc("connected",
 		func(conn *client.Conn, line *client.Line) {
+			conn.Mode(conn.Me().Nick, "+B")
 			for _, channel := range b.channels {
 				conn.Join(channel)
 			}
-			conn.Mode(conn.Me().Nick, "+B")
 		})
 
 	// Signal disconnect to Bot.Run so it can reconnect.
