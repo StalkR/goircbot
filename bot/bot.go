@@ -66,7 +66,7 @@ func NewBotWithProxy(host string, ssl bool, nick, ident string, channels []strin
 		channels:  channels,
 	}
 
-	// Join channels on connect and mark ourselves as a Bot.
+	// On connect, mark ourselves as bot first then join channels (can be long).
 	conn.HandleFunc("connected",
 		func(conn *client.Conn, line *client.Line) {
 			conn.Mode(conn.Me().Nick, "+B")
