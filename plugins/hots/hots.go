@@ -29,7 +29,11 @@ func (s *Stats) String() string {
 	if s.TeamLeague.Medal == "" {
 		tl = "Team League: n/a"
 	}
-	hl := fmt.Sprintf("Hero League: %s %d (MMR %d)", s.HeroLeague.Medal, s.HeroLeague.Score, s.HeroLeague.MMR)
+	hlScore := "*"
+	if s.HeroLeague.Score != -1 {
+		hlScore = fmt.Sprintf("%d", s.HeroLeague.Score)
+	}
+	hl := fmt.Sprintf("Hero League: %s %v (MMR %d)", s.HeroLeague.Medal, hlScore, s.HeroLeague.MMR)
 	if s.HeroLeague.Medal == "" {
 		hl = "Hero League: n/a"
 	}
@@ -71,9 +75,9 @@ func get(id int) ([]byte, error) {
 
 var (
 	playerIDRE   = regexp.MustCompile(`<link href="https://www\.hotslogs\.com/Player/Profile\?PlayerID=(\d+)"`)
-	teamLeagueRE = regexp.MustCompile(`<th>Team League</th><td><img[^>]*>[^<]*<span>(\w+) (\d+) \(Current MMR: (\d+)\)</span>`)
-	heroLeagueRE = regexp.MustCompile(`<th>Hero League</th><td><img[^>]*>[^<]*<span>(\w+) (\d+) \(Current MMR: (\d+)\)</span>`)
-	quickMatchRE = regexp.MustCompile(`<th>Quick Match</th><td><img[^>]*>[^<]*<span>(\w+) (\d+) \(Current MMR: (\d+)\)</span>`)
+	teamLeagueRE = regexp.MustCompile(`<td>Team League</td><td><img[^>]*>[^<]*<span>(\w+) (\d+) \(MMR:&nbsp;(\d+)\)</span>`)
+	heroLeagueRE = regexp.MustCompile(`<td>Hero League</td><td><img[^>]*>[^<]*<span>(\w+) (\d+|<div[^>]*>\*</div>) \(MMR:&nbsp;(\d+)\)</span>`)
+	quickMatchRE = regexp.MustCompile(`<td>Quick Match</td><td><img[^>]*>[^<]*<span>(\w+) (\d+) \(MMR:&nbsp;(\d+)\)</span>`)
 )
 
 func parse(page string) (*Stats, error) {
@@ -104,7 +108,7 @@ func parse(page string) (*Stats, error) {
 		s.HeroLeague.Medal = m[1]
 		score, err := strconv.Atoi(m[2])
 		if err != nil {
-			return nil, err
+			score = -1
 		}
 		s.HeroLeague.Score = score
 		mmr, err := strconv.Atoi(m[3])
