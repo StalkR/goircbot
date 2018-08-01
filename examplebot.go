@@ -33,6 +33,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/scores"
 	"github.com/StalkR/goircbot/plugins/search"
 	"github.com/StalkR/goircbot/plugins/sed"
+	"github.com/StalkR/goircbot/plugins/stock"
 	"github.com/StalkR/goircbot/plugins/tail"
 	timep "github.com/StalkR/goircbot/plugins/time"
 	"github.com/StalkR/goircbot/plugins/tor"
@@ -92,6 +93,7 @@ func main() {
 	scores.Register(b, "/tmp/scores")
 	search.Register(b, "<key>", "<cx>")
 	sed.Register(b)
+	stock.Register(b)
 	tail.Register(b, []string{"/etc/passwd"})
 	timep.Register(b, "<key>")
 	tor.Register(b, "127.0.0.1:9051", "secret")
