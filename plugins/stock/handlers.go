@@ -62,8 +62,31 @@ func (q *quote) String() string {
 	if q.Change > 0 {
 		plus = "+"
 	}
-	return fmt.Sprintf("%v (%v): %v (%v%v, %v%v%%)",
-		q.Symbol, q.CompanyName, q.LatestPrice, plus, q.Change, plus, q.ChangePercent)
+	return fmt.Sprintf("%v (%v): %v %v (%v%v, %v%.2f%%), %v market cap, %v volume, %.2f P/E - https://iextrading.com/apps/stocks/%v",
+		q.Symbol, q.CompanyName,
+		q.LatestSource, q.LatestPrice, plus, q.Change, plus, q.ChangePercent*100,
+		humanize(q.MarketCap), humanize(q.LatestVolume), q.PeRatio, q.Symbol)
+}
+
+func humanize(i int64) string {
+	format := func(i, unit int64) string {
+		f := "%.0f"
+		if i < 10*unit {
+			f = "%.2f"
+		} else if i < 100*unit {
+			f = "%.1f"
+		}
+		return fmt.Sprintf(f, float64(i)/float64(unit))
+	}
+	switch {
+	case i >= 1e9: // Billion
+		return fmt.Sprintf("%vB$", format(i, 1e9))
+	case i >= 1e6: // Million
+		return fmt.Sprintf("%vM$", format(i, 1e6))
+	case i >= 1e3: // Thousand
+		return fmt.Sprintf("%vK$", format(i, 1e3))
+	}
+	return fmt.Sprintf("%v$", i)
 }
 
 func stock(symbol string) (*quote, error) {
