@@ -15,7 +15,7 @@ import (
 const baseURL = "http://www.spirit-of-metal.com/liste_groupe.php"
 
 var (
-	resultRE      = regexp.MustCompile(`(?s)<div class=col-xs-9><h3>([^<]+)</h3>(.*?) - (.*?) <BR> `)
+	resultRE      = regexp.MustCompile(`(?s)<div class="col-xs-9"><h3>([^<]+)</h3>(.*?) - (.*?) <br> `)
 	nameCountryRE = regexp.MustCompile(`^(.*?) \([A-Z]+\)$`)
 )
 
