@@ -19,13 +19,13 @@ const delay = 5 * time.Minute
 // it goes back above the limit.
 type Alarm struct {
 	Path     string
-	Limit    int
+	Limit    uint64
 	notified bool
 }
 
 // NewAlarm creates a new Alarm as specified.
 func NewAlarm(path string, limit size.Byte) Alarm {
-	return Alarm{Path: path, Limit: int(limit)}
+	return Alarm{Path: path, Limit: uint64(limit)}
 }
 
 // Monitor monitors a path and notifies when limit is crossed.
@@ -47,16 +47,14 @@ func (a *Alarm) Monitor(b bot.Bot) {
 }
 
 // Notify notifies disk usage on all channels.
-func (a *Alarm) Notify(b bot.Bot, total, free int) {
+func (a *Alarm) Notify(b bot.Bot, total, free uint64) {
 	if !b.Connected() {
 		return
 	}
 	a.notified = true
 	percent := 100 * (total - free) / total
-	totalFmt := size.Byte(total).String()
-	freeFmt := size.Byte(free).String()
 	line := fmt.Sprintf("Warning: %v has %v free (%v%% of %v used)",
-		a.Path, freeFmt, percent, totalFmt)
+		a.Path, size.Byte(free), percent, size.Byte(total))
 	for _, channel := range b.Channels() {
 		b.Privmsg(channel, line)
 	}
@@ -82,10 +80,8 @@ func df(e *bot.Event, alarms ...Alarm) {
 		return
 	}
 	percent := 100 * (total - free) / total
-	totalFmt := size.Byte(total).String()
-	freeFmt := size.Byte(free).String()
 	line := fmt.Sprintf("%v has %v free (%v%% of %v used)",
-		path, freeFmt, percent, totalFmt)
+		path, size.Byte(free), percent, size.Byte(total))
 	e.Bot.Privmsg(e.Target, line)
 }
 

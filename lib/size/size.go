@@ -4,7 +4,7 @@ package size
 import "fmt"
 
 // A Byte represents a number of bytes.
-type Byte int64
+type Byte uint64
 
 const (
 	_       = iota // ignore first value by assigning to blank identifier
