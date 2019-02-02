@@ -15,6 +15,6 @@ func Space(path string) (total, free int, err error) {
 		return
 	}
 	total = int(s.Bsize) * int(s.Blocks)
-	free = int(s.Bsize) * int(s.Bfree)
+	free = int(s.Bsize) * int(s.Bavail)
 	return
 }
