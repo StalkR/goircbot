@@ -71,22 +71,26 @@ func (a *Alarm) Notify(b bot.Bot, total, free uint64) {
 	}
 }
 
-func df(e *bot.Event, alarms map[string]Alarm) {
+func df(e *bot.Event, paths map[string]bool) {
+	if len(paths) == 0 {
+		e.Bot.Privmsg(e.Target, "error: no paths configured")
+		return
+	}
+	var pathlist []string
+	for p := range paths {
+		pathlist = append(pathlist, p)
+	}
+
 	path := strings.TrimSpace(e.Args)
 	if path == "" {
-		var paths []string
-		for _, p := range alarms {
-			paths = append(paths, p.Path)
-		}
 		if len(paths) > 1 {
-			e.Bot.Privmsg(e.Target, fmt.Sprintf("usage: df <path> (%v)", strings.Join(paths, ", ")))
+			e.Bot.Privmsg(e.Target, fmt.Sprintf("usage: df <path> (%v)", strings.Join(pathlist, ", ")))
 			return
 		}
-		path = paths[0] // there's only one, just use it
+		path = pathlist[0]
 	}
-	// only allow paths for which we have an alarm for
-	if _, ok := alarms[path]; !ok {
-		e.Bot.Privmsg(e.Target, "error: path not found")
+	if !paths[path] {
+		e.Bot.Privmsg(e.Target, "error: path not configured")
 		return
 	}
 	line, err := status(path)
@@ -99,15 +103,15 @@ func df(e *bot.Event, alarms map[string]Alarm) {
 
 // Register registers the plugin with a bot.
 func Register(b bot.Bot, alarms ...Alarm) {
-	m := map[string]Alarm{}
+	paths := map[string]bool{}
 	for _, a := range alarms {
-		m[a.Path] = a
+		paths[a.Path] = true
 		go a.Monitor(b)
 	}
 
 	b.Commands().Add("df", bot.Command{
 		Help:    "See disk usage",
-		Handler: func(e *bot.Event) { df(e, m) },
+		Handler: func(e *bot.Event) { df(e, paths) },
 		Pub:     true,
 		Priv:    false,
 		Hidden:  false})
