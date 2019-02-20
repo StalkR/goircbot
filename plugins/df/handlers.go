@@ -46,6 +46,17 @@ func (a *Alarm) Monitor(b bot.Bot) {
 	}
 }
 
+// status reports disk free/used status of a path.
+func status(path string) (string, error) {
+	total, free, err := disk.Space(path)
+	if err != nil {
+		return "", err
+	}
+	percent := 100 * (total - free) / total
+	return fmt.Sprintf("%v has %v free (%v%% of %v used)",
+		path, size.Byte(free), percent, size.Byte(total)), nil
+}
+
 // Notify notifies disk usage on all channels.
 func (a *Alarm) Notify(b bot.Bot, total, free uint64) {
 	if !b.Connected() {
@@ -60,40 +71,43 @@ func (a *Alarm) Notify(b bot.Bot, total, free uint64) {
 	}
 }
 
-func df(e *bot.Event, alarms ...Alarm) {
+func df(e *bot.Event, alarms map[string]Alarm) {
 	path := strings.TrimSpace(e.Args)
-	// Only allow paths with an alarm.
-	found := false
-	for _, a := range alarms {
-		if path == a.Path {
-			found = true
-			break
+	if path == "" {
+		var paths []string
+		for _, p := range alarms {
+			paths = append(paths, p.Path)
 		}
+		if len(paths) > 1 {
+			e.Bot.Privmsg(e.Target, fmt.Sprintf("usage: df <path> (%v)", strings.Join(paths, ", ")))
+			return
+		}
+		path = paths[0] // there's only one, just use it
 	}
-	if !found {
+	// only allow paths for which we have an alarm for
+	if _, ok := alarms[path]; !ok {
+		e.Bot.Privmsg(e.Target, "error: path not found")
 		return
 	}
-
-	total, free, err := disk.Space(path)
+	line, err := status(path)
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %v", err))
 		return
 	}
-	percent := 100 * (total - free) / total
-	line := fmt.Sprintf("%v has %v free (%v%% of %v used)",
-		path, size.Byte(free), percent, size.Byte(total))
 	e.Bot.Privmsg(e.Target, line)
 }
 
 // Register registers the plugin with a bot.
 func Register(b bot.Bot, alarms ...Alarm) {
+	m := map[string]Alarm{}
 	for _, a := range alarms {
+		m[a.Path] = a
 		go a.Monitor(b)
 	}
 
 	b.Commands().Add("df", bot.Command{
 		Help:    "See disk usage",
-		Handler: func(e *bot.Event) { df(e, alarms...) },
+		Handler: func(e *bot.Event) { df(e, m) },
 		Pub:     true,
 		Priv:    false,
 		Hidden:  false})
