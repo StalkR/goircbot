@@ -17,6 +17,7 @@ func TestSearch(t *testing.T) {
 			want: []metal.Band{
 				metal.Band{Name: "Converge", Genre: "Hardcore Chaotique / Punk / Metal", Country: "USA"},
 				metal.Band{Name: "Convict", Genre: "Punk Rock / Pop Punk", Country: "Belgique"},
+				metal.Band{Name: "Convulsing", Genre: "Death Metal / Black Metal", Country: "Australie"},
 			},
 		},
 		{
