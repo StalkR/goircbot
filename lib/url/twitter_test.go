@@ -4,28 +4,13 @@ import (
 	"testing"
 )
 
-func TestTwitterMatch(t *testing.T) {
-	p := &Twitter{}
-	for _, tt := range []struct {
-		url  string
-		want bool
-	}{
-		{url: "http://twitter.com/nickname/status/123456", want: true},
-		{url: "https://twitter.com/nickname/status/123456", want: true},
-		{url: "http://twitter.com/nickname/status/123456#extra", want: true},
-		{url: "http://example.com"},
-	} {
-		if got := p.Match(tt.url); got != tt.want {
-			t.Errorf("Match(%s): got %v; want %v", tt.url, got, tt.want)
-		}
-	}
-}
-
-func TestTwitterParse(t *testing.T) {
+func TestTwitter(t *testing.T) {
 	for _, tt := range []struct {
 		url  string
 		want string
+		err  error
 	}{
+		{url: "http://example.com", err: errSkip},
 		{
 			url:  "https://twitter.com/BenLaurie/status/331442973009133568",
 			want: `Google Public DNS now checks DNSSEC for you by default. http://googleonlinesecurity.blogspot.co.uk/2013/03/google-public-dns-now-supports-dnssec.html ….`,
@@ -40,20 +25,20 @@ func TestTwitterParse(t *testing.T) {
 		},
 		{
 			url:  "https://twitter.com/element14/status/476395971472265216/photo/1",
-			want: `There's a new #Arduino coming ! Have you seen it yet? http://ow.ly/xM7BJ http://pic.twitter.com/KV3hhRCi52`,
+			want: `There's a new #Arduino coming ! Have you seen it yet? http://ow.ly/xM7BJ https://pic.twitter.com/KV3hhRCi52`,
 		},
 		{
 			url:  "https://twitter.com/DefConBeanBag1/status/761690424423571456/photo/1",
-			want: "I want to break free... #DEFCON2016 @defcon @thedarktangent http://pic.twitter.com/egTrO0ja7q",
+			want: "I want to break free... #DEFCON2016 @defcon @thedarktangent https://pic.twitter.com/egTrO0ja7q",
 		},
 	} {
-		got, err := Title(tt.url)
-		if err != nil {
-			t.Errorf("Title(%s): err: %v", tt.url, err)
+		got, err := handleTwitter(tt.url)
+		if tt.err != err {
+			t.Errorf("Title(%v): err: %v", tt.url, err)
 			continue
 		}
-		if got != tt.want {
-			t.Errorf("Title(%s): got %s; want %s", tt.url, got, tt.want)
+		if err == nil && got != tt.want {
+			t.Errorf("Title(%v): got %v; want %v", tt.url, got, tt.want)
 		}
 	}
 }
