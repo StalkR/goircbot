@@ -11,6 +11,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/admin"
 	"github.com/StalkR/goircbot/plugins/asm"
 	"github.com/StalkR/goircbot/plugins/cdecl"
+	"github.com/StalkR/goircbot/plugins/coin"
 	"github.com/StalkR/goircbot/plugins/darkstat"
 	"github.com/StalkR/goircbot/plugins/df"
 	"github.com/StalkR/goircbot/plugins/dl"
@@ -64,6 +65,7 @@ func main() {
 	admin.Register(b, []string{"nick!ident@host"})
 	asm.Register(b)
 	cdecl.Register(b)
+	coin.Register(b, "<key>")
 	darkstat.Register(b, map[string]string{
 		"public":  "http://darkstat.public.com",
 		"private": "https://user:pass@darkstat.private.com",
