@@ -36,7 +36,6 @@ import (
 	"github.com/StalkR/goircbot/plugins/sed"
 	"github.com/StalkR/goircbot/plugins/stock"
 	"github.com/StalkR/goircbot/plugins/tail"
-	timep "github.com/StalkR/goircbot/plugins/time"
 	"github.com/StalkR/goircbot/plugins/tor"
 	"github.com/StalkR/goircbot/plugins/translate"
 	"github.com/StalkR/goircbot/plugins/travisci"
@@ -44,7 +43,6 @@ import (
 	"github.com/StalkR/goircbot/plugins/urban"
 	"github.com/StalkR/goircbot/plugins/urltitle"
 	"github.com/StalkR/goircbot/plugins/whoami"
-	"github.com/StalkR/goircbot/plugins/wunderground"
 	"github.com/fluffle/goirc/logging/glog"
 )
 
@@ -97,7 +95,6 @@ func main() {
 	sed.Register(b)
 	stock.Register(b)
 	tail.Register(b, []string{"/etc/passwd"})
-	timep.Register(b, "<key>")
 	tor.Register(b, "127.0.0.1:9051", "secret")
 	translate.Register(b, "<key>")
 	travisci.Register(b)
@@ -106,6 +103,5 @@ func main() {
 	urban.Register(b)
 	urltitle.Register(b, ignore)
 	whoami.Register(b)
-	wunderground.Register(b, "<key>")
 	b.Run()
 }
