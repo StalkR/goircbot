@@ -42,6 +42,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/up"
 	"github.com/StalkR/goircbot/plugins/urban"
 	"github.com/StalkR/goircbot/plugins/urltitle"
+	"github.com/StalkR/goircbot/plugins/weather"
 	"github.com/StalkR/goircbot/plugins/whoami"
 	"github.com/fluffle/goirc/logging/glog"
 )
@@ -102,6 +103,7 @@ func main() {
 	up.Register(b)
 	urban.Register(b)
 	urltitle.Register(b, ignore)
+	weather.Register(b, "<key>")
 	whoami.Register(b)
 	b.Run()
 }
