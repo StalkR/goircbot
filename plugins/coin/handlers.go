@@ -61,10 +61,11 @@ func coin(e *bot.Event, apiKey string) {
 	}
 	r, err := rate(apiKey, symbol)
 	if err != nil {
-		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
+		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %v", err))
 		return
 	}
-	e.Bot.Privmsg(e.Target, fmt.Sprintf("1 %v = %v USD", symbol, r))
+	more := fmt.Sprintf("https://www.coinbase.com/price/%v", strings.ToLower(symbol))
+	e.Bot.Privmsg(e.Target, fmt.Sprintf("1 %v = %v USD - %v", symbol, r, more))
 }
 
 // Register registers the plugin with a bot.
