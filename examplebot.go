@@ -36,6 +36,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/sed"
 	"github.com/StalkR/goircbot/plugins/stock"
 	"github.com/StalkR/goircbot/plugins/tail"
+	"github.com/StalkR/goircbot/plugins/timezone"
 	"github.com/StalkR/goircbot/plugins/tor"
 	"github.com/StalkR/goircbot/plugins/translate"
 	"github.com/StalkR/goircbot/plugins/travisci"
@@ -96,6 +97,7 @@ func main() {
 	sed.Register(b)
 	stock.Register(b)
 	tail.Register(b, []string{"/etc/passwd"})
+	timezone.Register(b, "<username>")
 	tor.Register(b, "127.0.0.1:9051", "secret")
 	translate.Register(b, "<key>")
 	travisci.Register(b)
