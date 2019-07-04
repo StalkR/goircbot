@@ -95,7 +95,7 @@ func main() {
 	scores.Register(b, "/tmp/scores")
 	search.Register(b, "<key>", "<cx>")
 	sed.Register(b)
-	stock.Register(b)
+	stock.Register(b, "<key>")
 	tail.Register(b, []string{"/etc/passwd"})
 	timezone.Register(b, "<username>")
 	tor.Register(b, "127.0.0.1:9051", "secret")

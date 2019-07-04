@@ -12,8 +12,6 @@ import (
 	"github.com/StalkR/goircbot/lib/transport"
 )
 
-const quoteURL = "https://api.iextrading.com/1.0/stock/%s/quote"
-
 type quote struct {
 	Symbol                string
 	CompanyName           string
@@ -89,8 +87,12 @@ func humanize(i int64) string {
 	return fmt.Sprintf("%v$", i)
 }
 
-func stock(symbol string) (*quote, error) {
-	uri := fmt.Sprintf(quoteURL, url.PathEscape(symbol))
+const apiURL = "https://cloud.iexapis.com/stable"
+
+func stock(apiKey, symbol string) (*quote, error) {
+	v := url.Values{}
+	v.Set("token", apiKey)
+	uri := fmt.Sprintf("%s/stock/%s/quote?%s", apiURL, url.PathEscape(symbol), v.Encode())
 	c, err := transport.Client(uri)
 	if err != nil {
 		return nil, err
@@ -103,19 +105,19 @@ func stock(symbol string) (*quote, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("%v", resp.Status)
 	}
-	var v quote
-	if err := json.NewDecoder(resp.Body).Decode(&v); err != nil {
+	var r quote
+	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
 		return nil, err
 	}
-	return &v, nil
+	return &r, nil
 }
 
-func handleStock(e *bot.Event) {
+func handleStock(e *bot.Event, apiKey string) {
 	symbol := strings.TrimSpace(e.Args)
 	if len(symbol) == 0 {
 		return
 	}
-	q, err := stock(symbol)
+	q, err := stock(apiKey, symbol)
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
@@ -124,10 +126,10 @@ func handleStock(e *bot.Event) {
 }
 
 // Register registers the plugin with a bot.
-func Register(b bot.Bot) {
+func Register(b bot.Bot, apiKey string) {
 	b.Commands().Add("stock", bot.Command{
 		Help:    "get trading stock information like price",
-		Handler: handleStock,
+		Handler: func(e *bot.Event) { handleStock(e, apiKey) },
 		Pub:     true,
 		Priv:    true,
 		Hidden:  false})
