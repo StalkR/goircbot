@@ -26,12 +26,12 @@ type Response struct {
 	Base string
 	Main struct {
 		Temperature         float64 `json:"temp"`
-		Pressure            int     `json:"pressure"`
+		Pressure            float64 `json:"pressure"`
 		Humidity            int     `json:"humidity"`
 		MinTemperature      float64 `json:"temp_min"`
 		MaxTemperature      float64 `json:"temp_max"`
-		SeaLevelPressure    int     `json:"sea_level"`
-		GroundLevelPressure int     `json:"grnd_level"`
+		SeaLevelPressure    float64 `json:"sea_level"`
+		GroundLevelPressure float64 `json:"grnd_level"`
 	} `json:"main"`
 	Wind struct {
 		Speed   float64 `json:"speed"` // meter/second
