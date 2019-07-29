@@ -89,6 +89,12 @@ func NewBotWithProxy(host string, ssl bool, nick, ident string, channels []strin
 			b.quit <- true
 		})
 
+	// Print out any error from the server
+	conn.HandleFunc("error",
+		func(conn *client.Conn, line *client.Line) {
+			log.Println(conn.Config().Server, line.Cmd, line.Text())
+		})
+
 	conn.HandleFunc("privmsg",
 		func(conn *client.Conn, line *client.Line) { b.commands.Handle(b, line) })
 
