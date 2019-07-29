@@ -2,6 +2,7 @@
 package bot
 
 import (
+	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -32,84 +33,105 @@ type Bot interface {
 	Channels() []string                                       // Channels returns list of channels which bot has joined.
 }
 
-// NewBot creates a new Bot implementation with a set of parameters.
-func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
-	return NewBotWithProxy(host, ssl, nick, ident, channels, "")
-}
-
-// NewBotWithProxy creates a new Bot implementation with a set of parameters and a proxy.
-func NewBotWithProxy(host string, ssl bool, nick, ident string, channels []string, proxy string) Bot {
-	hostPort := strings.SplitN(host, ":", 2)
+// NewBotWithProxyPassword creates a new Bot implementation with options.
+func NewBotOptions(options ...func(*BotImpl)) (Bot, error) {
 	cfg := &client.Config{
-		Me:          &state.Nick{Nick: nick},
+		Me:          &state.Nick{Nick: "goircbot"},
 		NewNick:     func(s string) string { return s + "_" },
 		PingFreq:    3 * time.Minute,
 		QuitMessage: "I have to go.",
-		Server:      host,
-		SSL:         ssl,
-		SSLConfig:   tls.Config(hostPort[0]),
+		Server:      "",
+		SSL:         false,
+		SSLConfig:   nil,
 		Version:     "Powered by GoIRCBot",
 		Recover:     (*client.Conn).LogPanic,
 		SplitLen:    450,
-		Proxy:       proxy,
+		Proxy:       "",
+		Pass:        "",
 	}
-	cfg.Me.Ident = ident
-	cfg.Me.Name = nick
 
-	conn := client.Client(cfg)
-	conn.EnableStateTracking()
 	b := &BotImpl{
-		conn:      conn,
+		config:    cfg,
 		reconnect: true,
 		quit:      make(chan bool),
 		commands:  NewCommands(),
-		channels:  channels,
 	}
 
-	// On connect, mark ourselves as bot first then join channels (can be long).
-	conn.HandleFunc("connected",
-		func(conn *client.Conn, line *client.Line) {
-			conn.Mode(conn.Me().Nick, "+B")
-			for _, channel := range b.channels {
-				conn.Join(channel)
-			}
-		})
+	for _, option := range options {
+		option(b)
+	}
 
-	// Signal disconnect to Bot.Run so it can reconnect.
-	conn.HandleFunc("disconnected",
-		func(conn *client.Conn, line *client.Line) {
-			channels := b.Channels()
-			// On the first disconnect, we will remember channels. Then state is
-			// reinitialized and another connection is attempted. If that one fails,
-			// we end up with an empty state, so no channels and we do not want to
-			// save that, it does not make much sense. So ignore empty values.
-			if len(channels) > 0 {
-				b.channels = b.Channels()
-			}
-			b.quit <- true
-		})
+	if b.config.Server == "" {
+		return nil, fmt.Errorf("Host option not given")
+	}
 
-	// Print out any error from the server
-	conn.HandleFunc("error",
-		func(conn *client.Conn, line *client.Line) {
-			log.Println(conn.Config().Server, line.Cmd, line.Text())
-		})
+	if b.config.SSL {
+		hostPort := strings.SplitN(b.config.Server, ":", 2)
+		b.config.SSLConfig = tls.Config(hostPort[0])
+	}
 
-	conn.HandleFunc("privmsg",
-		func(conn *client.Conn, line *client.Line) { b.commands.Handle(b, line) })
+	if b.config.Me.Ident == "" {
+		b.config.Me.Ident = b.config.Me.Nick
+	}
 
-	b.commands.Add("help", Command{
-		Help:    "show commands or detailed help",
-		Handler: func(e *Event) { b.commands.Help(e) },
-		Pub:     true,
-		Priv:    true,
-		Hidden:  false})
+	if b.config.Me.Name == "" {
+		b.config.Me.Name = b.config.Me.Nick
+	}
 
+	return b, nil
+}
+
+func Host(host string) func(*BotImpl) {
+	return func(b *BotImpl) { b.config.Server = host }
+}
+
+func Nick(nick string) func(*BotImpl) {
+	return func(b *BotImpl) { b.config.Me.Nick = nick }
+}
+
+func SSL(ssl bool) func(*BotImpl) {
+	return func(b *BotImpl) { b.config.SSL = ssl }
+}
+
+func Ident(ident string) func(*BotImpl) {
+	return func(b *BotImpl) { b.config.Me.Ident = ident }
+}
+
+func RealName(realName string) func(*BotImpl) {
+	return func(b *BotImpl) { b.config.Me.Name = realName }
+}
+
+func Proxy(proxy string) func(*BotImpl) {
+	return func(b *BotImpl) { b.config.Proxy = proxy }
+}
+
+func Password(password string) func(*BotImpl) {
+	return func(b *BotImpl) { b.config.Pass = password }
+}
+
+func Channels(channels []string) func(*BotImpl) {
+	return func(b *BotImpl) { b.channels = channels }
+}
+
+// NewBot creates a new Bot implementation with a set of parameters.
+//
+// Deprecated: use NewBotOptions instead.
+func NewBot(host string, ssl bool, nick, ident string, channels []string) Bot {
+	b, _ := NewBotOptions(Host(host), Nick(nick), SSL(ssl), Ident(ident), Channels(channels))
+	return b
+}
+
+// NewBotWithProxy creates a new Bot implementation with a set of parameters including a proxy.
+//
+// Deprecated: use NewBotOptions instead.
+func NewBotWithProxy(host string, ssl bool, nick, ident string, channels []string, proxy string) Bot {
+	b, _ := NewBotOptions(Host(host), Nick(nick), SSL(ssl), Ident(ident), Proxy(proxy), Channels(channels))
 	return b
 }
 
 // BotImpl implements Bot.
 type BotImpl struct {
+	config    *client.Config
 	conn      *client.Conn
 	reconnect bool
 	quit      chan bool
@@ -119,6 +141,7 @@ type BotImpl struct {
 
 // Run starts the Bot by connecting it to IRC. It automatically reconnects.
 func (b *BotImpl) Run() {
+	b.setup()
 	for b.reconnect {
 		if err := b.Conn().Connect(); err != nil {
 			log.Println("Connection error:", err, "- reconnecting in 1 minute")
@@ -162,4 +185,48 @@ func (b *BotImpl) Channels() []string {
 	}
 	sort.Strings(channels)
 	return channels
+}
+
+func (b *BotImpl) setup() {
+	b.conn = client.Client(b.config)
+
+	b.conn.EnableStateTracking()
+	// On connect, mark ourselves as bot first then join channels (can be long).
+	b.conn.HandleFunc("connected",
+		func(conn *client.Conn, line *client.Line) {
+			conn.Mode(conn.Me().Nick, "+B")
+			for _, channel := range b.channels {
+				conn.Join(channel)
+			}
+		})
+
+	// Signal disconnect to Bot.Run so it can reconnect.
+	b.conn.HandleFunc("disconnected",
+		func(conn *client.Conn, line *client.Line) {
+			channels := b.Channels()
+			// On the first disconnect, we will remember channels. Then state is
+			// reinitialized and another connection is attempted. If that one fails,
+			// we end up with an empty state, so no channels and we do not want to
+			// save that, it does not make much sense. So ignore empty values.
+			if len(channels) > 0 {
+				b.channels = b.Channels()
+			}
+			b.quit <- true
+		})
+
+	// Print out any error from the server
+	b.conn.HandleFunc("error",
+		func(conn *client.Conn, line *client.Line) {
+			log.Println(conn.Config().Server, line.Cmd, line.Text())
+		})
+
+	b.conn.HandleFunc("privmsg",
+		func(conn *client.Conn, line *client.Line) { b.commands.Handle(b, line) })
+
+	b.commands.Add("help", Command{
+		Help:    "show commands or detailed help",
+		Handler: func(e *Event) { b.commands.Help(e) },
+		Pub:     true,
+		Priv:    true,
+		Hidden:  false})
 }
