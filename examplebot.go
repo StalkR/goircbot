@@ -3,6 +3,7 @@ package main
 
 import (
 	"flag"
+	"log"
 	"strings"
 	"time"
 
@@ -61,7 +62,12 @@ var (
 func main() {
 	flag.Parse()
 	glog.Init()
-	b := bot.NewBot(*host, *ssl, *nick, *ident, strings.Split(*channels, ","))
+	b, err := bot.NewBotOptions(bot.Host(*host), bot.Nick(*nick), bot.SSL(*ssl), bot.Ident(*ident),
+		bot.Channels(strings.Split(*channels, ",")))
+	if err != nil {
+		log.Fatalf("failed to init new bot: %v", err)
+	}
+
 	admin.Register(b, []string{"nick!ident@host"})
 	asm.Register(b)
 	cdecl.Register(b)
