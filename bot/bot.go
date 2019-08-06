@@ -78,6 +78,7 @@ func NewBotOptions(options ...func(*BotImpl)) (Bot, error) {
 		b.config.Me.Name = b.config.Me.Nick
 	}
 
+	b.setup()
 	return b, nil
 }
 
@@ -141,7 +142,6 @@ type BotImpl struct {
 
 // Run starts the Bot by connecting it to IRC. It automatically reconnects.
 func (b *BotImpl) Run() {
-	b.setup()
 	for b.reconnect {
 		if err := b.Conn().Connect(); err != nil {
 			log.Println("Connection error:", err, "- reconnecting in 1 minute")
