@@ -17,6 +17,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/df"
 	"github.com/StalkR/goircbot/plugins/dl"
 	"github.com/StalkR/goircbot/plugins/dns"
+	"github.com/StalkR/goircbot/plugins/dnssec"
 	"github.com/StalkR/goircbot/plugins/errors"
 	"github.com/StalkR/goircbot/plugins/failotron"
 	"github.com/StalkR/goircbot/plugins/geo"
@@ -79,6 +80,7 @@ func main() {
 	df.Register(b, df.NewAlarm(`/`, 10*size.GB))
 	dl.Register(b, "", "")
 	dns.Register(b)
+	dnssec.Register(b)
 	errors.Register(b)
 	failotron.Register(b, ignore)
 	hots.Register(b, map[string]int{
