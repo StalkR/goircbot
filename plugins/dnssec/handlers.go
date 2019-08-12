@@ -45,7 +45,7 @@ func handle(e *bot.Event) {
 		}
 	}
 
-	e.Bot.Privmsg(e.Target, fmt.Sprintf("%v: %v - %v%v", site, strings.Join(all, ", "), dnssec.URL, site))
+	e.Bot.Privmsg(e.Target, fmt.Sprintf("%v - %v%v", strings.Join(all, ", "), dnssec.URL, site))
 }
 
 // Register registers the plugin with a bot.
