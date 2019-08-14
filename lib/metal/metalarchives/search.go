@@ -4,6 +4,7 @@ package metalarchives
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
@@ -12,7 +13,7 @@ import (
 	"github.com/StalkR/goircbot/lib/transport"
 )
 
-const baseURL = "http://www.metal-archives.com/search/ajax-band-search/"
+const baseURL = "https://www.metal-archives.com/search/ajax-band-search/"
 
 // Search finds bands by name.
 func Search(name string) ([]metal.Band, error) {
@@ -21,7 +22,13 @@ func Search(name string) ([]metal.Band, error) {
 		return nil, err
 	}
 	u := url.Values{"query": {name}, "field": {"name"}}
-	resp, err := client.Get(fmt.Sprintf("%s?%s", baseURL, u.Encode()))
+	uri := fmt.Sprintf("%s?%s", baseURL, u.Encode())
+	req, err := http.NewRequest("GET", uri, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("User-Agent", "Go IRC Bot (github.com/StalkR/goircbot)")
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
