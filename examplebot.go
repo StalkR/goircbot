@@ -56,6 +56,7 @@ var (
 	nick     = flag.String("nick", "goircbot", "Bot nick")
 	ident    = flag.String("ident", "goircbot", "Bot ident")
 	channels = flag.String("channels", "", "Channels to join (separated by comma)")
+	prefix   = flag.String("prefix", "!", "Command prefix")
 
 	ignore = []string{"bot"}
 )
@@ -64,7 +65,8 @@ func main() {
 	flag.Parse()
 	glog.Init()
 	b, err := bot.NewBotOptions(bot.Host(*host), bot.Nick(*nick), bot.SSL(*ssl), bot.Ident(*ident),
-		bot.Channels(strings.Split(*channels, ",")))
+		bot.Channels(strings.Split(*channels, ",")),
+		bot.WithPrefix(*prefix))
 	if err != nil {
 		log.Fatalf("failed to init new bot: %v", err)
 	}
