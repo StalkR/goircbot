@@ -51,12 +51,12 @@ import (
 )
 
 var (
-	host     = flag.String("host", "irc.example.com", "Server host[:port]")
-	ssl      = flag.Bool("ssl", true, "Enable SSL")
-	nick     = flag.String("nick", "goircbot", "Bot nick")
-	ident    = flag.String("ident", "goircbot", "Bot ident")
-	channels = flag.String("channels", "", "Channels to join (separated by comma)")
-	prefix   = flag.String("prefix", "!", "Command prefix")
+	host          = flag.String("host", "irc.example.com", "Server host[:port]")
+	ssl           = flag.Bool("ssl", true, "Enable SSL")
+	nick          = flag.String("nick", "goircbot", "Bot nick")
+	ident         = flag.String("ident", "goircbot", "Bot ident")
+	channels      = flag.String("channels", "", "Channels to join (separated by comma)")
+	commandPrefix = flag.String("command-prefix", "!", "Command prefix")
 
 	ignore = []string{"bot"}
 )
@@ -66,7 +66,7 @@ func main() {
 	glog.Init()
 	b, err := bot.NewBotOptions(bot.Host(*host), bot.Nick(*nick), bot.SSL(*ssl), bot.Ident(*ident),
 		bot.Channels(strings.Split(*channels, ",")),
-		bot.WithPrefix(*prefix))
+		bot.CommandPrefix(*commandPrefix))
 	if err != nil {
 		log.Fatalf("failed to init new bot: %v", err)
 	}

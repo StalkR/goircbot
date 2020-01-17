@@ -31,7 +31,7 @@ type Bot interface {
 	Privmsg(t, msg string)                                    // Shortcut to Conn().Privmsg()
 	Conn() *client.Conn                                       // Conn returns the underlying goirc client connection.
 	Channels() []string                                       // Channels returns list of channels which bot has joined.
-	Prefix() string                                           // Prefix returns the bot's command prefix
+	CommandPrefix() string                                    // Return's the bot's prefix used to specify commands
 }
 
 // NewBotWithProxyPassword creates a new Bot implementation with options.
@@ -115,8 +115,8 @@ func Channels(channels []string) func(*BotImpl) {
 	return func(b *BotImpl) { b.channels = channels }
 }
 
-func WithPrefix(prefix string) func(impl *BotImpl) {
-	return func(b *BotImpl) { b.prefix = prefix }
+func CommandPrefix(commandPrefix string) func(impl *BotImpl) {
+	return func(b *BotImpl) { b.commandPrefix = commandPrefix }
 }
 
 // NewBot creates a new Bot implementation with a set of parameters.
@@ -137,13 +137,13 @@ func NewBotWithProxy(host string, ssl bool, nick, ident string, channels []strin
 
 // BotImpl implements Bot.
 type BotImpl struct {
-	config    *client.Config
-	conn      *client.Conn
-	reconnect bool
-	quit      chan bool
-	commands  *Commands
-	channels  []string
-	prefix    string
+	config        *client.Config
+	conn          *client.Conn
+	reconnect     bool
+	quit          chan bool
+	commands      *Commands
+	channels      []string
+	commandPrefix string
 }
 
 // Run starts the Bot by connecting it to IRC. It automatically reconnects.
@@ -237,6 +237,6 @@ func (b *BotImpl) setup() {
 		Hidden:  false})
 }
 
-func (b *BotImpl) Prefix() string {
-	return b.prefix
+func (b *BotImpl) CommandPrefix() string {
+	return b.commandPrefix
 }
