@@ -31,7 +31,7 @@ func (s *Commands) Handle(b Bot, line *client.Line) {
 	if strings.HasPrefix(line.Args[0], "#") {
 		target = line.Args[0]
 		switch {
-		case strings.HasPrefix(words[0], "!"):
+		case strings.HasPrefix(words[0], b.CommandPrefix()):
 			indirect = true
 			words[0] = words[0][1:]
 
