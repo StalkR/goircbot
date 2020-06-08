@@ -9,7 +9,6 @@ var errSkip = errors.New("url: skip to next handler")
 // handlers is the ordered list of handlers.
 // Last one must not return errSkip.
 var handlers = []func(url string) (string, error){
-	handleTwitter,
 	handleDefault,
 }
 
