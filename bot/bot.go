@@ -52,10 +52,11 @@ func NewBotOptions(options ...func(*BotImpl)) (Bot, error) {
 	}
 
 	b := &BotImpl{
-		config:    cfg,
-		reconnect: true,
-		quit:      make(chan bool),
-		commands:  NewCommands(),
+		config:        cfg,
+		reconnect:     true,
+		quit:          make(chan bool),
+		commands:      NewCommands(),
+		commandPrefix: "!",
 	}
 
 	for _, option := range options {
