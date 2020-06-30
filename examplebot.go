@@ -15,6 +15,7 @@ import (
 	"github.com/StalkR/goircbot/plugins/coin"
 	"github.com/StalkR/goircbot/plugins/darkstat"
 	"github.com/StalkR/goircbot/plugins/df"
+	"github.com/StalkR/goircbot/plugins/discord"
 	"github.com/StalkR/goircbot/plugins/dl"
 	"github.com/StalkR/goircbot/plugins/dns"
 	"github.com/StalkR/goircbot/plugins/dnssec"
@@ -80,6 +81,9 @@ func main() {
 		"private": "https://user:pass@darkstat.private.com",
 	})
 	df.Register(b, df.NewAlarm(`/`, 10*size.GB))
+	discord.Register(b, "token", map[string]*discord.Channel{
+		"#irc": &discord.Channel{"#discord", "webhook URL"},
+	})
 	dl.Register(b, "", "")
 	dns.Register(b)
 	dnssec.Register(b)
