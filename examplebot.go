@@ -82,7 +82,7 @@ func main() {
 	})
 	df.Register(b, df.NewAlarm(`/`, 10*size.GB))
 	discord.Register(b, "token", map[string]*discord.Channel{
-		"#irc": &discord.Channel{"#discord", "webhook URL"},
+		"#irc": &discord.Channel{Channel: "#discord", Webhook: "URL"},
 	})
 	dl.Register(b, "", "")
 	dns.Register(b)
