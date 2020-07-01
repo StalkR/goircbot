@@ -12,7 +12,7 @@ import (
 	"github.com/StalkR/goircbot/lib/transport"
 )
 
-const baseURL = "http://www.metalorgie.com/recherche"
+const baseURL = "https://www.metalorgie.com/recherche"
 
 var (
 	sectionsRE = regexp.MustCompile(`(?s)<div class="fleft">(.*?)<div class="clear">`)

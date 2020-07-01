@@ -12,7 +12,7 @@ import (
 	"github.com/StalkR/goircbot/lib/transport"
 )
 
-const baseURL = "http://www.spirit-of-metal.com/liste_groupe.php"
+const baseURL = "https://www.spirit-of-metal.com/liste_groupe.php"
 
 var (
 	resultRE      = regexp.MustCompile(`(?s)<div class="col-xs-9"><h3>([^<]+)</h3>(.*?) - (.*?) <br> `)
