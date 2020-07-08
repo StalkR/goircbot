@@ -21,7 +21,6 @@ import (
 	"github.com/StalkR/goircbot/plugins/dnssec"
 	"github.com/StalkR/goircbot/plugins/errors"
 	"github.com/StalkR/goircbot/plugins/failotron"
-	"github.com/StalkR/goircbot/plugins/geo"
 	"github.com/StalkR/goircbot/plugins/git"
 	"github.com/StalkR/goircbot/plugins/golang"
 	"github.com/StalkR/goircbot/plugins/hots"
@@ -92,7 +91,6 @@ func main() {
 	hots.Register(b, map[string]int{
 		"playerName": 1234, // Player ID
 	})
-	geo.Register(b)
 	git.Register(b, map[string]string{
 		"linux": "https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log/",
 	})
