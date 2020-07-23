@@ -18,25 +18,25 @@ const delay = 5 * time.Minute
 // Notification happens once when limit is crossed then is reset if
 // it goes back above the limit.
 type Alarm struct {
-	Path     string
-	Limit    uint64
+	path     string
+	limit    uint64
 	notified bool
 }
 
 // NewAlarm creates a new Alarm as specified.
 func NewAlarm(path string, limit size.Byte) Alarm {
-	return Alarm{Path: path, Limit: uint64(limit)}
+	return Alarm{path: path, limit: uint64(limit)}
 }
 
 // Monitor monitors a path and notifies when limit is crossed.
 func (a *Alarm) Monitor(b bot.Bot) {
 	for ; ; time.Sleep(delay) {
-		total, free, err := disk.Space(a.Path)
+		total, free, err := disk.Space(a.path)
 		if err != nil {
 			log.Printf("df: error: %v", err)
 			continue
 		}
-		if free > a.Limit {
+		if free > a.limit {
 			a.notified = false
 			continue
 		}
@@ -65,7 +65,7 @@ func (a *Alarm) Notify(b bot.Bot, total, free uint64) {
 	a.notified = true
 	percent := 100 * (total - free) / total
 	line := fmt.Sprintf("Warning: %v has %v free (%v%% of %v used)",
-		a.Path, size.Byte(free), percent, size.Byte(total))
+		a.path, size.Byte(free), percent, size.Byte(total))
 	for _, channel := range b.Channels() {
 		b.Privmsg(channel, line)
 	}
@@ -106,7 +106,7 @@ func Register(b bot.Bot, alarms ...Alarm) {
 	paths := map[string]bool{}
 	for _, a := range alarms {
 		a := a // https://github.com/golang/go/wiki/CommonMistakes#using-goroutines-on-loop-iterator-variables
-		paths[a.Path] = true
+		paths[a.path] = true
 		go a.Monitor(b)
 	}
 
