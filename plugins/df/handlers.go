@@ -105,6 +105,7 @@ func df(e *bot.Event, paths map[string]bool) {
 func Register(b bot.Bot, alarms ...Alarm) {
 	paths := map[string]bool{}
 	for _, a := range alarms {
+		a := a // https://github.com/golang/go/wiki/CommonMistakes#using-goroutines-on-loop-iterator-variables
 		paths[a.Path] = true
 		go a.Monitor(b)
 	}
