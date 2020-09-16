@@ -42,10 +42,11 @@ func watchLine(b bot.Bot, line *client.Line, ignore map[string]bool) {
 		log.Println("urltitle:", err)
 		return
 	}
-	if len(title) > 200 {
-		title = title[:200]
+	msg := fmt.Sprintf("%s :: %s", link, title)
+	if len(msg) > 450 {
+		msg = msg[:447] + "..."
 	}
-	b.Privmsg(target, fmt.Sprintf("%s :: %s", link, title))
+	b.Privmsg(target, msg)
 }
 
 // Register registers the plugin with a bot.
