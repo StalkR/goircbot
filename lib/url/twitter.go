@@ -41,11 +41,11 @@ func handleTwitter(target string) (string, error) {
 
 	image := tweetImageRE.FindStringSubmatch(body)
 	if image != nil {
-		path, err := url.QueryUnescape(image[1])
+		uri, err := url.QueryUnescape(image[1])
 		if err != nil {
 			return "", err
 		}
-		s = fmt.Sprintf("%v https://nitter.net%v", s, path)
+		s = fmt.Sprintf("%v %v", s, uri)
 	}
 
 	s = stripTags(s)
