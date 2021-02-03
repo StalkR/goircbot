@@ -4,11 +4,12 @@ package urltitle
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"regexp"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/url"
+	liburl "github.com/StalkR/goircbot/lib/url"
 	"github.com/fluffle/goirc/client"
 )
 
@@ -34,15 +35,16 @@ func watchLine(b bot.Bot, line *client.Line, ignore map[string]bool) {
 		return
 	}
 	link := match[1]
-	if len(link) > 200 {
+	u, err := url.Parse(link)
+	if err != nil {
 		return
 	}
-	title, err := url.Title(link)
+	title, err := liburl.Title(link)
 	if err != nil {
 		log.Println("urltitle:", err)
 		return
 	}
-	msg := fmt.Sprintf("%s :: %s", link, title)
+	msg := fmt.Sprintf("%s :: %s", u.Host, title)
 	if len(msg) > 450 {
 		msg = msg[:447] + "..."
 	}
