@@ -21,11 +21,11 @@ func TestTwitter(t *testing.T) {
 		},
 		{
 			url:  "https://twitter.com/element14_Avnet/status/476395971472265216",
-			want: `There's a new #Arduino coming ! Have you seen it yet? http://ow.ly/xM7BJ https://nitter.net/pic/media/Bpx_nJpIMAEVd7M.png`,
+			want: `There's a new #Arduino coming ! Have you seen it yet? http://ow.ly/xM7BJ https://nitter.cc/pic/media/Bpx_nJpIMAEVd7M.png`,
 		},
 		{
 			url:  "https://twitter.com/DefConBeanBag1/status/761690424423571456",
-			want: "I want to break free... 🎵 ☠ #DEFCON2016 @defcon @thedarktangent https://nitter.net/pic/media/CpIRZDvUAAEOYm2.jpg",
+			want: "I want to break free... 🎵 ☠ #DEFCON2016 @defcon @thedarktangent https://nitter.cc/pic/media/CpIRZDvUAAEOYm2.jpg",
 		},
 	} {
 		got, err := handleTwitter(tt.url)

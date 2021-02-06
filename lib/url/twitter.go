@@ -15,6 +15,10 @@ var (
 	tweetImageRE = regexp.MustCompile(`<meta property="og:image" content="([^"]*)"`)
 )
 
+// Twitter frontend is not scrapable easily and they require using their API.
+// Instead, use the alternative Twitter front-end https://github.com/zedeus/nitter
+const nitterDomain = "nitter.cc"
+
 func handleTwitter(target string) (string, error) {
 	if !twitterRE.MatchString(target) {
 		return "", errSkip
@@ -24,9 +28,7 @@ func handleTwitter(target string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// Twitter frontend is not scrapable easily and they require using their API.
-	// Instead, use the alternative Twitter front-end https://github.com/zedeus/nitter
-	u.Host = "nitter.net"
+	u.Host = nitterDomain
 
 	body, err := get(u.String())
 	if err != nil {
@@ -50,9 +52,10 @@ func handleTwitter(target string) (string, error) {
 
 	s = stripTags(s)
 	// unescape would replace &nbsp; by \u00a0 but we prefer normal space \u0020
-	s = strings.Replace(s, "&nbsp;", " ", -1)
-	s = strings.Replace(s, "\n", " ", -1)
+	s = strings.ReplaceAll(s, "&nbsp;", " ")
+	s = strings.ReplaceAll(s, "\n", " ")
 	s = html.UnescapeString(s)
 	s = trim(s)
+	s = strings.ReplaceAll(s, "http://"+nitterDomain, "https://"+nitterDomain)
 	return s, nil
 }
