@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"regexp"
 
@@ -36,6 +37,9 @@ func Search(name string) ([]metal.Band, error) {
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("metalorgie: status %v; body: %v", resp.Status, string(b))
 	}
 	var results []metal.Band
 	for _, r := range sectionsRE.FindAllString(string(b), -1) {
