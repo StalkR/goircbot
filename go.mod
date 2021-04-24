@@ -7,6 +7,6 @@ require (
 	github.com/StalkR/imdb v1.0.6
 	github.com/fluffle/goirc v1.1.1
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
-	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
-	golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57
+	golang.org/x/net v0.0.0-20210423184538-5f58ad60dda6 // indirect
+	golang.org/x/sys v0.0.0-20210423185535-09eb48e85fd7
 )
