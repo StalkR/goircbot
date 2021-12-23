@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
@@ -54,6 +55,7 @@ func multiple(c map[string]*darkstat.Conn) (string, error) {
 	if len(stats) == 0 {
 		return "", errors.New("darkstat: all failed")
 	}
+	sort.Strings(stats)
 	return strings.Join(stats, " - "), nil
 }
 
