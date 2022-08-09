@@ -67,7 +67,7 @@ func Register(b bot.Bot, oldfile string, ignore []string) {
 	// Every minute, save to file.
 	if len(oldfile) > 0 {
 		go func() {
-			for _ = range time.Tick(time.Minute) {
+			for range time.Tick(time.Minute) {
 				save(oldfile, o)
 			}
 		}()
@@ -75,7 +75,7 @@ func Register(b bot.Bot, oldfile string, ignore []string) {
 
 	// Every day, clean URLs older than a year so it does not grow infinitely.
 	go func() {
-		for _ = range time.Tick(time.Hour * 24) {
+		for range time.Tick(time.Hour * 24) {
 			o.Clean(time.Hour * 24 * 365)
 		}
 	}()

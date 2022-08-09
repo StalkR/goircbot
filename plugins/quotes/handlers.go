@@ -111,7 +111,7 @@ func Register(b bot.Bot, f string) {
 	// Every minute, save to file (effective only if changed).
 	if len(f) > 0 {
 		go func() {
-			for _ = range time.Tick(10 * time.Second) {
+			for range time.Tick(10 * time.Second) {
 				save(f, q)
 			}
 		}()

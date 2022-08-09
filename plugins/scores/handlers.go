@@ -96,7 +96,7 @@ func Register(b bot.Bot, scoresfile string) {
 	// Every minute, save to file.
 	if len(scoresfile) > 0 {
 		go func() {
-			for _ = range time.Tick(time.Minute) {
+			for range time.Tick(time.Minute) {
 				save(scoresfile, s)
 			}
 		}()

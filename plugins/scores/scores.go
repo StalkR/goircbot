@@ -92,7 +92,7 @@ func (l ScoreList) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
 
 func (l ScoreList) Less(i, j int) bool { return l[i].Value < l[j].Value }
 
-// Score represents a single entry of a ScoreList.
+// ScoreEntry represents a single entry of a ScoreList.
 type ScoreEntry struct {
 	Name  string
 	Value int
