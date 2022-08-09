@@ -22,8 +22,8 @@ It uses [fluffle/goirc][6] ([doc][7]).
 ## Bugs, comments, questions
 Create a [new issue][8].
 
-[1]: https://api.travis-ci.org/StalkR/goircbot.png?branch=master
-[2]: https://travis-ci.org/StalkR/goircbot
+[1]: https://github.com/StalkR/goircbot/actions/workflows/build.yml/badge.svg
+[2]: https://github.com/StalkR/goircbot/actions/workflows/build.yml
 [3]: https://godoc.org/github.com/StalkR/goircbot?status.png
 [4]: https://godoc.org/github.com/StalkR/goircbot
 [5]: https://github.com/StalkR/goircbot
