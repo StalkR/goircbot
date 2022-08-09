@@ -11,6 +11,7 @@ import (
   "github.com/StalkR/goircbot/lib/transport"
 )
 
+// ErrNotFound is returned when no result is found.
 var ErrNotFound = errors.New("not found")
 
 // A Location represents a geo location with a few properties.
