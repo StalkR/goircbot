@@ -58,16 +58,16 @@ func (c *Conn) Stats() (*Statistics, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	bw_stats, err := ioutil.ReadAll(resp.Body)
+	bwStats, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	m := downRE.FindSubmatch(bw_stats)
+	m := downRE.FindSubmatch(bwStats)
 	if m == nil {
 		return nil, errors.New("mldonkey: cannot parse download speed")
 	}
 	DL := string(m[1])
-	m = upRE.FindSubmatch(bw_stats)
+	m = upRE.FindSubmatch(bwStats)
 	if m == nil {
 		return nil, errors.New("mldonkey: cannot parse upload speed")
 	}
