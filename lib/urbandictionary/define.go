@@ -12,50 +12,31 @@ import (
 	"github.com/StalkR/goircbot/lib/transport"
 )
 
+// A Result represents an Urban Dictionary search result.
 type Result struct {
-	Has_related_words bool
-	Pages             int
-	Result_type       string
-	Sounds            []string
-	Total             int
-	List              []Definition
+	List []Definition `json:"list"`
 }
 
+// A Definition represents an Urban Dictionary definition.
 type Definition struct {
-	Word                   string
-	Definition             string
-	Example                string
-	Author                 string
-	Defid                  int
-	Permalink              string
-	Current_vote           string
-	Thumbs_up, Thumbs_down int
-	Term                   string
-	Type                   string
+	Word       string `json:"word"`
+	Definition string `json:"definition"`
 }
 
 func (r *Result) String() string {
 	if len(r.List) == 0 {
 		return "no result"
 	}
-	if r.Result_type == "exact" || r.Result_type == "fulltext" {
-		return r.List[0].String()
-	}
-	if r.Result_type == "no_results" {
-		terms := make([]string, 0, len(r.List))
-		for _, d := range r.List {
-			terms = append(terms, d.Term)
-		}
-		return fmt.Sprintf("no result, did you mean: %s?", strings.Join(terms[:5], "? "))
-	}
-	return fmt.Sprintf("%s: %v", r.Result_type, r.List)
+	return r.List[0].String()
 }
 
 func (d *Definition) String() string {
-	def := d.Definition
-	def = strings.Replace(def, "\r", "", -1)
-	def = strings.Replace(def, "\n", " ", -1)
-	return fmt.Sprintf("%s: %s", d.Word, def)
+	s := d.Definition
+	s = strings.Replace(s, "\r", "", -1)
+	s = strings.Replace(s, "\n", " ", -1)
+	s = strings.Replace(s, "[", "", -1)
+	s = strings.Replace(s, "]", "", -1)
+	return fmt.Sprintf("%v: %v", d.Word, s)
 }
 
 // Define gets definition of term on Urban Dictionary and populates a Result.
@@ -76,9 +57,8 @@ func Define(term string) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := Result{}
-	err = json.Unmarshal(contents, &r)
-	if err != nil {
+	var r Result
+	if err = json.Unmarshal(contents, &r); err != nil {
 		return nil, err
 	}
 	return &r, nil
