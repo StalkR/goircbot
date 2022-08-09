@@ -11,23 +11,27 @@ import (
 	"github.com/StalkR/goircbot/lib/transport"
 )
 
+// Result is from Google custom search API JSON result.
 type Result struct {
 	Kind              string
-	Url               Url
+	URL               URL
 	Queries           Queries
 	Context           Context
-	SearchInformation SearchInformation
+	SearchInformation Information
 	Items             []Item
 }
 
-type Url struct {
+// URL is from Google custom search API JSON result.
+type URL struct {
 	Type, Template string
 }
 
+// Queries is from Google custom search API JSON result.
 type Queries struct {
 	NextPage, Request []Page
 }
 
+// Page is from Google custom search API JSON result.
 type Page struct {
 	Title, TotalResults, SearchTerms string
 	Count, StartIndex                int
@@ -35,22 +39,25 @@ type Page struct {
 	Safe, Cx                         string
 }
 
+// Context is from Google custom search API JSON result.
 type Context struct {
 	Title string
 }
 
-type SearchInformation struct {
+// Information is from Google custom search API JSON result.
+type Information struct {
 	SearchTime            float64
 	FormattedSearchTime   string
 	TotalResults          string
 	FormattedTotalResults string
 }
 
+// Item is from Google custom search API JSON result.
 type Item struct {
-	Kind, Title, HtmlTitle         string
+	Kind, Title, HTMLTitle         string
 	Link, DisplayLink              string
-	Snippet, HtmlSnippet, CacheId  string
-	FormattedUrl, HtmlFormattedUrl string
+	Snippet, HTMLSnippet, CacheID  string
+	FormattedURL, HTMLFormattedURL string
 }
 
 func compactSpaces(s string) string {

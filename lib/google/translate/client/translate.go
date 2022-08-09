@@ -9,7 +9,7 @@ import (
 	"github.com/StalkR/goircbot/lib/google/translate"
 )
 
-func Supported(target, key string) {
+func supported(target, key string) {
 	languages, err := translate.Languages(target, key)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -26,7 +26,7 @@ func Supported(target, key string) {
 		strings.Join(langs, ", "))
 }
 
-func Translate(source, target, text, key string) {
+func translateText(source, target, text, key string) {
 	translated, err := translate.Translate(source, target, text, key)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -41,11 +41,11 @@ func Translate(source, target, text, key string) {
 func main() {
 	switch {
 	case len(os.Args) == 2:
-		Supported("", os.Args[1])
+		supported("", os.Args[1])
 	case len(os.Args) == 3:
-		Supported(os.Args[2], os.Args[1])
+		supported(os.Args[2], os.Args[1])
 	case len(os.Args) == 5:
-		Translate(os.Args[2], os.Args[3], os.Args[4], os.Args[1])
+		translateText(os.Args[2], os.Args[3], os.Args[4], os.Args[1])
 	default:
 		fmt.Println("Show all supported languages:")
 		fmt.Printf("	%v <key>\n", os.Args[0])
