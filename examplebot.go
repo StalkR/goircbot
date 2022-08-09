@@ -5,7 +5,6 @@ import (
 	"flag"
 	"log"
 	"strings"
-	"time"
 
 	"github.com/StalkR/goircbot/bot"
 	"github.com/StalkR/goircbot/lib/size"
@@ -40,7 +39,6 @@ import (
 	"github.com/StalkR/goircbot/plugins/timezone"
 	"github.com/StalkR/goircbot/plugins/tor"
 	"github.com/StalkR/goircbot/plugins/translate"
-	"github.com/StalkR/goircbot/plugins/travisci"
 	"github.com/StalkR/goircbot/plugins/up"
 	"github.com/StalkR/goircbot/plugins/urban"
 	"github.com/StalkR/goircbot/plugins/urltitle"
@@ -108,8 +106,6 @@ func main() {
 	timezone.Register(b, "<username>")
 	tor.Register(b, "127.0.0.1:9051", "secret")
 	translate.Register(b, "<key>")
-	travisci.Register(b)
-	travisci.Watch(b, []string{"StalkR/goircbot"}, 5*time.Minute)
 	up.Register(b)
 	urban.Register(b)
 	urltitle.Register(b, ignore)
