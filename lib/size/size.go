@@ -6,6 +6,7 @@ import "fmt"
 // A Byte represents a number of bytes.
 type Byte uint64
 
+// Suffixes for KB, MB, GB, TB, PB and EB.
 const (
 	_       = iota // ignore first value by assigning to blank identifier
 	KB Byte = 1 << (10 * iota)
