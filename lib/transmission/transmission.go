@@ -39,8 +39,8 @@ func New(serverURL string) (*Conn, error) {
 	return &Conn{url: serverURL, client: client}, nil
 }
 
-// sessionId asks Transmission for an RPC session ID.
-func (c *Conn) sessionId() (string, error) {
+// sessionID asks Transmission for an RPC session ID.
+func (c *Conn) sessionID() (string, error) {
 	resp, err := c.client.Get(c.url + "/transmission/rpc")
 	if err != nil {
 		return "", err
@@ -48,14 +48,14 @@ func (c *Conn) sessionId() (string, error) {
 	defer resp.Body.Close()
 	values, ok := resp.Header["X-Transmission-Session-Id"]
 	if !ok || len(values) < 1 {
-		return "", errors.New("transmission: sessionId not found")
+		return "", errors.New("transmission: session ID not found")
 	}
 	return values[0], nil
 }
 
 // rpc sends an RPC request to Transmission with the right session ID.
 func (c *Conn) rpc(request interface{}) ([]byte, error) {
-	sessId, err := c.sessionId()
+	sessionID, err := c.sessionID()
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (c *Conn) rpc(request interface{}) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("X-Transmission-Session-Id", sessId)
+	req.Header.Add("X-Transmission-Session-Id", sessionID)
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
@@ -133,6 +133,6 @@ type torrentAddedArguments struct {
 }
 
 type torrentAdded struct {
-	Id               int
+	ID               int
 	Name, HashString string
 }
