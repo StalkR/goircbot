@@ -34,8 +34,8 @@ type Bot interface {
 	CommandPrefix() string                                    // Return's the bot's prefix used to specify commands
 }
 
-// NewBotWithProxyPassword creates a new Bot implementation with options.
-func NewBotOptions(options ...func(*BotImpl)) (Bot, error) {
+// NewBotOptions creates a new Bot implementation with options.
+func NewBotOptions(options ...Option) (Bot, error) {
 	cfg := &client.Config{
 		Me:          &state.Nick{Nick: "goircbot"},
 		NewNick:     func(s string) string { return s + "_" },
@@ -51,7 +51,7 @@ func NewBotOptions(options ...func(*BotImpl)) (Bot, error) {
 		Pass:        "",
 	}
 
-	b := &BotImpl{
+	b := &botImpl{
 		config:        cfg,
 		reconnect:     true,
 		quit:          make(chan bool),
@@ -84,40 +84,52 @@ func NewBotOptions(options ...func(*BotImpl)) (Bot, error) {
 	return b, nil
 }
 
-func Host(host string) func(*BotImpl) {
-	return func(b *BotImpl) { b.config.Server = host }
+// Option represents a configurable option.
+type Option func(*botImpl)
+
+// Host is an option to configure the IRC server host.
+func Host(host string) func(*botImpl) {
+	return func(b *botImpl) { b.config.Server = host }
 }
 
-func Nick(nick string) func(*BotImpl) {
-	return func(b *BotImpl) { b.config.Me.Nick = nick }
+// Nick is an option to configure the bot nick.
+func Nick(nick string) func(*botImpl) {
+	return func(b *botImpl) { b.config.Me.Nick = nick }
 }
 
-func SSL(ssl bool) func(*BotImpl) {
-	return func(b *BotImpl) { b.config.SSL = ssl }
+// SSL is an option to configure SSL (TLS) on the connection.
+func SSL(ssl bool) func(*botImpl) {
+	return func(b *botImpl) { b.config.SSL = ssl }
 }
 
-func Ident(ident string) func(*BotImpl) {
-	return func(b *BotImpl) { b.config.Me.Ident = ident }
+// Ident is an option to configure the bot ident.
+func Ident(ident string) func(*botImpl) {
+	return func(b *botImpl) { b.config.Me.Ident = ident }
 }
 
-func RealName(realName string) func(*BotImpl) {
-	return func(b *BotImpl) { b.config.Me.Name = realName }
+// RealName is an option to configure the bot real name.
+func RealName(realName string) func(*botImpl) {
+	return func(b *botImpl) { b.config.Me.Name = realName }
 }
 
-func Proxy(proxy string) func(*BotImpl) {
-	return func(b *BotImpl) { b.config.Proxy = proxy }
+// Proxy is an option to configure a proxy to connect to the IRC server.
+func Proxy(proxy string) func(*botImpl) {
+	return func(b *botImpl) { b.config.Proxy = proxy }
 }
 
-func Password(password string) func(*BotImpl) {
-	return func(b *BotImpl) { b.config.Pass = password }
+// Password is an option to configure the IRC server password.
+func Password(password string) func(*botImpl) {
+	return func(b *botImpl) { b.config.Pass = password }
 }
 
-func Channels(channels []string) func(*BotImpl) {
-	return func(b *BotImpl) { b.channels = channels }
+// Channels is an option to configure the channels for the bot to join.
+func Channels(channels []string) func(*botImpl) {
+	return func(b *botImpl) { b.channels = channels }
 }
 
-func CommandPrefix(commandPrefix string) func(impl *BotImpl) {
-	return func(b *BotImpl) { b.commandPrefix = commandPrefix }
+// CommandPrefix is an option to configure the prefix of commands (default is !).
+func CommandPrefix(commandPrefix string) func(impl *botImpl) {
+	return func(b *botImpl) { b.commandPrefix = commandPrefix }
 }
 
 // NewBot creates a new Bot implementation with a set of parameters.
@@ -136,8 +148,8 @@ func NewBotWithProxy(host string, ssl bool, nick, ident string, channels []strin
 	return b
 }
 
-// BotImpl implements Bot.
-type BotImpl struct {
+// botImpl implements Bot.
+type botImpl struct {
 	config        *client.Config
 	conn          *client.Conn
 	reconnect     bool
@@ -148,7 +160,7 @@ type BotImpl struct {
 }
 
 // Run starts the Bot by connecting it to IRC. It automatically reconnects.
-func (b *BotImpl) Run() {
+func (b *botImpl) Run() {
 	for b.reconnect {
 		if err := b.Conn().Connect(); err != nil {
 			log.Println("Connection error:", err, "- reconnecting in 1 minute")
@@ -162,30 +174,56 @@ func (b *BotImpl) Run() {
 }
 
 // Quit quits the bot from IRC (and no reconnect).
-func (b *BotImpl) Quit(msg string) {
+func (b *botImpl) Quit(msg string) {
 	b.reconnect = false
 	b.conn.Quit(msg)
 }
 
 // Commands returns the underlying Commands.
-func (b *BotImpl) Commands() *Commands { return b.commands }
+func (b *botImpl) Commands() *Commands { return b.commands }
 
 // Shortcuts to b.Conn to ease mocking of Bot interface.
-func (b *BotImpl) Action(t, msg string) { b.Conn().Action(t, msg) }
-func (b *BotImpl) Connected() bool      { return b.Conn().Connected() }
-func (b *BotImpl) HandleFunc(n string, h client.HandlerFunc) client.Remover {
+
+// Action is a shortcut to goirc connection Action().
+func (b *botImpl) Action(t, msg string) { b.Conn().Action(t, msg) }
+
+// Connected is a shortcut to goirc connection Connected().
+func (b *botImpl) Connected() bool { return b.Conn().Connected() }
+
+// HandleFunc is a shortcut to goirc connection HandleFunc().
+func (b *botImpl) HandleFunc(n string, h client.HandlerFunc) client.Remover {
 	return b.Conn().HandleFunc(n, h)
 }
-func (b *BotImpl) Invite(nick, channel string) { b.Conn().Invite(nick, channel) }
-func (b *BotImpl) Join(c string)               { b.Conn().Join(c) }
-func (b *BotImpl) Me() *state.Nick             { return b.Conn().Me() }
-func (b *BotImpl) Mode(t string, m ...string)  { b.Conn().Mode(t, m...) }
-func (b *BotImpl) Nick(nick string)            { b.Conn().Nick(nick) }
-func (b *BotImpl) Notice(t, msg string)        { b.Conn().Notice(t, msg) }
-func (b *BotImpl) Part(c string, m ...string)  { b.Conn().Part(c, m...) }
-func (b *BotImpl) Privmsg(t, msg string)       { b.Conn().Privmsg(t, msg) }
-func (b *BotImpl) Conn() *client.Conn          { return b.conn }
-func (b *BotImpl) Channels() []string {
+
+// Invite is a shortcut to goirc connection Invite().
+func (b *botImpl) Invite(nick, channel string) { b.Conn().Invite(nick, channel) }
+
+// Join is a shortcut to goirc connection Join().
+func (b *botImpl) Join(c string) { b.Conn().Join(c) }
+
+// Me is a shortcut to goirc connection Me().
+func (b *botImpl) Me() *state.Nick { return b.Conn().Me() }
+
+// Mode is a shortcut to goirc connection Mode().
+func (b *botImpl) Mode(t string, m ...string) { b.Conn().Mode(t, m...) }
+
+// Nick is a shortcut to goirc connection Nick().
+func (b *botImpl) Nick(nick string) { b.Conn().Nick(nick) }
+
+// Notice is a shortcut to goirc connection Notice().
+func (b *botImpl) Notice(t, msg string) { b.Conn().Notice(t, msg) }
+
+// Part is a shortcut to goirc connection Part().
+func (b *botImpl) Part(c string, m ...string) { b.Conn().Part(c, m...) }
+
+// Privmsg is a shortcut to goirc connection Privmsg().
+func (b *botImpl) Privmsg(t, msg string) { b.Conn().Privmsg(t, msg) }
+
+// Conn returns the goirc connection.
+func (b *botImpl) Conn() *client.Conn { return b.conn }
+
+// Channels returns a sorted list of channels the bot is currently on.
+func (b *botImpl) Channels() []string {
 	var channels []string
 	for name := range b.Conn().Me().Channels {
 		channels = append(channels, name)
@@ -194,7 +232,7 @@ func (b *BotImpl) Channels() []string {
 	return channels
 }
 
-func (b *BotImpl) setup() {
+func (b *botImpl) setup() {
 	b.conn = client.Client(b.config)
 
 	b.conn.EnableStateTracking()
@@ -238,6 +276,6 @@ func (b *BotImpl) setup() {
 		Hidden:  false})
 }
 
-func (b *BotImpl) CommandPrefix() string {
+func (b *botImpl) CommandPrefix() string {
 	return b.commandPrefix
 }

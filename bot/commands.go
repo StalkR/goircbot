@@ -11,7 +11,7 @@ type Commands struct {
 	cmds map[string]Command
 }
 
-// NewStore initializes a new Commands.
+// NewCommands initializes a new Commands.
 func NewCommands() *Commands {
 	return &Commands{cmds: make(map[string]Command)}
 }
