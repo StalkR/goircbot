@@ -7,7 +7,7 @@ import (
 
 	"github.com/StalkR/goircbot/bot"
 	"github.com/StalkR/goircbot/lib/transport"
-	imdb "github.com/StalkR/imdb/appengine"
+	"github.com/StalkR/imdb"
 )
 
 func search(e *bot.Event) {
@@ -15,7 +15,7 @@ func search(e *bot.Event) {
 	if len(q) == 0 {
 		return
 	}
-	c, err := transport.Client(imdb.AppURL)
+	c, err := transport.Client("https://www.imdb.com/")
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
