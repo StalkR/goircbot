@@ -6,8 +6,6 @@ import (
   "net/http"
   "net/url"
   "time"
-
-  "github.com/StalkR/goircbot/lib/transport"
 )
 
 // Timezone returns the timezone for latitude and longitude coordinates.
@@ -17,11 +15,7 @@ func Timezone(username string, latitude, longitude string) (*time.Location, erro
   v.Set("lng", longitude)
   v.Set("username", username)
   dest := fmt.Sprintf("http://api.geonames.org/timezoneJSON?%s", v.Encode())
-  client, err := transport.Client(dest)
-  if err != nil {
-    return nil, err
-  }
-  resp, err := client.Get(dest)
+  resp, err := http.DefaultClient.Get(dest)
   if err != nil {
     return nil, err
   }

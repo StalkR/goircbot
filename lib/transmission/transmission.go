@@ -8,8 +8,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 // A Statistics holds generic stats of Transmission.
@@ -26,22 +24,17 @@ func (s *Statistics) String() string {
 
 // A Conn represents a connection to Transmission.
 type Conn struct {
-	url    string
-	client *http.Client
+	url string
 }
 
 // New prepares a Transmission connection by returning a *Conn.
 func New(serverURL string) (*Conn, error) {
-	client, err := transport.Client(serverURL)
-	if err != nil {
-		return nil, err
-	}
-	return &Conn{url: serverURL, client: client}, nil
+	return &Conn{url: serverURL}, nil
 }
 
 // sessionID asks Transmission for an RPC session ID.
 func (c *Conn) sessionID() (string, error) {
-	resp, err := c.client.Get(c.url + "/transmission/rpc")
+	resp, err := http.DefaultClient.Get(c.url + "/transmission/rpc")
 	if err != nil {
 		return "", err
 	}
@@ -69,7 +62,7 @@ func (c *Conn) rpc(request interface{}) ([]byte, error) {
 		return nil, err
 	}
 	req.Header.Add("X-Transmission-Session-Id", sessionID)
-	resp, err := c.client.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

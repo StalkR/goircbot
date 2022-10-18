@@ -10,8 +10,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 var (
@@ -38,22 +36,17 @@ func (s *Statistics) String() string {
 
 // A Conn represents a connection to MLDonkey.
 type Conn struct {
-	url    string
-	client *http.Client
+	url string
 }
 
 // New prepares an MLDonkey connection by returning a *Conn.
 func New(serverURL string) (*Conn, error) {
-	client, err := transport.Client(serverURL)
-	if err != nil {
-		return nil, err
-	}
-	return &Conn{url: serverURL, client: client}, nil
+	return &Conn{url: serverURL}, nil
 }
 
 // Stats returns current statistics (speed, total downloads, etc.).
 func (c *Conn) Stats() (*Statistics, error) {
-	resp, err := c.client.Get(c.url + "/submit?q=bw_stats")
+	resp, err := http.DefaultClient.Get(c.url + "/submit?q=bw_stats")
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +66,7 @@ func (c *Conn) Stats() (*Statistics, error) {
 	}
 	UL := string(m[1])
 
-	resp, err = c.client.Get(c.url + "/submit?q=vd")
+	resp, err = http.DefaultClient.Get(c.url + "/submit?q=vd")
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +106,7 @@ func (c *Conn) Add(link string) error {
 	}
 	params := url.Values{}
 	params.Set("q", link)
-	resp, err := c.client.Get(c.url + "/submit?" + params.Encode())
+	resp, err := http.DefaultClient.Get(c.url + "/submit?" + params.Encode())
 	if err != nil {
 		return err
 	}

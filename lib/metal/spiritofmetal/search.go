@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"html"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"regexp"
 
 	"github.com/StalkR/goircbot/lib/metal"
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 const baseURL = "https://www.spirit-of-metal.com/liste_groupe.php"
@@ -21,12 +21,8 @@ var (
 
 // Search finds bands by name.
 func Search(name string) ([]metal.Band, error) {
-	client, err := transport.Client(baseURL)
-	if err != nil {
-		return nil, err
-	}
 	u := url.Values{"recherche_groupe": {name}}
-	resp, err := client.Get(fmt.Sprintf("%s?%s", baseURL, u.Encode()))
+	resp, err := http.DefaultClient.Get(fmt.Sprintf("%s?%s", baseURL, u.Encode()))
 	if err != nil {
 		return nil, err
 	}

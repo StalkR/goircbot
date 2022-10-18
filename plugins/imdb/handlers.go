@@ -3,10 +3,10 @@ package imdb
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/transport"
 	"github.com/StalkR/imdb"
 )
 
@@ -15,12 +15,7 @@ func search(e *bot.Event) {
 	if len(q) == 0 {
 		return
 	}
-	c, err := transport.Client("https://www.imdb.com/")
-	if err != nil {
-		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
-		return
-	}
-	titles, err := imdb.SearchTitle(c, q)
+	titles, err := imdb.SearchTitle(http.DefaultClient, q)
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
@@ -29,7 +24,7 @@ func search(e *bot.Event) {
 		e.Bot.Privmsg(e.Target, "No results found.")
 		return
 	}
-	title, err := imdb.NewTitle(c, titles[0].ID)
+	title, err := imdb.NewTitle(http.DefaultClient, titles[0].ID)
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return

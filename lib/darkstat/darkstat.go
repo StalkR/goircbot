@@ -7,28 +7,21 @@ import (
 	"encoding/xml"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 // A Conn represents a connection to Darkstat.
 type Conn struct {
-	url    string
-	client *http.Client
+	url string
 }
 
 // New prepares a Darkstat connection by returning a *Conn.
 func New(serverURL string) (*Conn, error) {
-	client, err := transport.Client(serverURL)
-	if err != nil {
-		return nil, err
-	}
-	return &Conn{url: serverURL, client: client}, nil
+	return &Conn{url: serverURL}, nil
 }
 
 // Graphs gets and parses darkstat's graphs.xml page.
 func (c *Conn) Graphs() (*GraphsXML, error) {
-	resp, err := c.client.Get(c.url + "/graphs.xml")
+	resp, err := http.DefaultClient.Get(c.url + "/graphs.xml")
 	if err != nil {
 		return nil, err
 	}

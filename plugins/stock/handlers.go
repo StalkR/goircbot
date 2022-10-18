@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 type quote struct {
@@ -93,11 +92,7 @@ func stock(apiKey, symbol string) (*quote, error) {
 	v := url.Values{}
 	v.Set("token", apiKey)
 	uri := fmt.Sprintf("%s/stock/%s/quote?%s", apiURL, url.PathEscape(symbol), v.Encode())
-	c, err := transport.Client(uri)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Get(uri)
+	resp, err := http.DefaultClient.Get(uri)
 	if err != nil {
 		return nil, err
 	}

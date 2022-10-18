@@ -3,10 +3,9 @@ package url
 import (
 	"io"
 	"io/ioutil"
+	"net/http"
 	"regexp"
 	"strings"
-
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 var whitespaceRE = regexp.MustCompile(`\s+`)
@@ -25,11 +24,7 @@ func stripTags(s string) string {
 
 // get fetches an URL with a standard GET.
 func get(url string) (string, error) {
-	client, err := transport.Client(url)
-	if err != nil {
-		return "", err
-	}
-	resp, err := client.Get(url)
+	resp, err := http.DefaultClient.Get(url)
 	if err != nil {
 		return "", err
 	}

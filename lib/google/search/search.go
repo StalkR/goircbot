@@ -5,10 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"regexp"
-
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 // Result is from Google custom search API JSON result.
@@ -76,16 +75,12 @@ func (i *Item) String() string {
 // It requires a Google API Key (key) and a Google Custom Search ID (cx).
 func Search(term, key, cx string) (*Result, error) {
 	base := "https://www.googleapis.com/customsearch/v1"
-	client, err := transport.Client(base)
-	if err != nil {
-		return nil, err
-	}
 	params := url.Values{}
 	params.Set("key", key)
 	params.Set("cx", cx)
 	params.Set("alt", "json")
 	params.Set("q", term)
-	resp, err := client.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
+	resp, err := http.DefaultClient.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
 	if err != nil {
 		return nil, err
 	}

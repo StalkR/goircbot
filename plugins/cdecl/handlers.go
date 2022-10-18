@@ -4,21 +4,17 @@ package cdecl
 import (
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 const queryURL = "http://cdecl.org/query.php"
 
 func explain(s string) (string, error) {
-	c, err := transport.Client(queryURL)
-	if err != nil {
-		return "", err
-	}
-	resp, err := c.PostForm(queryURL, url.Values{"q": {s}})
+	resp, err := http.DefaultClient.PostForm(queryURL, url.Values{"q": {s}})
 	if err != nil {
 		return "", err
 	}

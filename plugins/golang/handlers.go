@@ -4,11 +4,11 @@ package golang
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 // Register registers the plugin with a bot.
@@ -26,7 +26,6 @@ func goCmd(e *bot.Event) {
 	if len(snippet) == 0 {
 		return
 	}
-	// note: goirc takes care of cutting new lines
 	out, err := run(snippet)
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
@@ -55,11 +54,7 @@ func run(snippet string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	c, err := transport.Client(runURL)
-	if err != nil {
-		return "", err
-	}
-	resp, err := c.PostForm(runURL, url.Values{
+	resp, err := http.DefaultClient.PostForm(runURL, url.Values{
 		"body":    {code},
 		"version": {"2"},
 	})
@@ -86,11 +81,7 @@ type fmtResult struct {
 }
 
 func goFmt(code string) (string, error) {
-	c, err := transport.Client(fmtURL)
-	if err != nil {
-		return "", err
-	}
-	resp, err := c.PostForm(fmtURL, url.Values{
+	resp, err := http.DefaultClient.PostForm(fmtURL, url.Values{
 		"body":    {code},
 		"imports": {"true"},
 	})

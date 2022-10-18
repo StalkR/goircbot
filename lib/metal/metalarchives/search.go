@@ -10,17 +10,12 @@ import (
 	"strings"
 
 	"github.com/StalkR/goircbot/lib/metal"
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 const baseURL = "https://www.metal-archives.com/search/ajax-band-search/"
 
 // Search finds bands by name.
 func Search(name string) ([]metal.Band, error) {
-	client, err := transport.Client(baseURL)
-	if err != nil {
-		return nil, err
-	}
 	u := url.Values{"query": {name}, "field": {"name"}}
 	uri := fmt.Sprintf("%s?%s", baseURL, u.Encode())
 	req, err := http.NewRequest("GET", uri, nil)
@@ -28,7 +23,7 @@ func Search(name string) ([]metal.Band, error) {
 		return nil, err
 	}
 	req.Header.Add("User-Agent", "Go IRC Bot (github.com/StalkR/goircbot)")
-	resp, err := client.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

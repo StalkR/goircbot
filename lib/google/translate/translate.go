@@ -7,9 +7,8 @@ import (
 	"fmt"
 	"html"
 	"io/ioutil"
+	"net/http"
 	"net/url"
-
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 type lresult struct {
@@ -30,16 +29,12 @@ type Language struct {
 // given target language or empty string for all supported languages.
 func Languages(target string, key string) ([]Language, error) {
 	base := "https://www.googleapis.com/language/translate/v2/languages"
-	client, err := transport.Client(base)
-	if err != nil {
-		return nil, err
-	}
 	params := url.Values{}
 	params.Set("key", key)
 	if target != "" {
 		params.Set("target", target)
 	}
-	resp, err := client.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
+	resp, err := http.DefaultClient.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
 	if err != nil {
 		return nil, err
 	}
@@ -74,10 +69,6 @@ type Translation struct {
 // For automatic source language detection, use empty string.
 func Translate(source, target, text, key string) (*Translation, error) {
 	base := "https://www.googleapis.com/language/translate/v2"
-	client, err := transport.Client(base)
-	if err != nil {
-		return nil, err
-	}
 	params := url.Values{}
 	params.Set("key", key)
 	if source != "" {
@@ -85,7 +76,7 @@ func Translate(source, target, text, key string) (*Translation, error) {
 	}
 	params.Set("target", target)
 	params.Set("q", text)
-	resp, err := client.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
+	resp, err := http.DefaultClient.Get(fmt.Sprintf("%s?%s", base, params.Encode()))
 	if err != nil {
 		return nil, err
 	}

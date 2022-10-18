@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 const queryURL = "http://api.coinlayer.com/api/live"
@@ -30,11 +30,7 @@ func rate(apiKey, symbol string) (string, error) {
 		return "", errors.New("invalid symbol")
 	}
 	u := fmt.Sprintf("%s?%s", queryURL, url.Values{"access_key": []string{apiKey}}.Encode())
-	c, err := transport.Client(u)
-	if err != nil {
-		return "", err
-	}
-	resp, err := c.Get(u)
+	resp, err := http.DefaultClient.Get(u)
 	if err != nil {
 		return "", err
 	}

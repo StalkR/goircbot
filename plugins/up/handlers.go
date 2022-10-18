@@ -3,20 +3,16 @@ package up
 
 import (
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 // Probe gets an URL and returns a boolean if it worked within imparted time.
 func Probe(url string) bool {
-	client, err := transport.Client(url)
-	if err != nil {
-		return false
-	}
-	resp, err := client.Get(url)
+	resp, err := http.DefaultClient.Get(url)
 	if err != nil {
 		return false
 	}

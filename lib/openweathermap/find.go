@@ -4,10 +4,9 @@ package openweathermap
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 // A Response represents the parameters in API response.
@@ -102,11 +101,7 @@ func Find(apiKey string, q string) (*Response, error) {
 	v.Set("lang", "en")
 	v.Set("appid", apiKey)
 	dest := fmt.Sprintf("https://api.openweathermap.org/data/2.5/find?%s", v.Encode())
-	client, err := transport.Client(dest)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := client.Get(dest)
+	resp, err := http.DefaultClient.Get(dest)
 	if err != nil {
 		return nil, err
 	}

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"regexp"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
-	"github.com/StalkR/goircbot/lib/transport"
 )
 
 type commitMsg struct {
@@ -29,11 +29,7 @@ var (
 )
 
 func lastLog(url string) (*commitMsg, error) {
-	c, err := transport.Client(url)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.Get(url)
+	resp, err := http.DefaultClient.Get(url)
 	if err != nil {
 		return nil, err
 	}
