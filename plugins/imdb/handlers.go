@@ -10,12 +10,28 @@ import (
 	"github.com/StalkR/imdb"
 )
 
+const userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
+
+var client = &http.Client{
+	Transport: &customTransport{http.DefaultTransport},
+}
+
+type customTransport struct {
+	http.RoundTripper
+}
+
+func (e *customTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	r.Header.Set("Accept-Language", "en") // avoid IP-based language detection
+	r.Header.Set("User-Agent", userAgent)
+	return e.RoundTripper.RoundTrip(r)
+}
+
 func search(e *bot.Event) {
 	q := strings.TrimSpace(e.Args)
 	if len(q) == 0 {
 		return
 	}
-	titles, err := imdb.SearchTitle(http.DefaultClient, q)
+	titles, err := imdb.SearchTitle(client, q)
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
@@ -24,7 +40,7 @@ func search(e *bot.Event) {
 		e.Bot.Privmsg(e.Target, "No results found.")
 		return
 	}
-	title, err := imdb.NewTitle(http.DefaultClient, titles[0].ID)
+	title, err := imdb.NewTitle(client, titles[0].ID)
 	if err != nil {
 		e.Bot.Privmsg(e.Target, fmt.Sprintf("error: %s", err))
 		return
