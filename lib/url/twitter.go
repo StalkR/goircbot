@@ -17,7 +17,7 @@ var (
 
 // Twitter frontend is not scrapable easily and they require using their API.
 // Instead, use the alternative Twitter front-end https://github.com/zedeus/nitter
-const nitterDomain = "nitter.it"
+const nitterDomain = "nitter.nl"
 
 func handleTwitter(target string) (string, error) {
 	if !twitterRE.MatchString(target) {
