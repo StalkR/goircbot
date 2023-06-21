@@ -6,52 +6,73 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/StalkR/goircbot/bot"
 )
 
 type quote struct {
-	Symbol                string
-	CompanyName           string
-	PrimaryExchange       string
-	Sector                string
-	CalculationPrice      string
-	Open                  float64
-	OpenTime              int64
-	Close                 float64
-	CloseTime             int64
-	High                  float64
-	Low                   float64
-	LatestPrice           float64
-	LatestSource          string
-	LatestTime            string
-	LatestUpdate          int64
-	LatestVolume          int64
-	IexRealtimePrice      float64
-	IexRealtimeSize       int64
-	iexLastUpdated        int64
-	DelayedPrice          float64
-	DelayedPriceTime      int64
-	ExtendedPrice         float64
-	ExtendedChange        float64
-	ExtendedChangePercent float64
-	ExtendedPriceTime     int64
-	PreviousClose         float64
-	Change                float64
-	ChangePercent         float64
-	IexMarketPercent      float64
-	IexVolume             int64
-	AvgTotalVolume        int64
-	IexBidPrice           float64
-	IexBidSize            int64
-	IexAskPrice           float64
-	IexAskSize            int64
-	MarketCap             int64
-	PeRatio               float64
-	Week52High            float64
-	Week52Low             float64
-	YtdChange             float64
+	Status  string `json:"status"` // "error"
+	Code    int    `json:"code"`   // 400
+	Message string `json:"message"`
+
+	Symbol         string `json:"symbol"`
+	Name           string `json:"name"`
+	Exchange       string `json:"exchange"`
+	MICCode        string `json:"mic_code"`
+	Currency       string `json:"currency"`
+	Datetime       string `json:"datetime"`
+	Timestamp      uint64 `json:"timestamp"`
+	OpenS          string `json:"open"`
+	Open           float64
+	HighS          string `json:"high"`
+	High           float64
+	LowS           string `json:"low"`
+	Low            float64
+	CloseS         string `json:"close"`
+	Close          float64
+	VolumeS        string `json:"volume"`
+	Volume         uint64
+	PreviousCloseS string `json:"previous_close"`
+	PreviousClose  float64
+	ChangeS        string `json:"change"`
+	Change         float64
+	PercentChangeS string `json:"percent_change"`
+	PercentChange  float64
+	AverageVolumeS string `json:"average_volume"`
+	AverageVolume  uint64
+	IsMarketOpen   bool `json:"is_market_open"`
+}
+
+func (q *quote) parse() {
+	if v, err := strconv.ParseFloat(q.OpenS, 64); err == nil {
+		q.Open = v
+	}
+	if v, err := strconv.ParseFloat(q.HighS, 64); err == nil {
+		q.High = v
+	}
+	if v, err := strconv.ParseFloat(q.LowS, 64); err == nil {
+		q.Low = v
+	}
+	if v, err := strconv.ParseFloat(q.CloseS, 64); err == nil {
+		q.Close = v
+	}
+	if v, err := strconv.ParseUint(q.VolumeS, 10, 64); err == nil {
+		q.Volume = v
+	}
+	if v, err := strconv.ParseFloat(q.PreviousCloseS, 64); err == nil {
+		q.PreviousClose = v
+	}
+	if v, err := strconv.ParseFloat(q.ChangeS, 64); err == nil {
+		q.Change = v
+	}
+	if v, err := strconv.ParseFloat(q.PercentChangeS, 64); err == nil {
+		q.PercentChange = v
+	}
+	if v, err := strconv.ParseUint(q.AverageVolumeS, 10, 64); err == nil {
+		q.AverageVolume = v
+	}
 }
 
 func (q *quote) String() string {
@@ -59,14 +80,12 @@ func (q *quote) String() string {
 	if q.Change > 0 {
 		plus = "+"
 	}
-	return fmt.Sprintf("%v (%v): %v %v (%v%v, %v%.2f%%), %v market cap, %v volume, %.2f P/E - https://iextrading.com/apps/stocks/%v",
-		q.Symbol, q.CompanyName,
-		q.LatestSource, q.LatestPrice, plus, q.Change, plus, q.ChangePercent*100,
-		humanize(q.MarketCap), humanize(q.LatestVolume), q.PeRatio, q.Symbol)
+	return fmt.Sprintf("%s (%s): %.2f %s (%s%.2f, %s%.2f%%), %s volume - https://finance.yahoo.com/quote/%s",
+		q.Symbol, q.Name, q.Close, q.Currency, plus, q.Change, plus, q.PercentChange, humanize(q.Volume), q.Symbol)
 }
 
-func humanize(i int64) string {
-	format := func(i, unit int64) string {
+func humanize(i uint64) string {
+	format := func(i, unit uint64) string {
 		f := "%.0f"
 		if i < 10*unit {
 			f = "%.2f"
@@ -77,22 +96,26 @@ func humanize(i int64) string {
 	}
 	switch {
 	case i >= 1e9: // Billion
-		return fmt.Sprintf("%vB$", format(i, 1e9))
+		return fmt.Sprintf("%vB", format(i, 1e9))
 	case i >= 1e6: // Million
-		return fmt.Sprintf("%vM$", format(i, 1e6))
+		return fmt.Sprintf("%vM", format(i, 1e6))
 	case i >= 1e3: // Thousand
-		return fmt.Sprintf("%vK$", format(i, 1e3))
+		return fmt.Sprintf("%vK", format(i, 1e3))
 	}
-	return fmt.Sprintf("%v$", i)
+	return fmt.Sprintf("%v", i)
 }
 
-const apiURL = "https://cloud.iexapis.com/stable"
+const apiURL = "https://api.twelvedata.com"
 
 func stock(apiKey, symbol string) (*quote, error) {
 	v := url.Values{}
-	v.Set("token", apiKey)
-	uri := fmt.Sprintf("%s/stock/%s/quote?%s", apiURL, url.PathEscape(symbol), v.Encode())
-	resp, err := http.DefaultClient.Get(uri)
+	v.Set("symbol", symbol)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/quote?%s", apiURL, v.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", fmt.Sprintf("apikey %v", apiKey))
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +127,10 @@ func stock(apiKey, symbol string) (*quote, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
 		return nil, err
 	}
+	if r.Status == "error" {
+		return nil, fmt.Errorf("error: %v", r.Message)
+	}
+	r.parse()
 	return &r, nil
 }
 
