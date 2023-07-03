@@ -7,11 +7,7 @@ import "errors"
 var errSkip = errors.New("url: skip to next handler")
 
 // handlers is the ordered list of handlers.
-// Last one must not return errSkip.
-var handlers = []func(url string) (string, error){
-	handleTwitter,
-	handleDefault,
-}
+var handlers = []func(url string) (string, error){}
 
 // Title gets an URL and returns its title.
 func Title(url string) (string, error) {
@@ -22,5 +18,5 @@ func Title(url string) (string, error) {
 		}
 		return title, err
 	}
-	panic("default handler should have matched")
+	return handleDefault(url)
 }
