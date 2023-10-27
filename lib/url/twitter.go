@@ -13,6 +13,7 @@ var (
 	twitterRE = regexp.MustCompile(`^https?://twitter\.com/.*?/status/(\d+)(?:/photo/\d+)?(?:#|$)`)
 )
 
+// Twitter API token, to be configured externally.
 var TwitterAPIToken string
 
 func handleTwitter(target string) (string, error) {
