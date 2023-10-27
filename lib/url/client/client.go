@@ -2,6 +2,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -9,12 +10,19 @@ import (
 	"github.com/StalkR/goircbot/lib/url"
 )
 
+var (
+	flagURL          = flag.String("url", "", "URL to show title of.")
+	flagTwitterToken = flag.String("twitter_token", "", "Twitter API Token.")
+)
+
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Printf("Usage: %v <url>\n", os.Args[0])
+	flag.Parse()
+	if *flagURL == "" {
+		fmt.Printf("Usage: %v [-twitter_token <token>] -url <url>\n", os.Args[0])
 		os.Exit(1)
 	}
-	title, err := url.Title(os.Args[1])
+	url.TwitterAPIToken = *flagTwitterToken
+	title, err := url.Title(*flagURL)
 	if err != nil {
 		log.Fatal(err)
 	}

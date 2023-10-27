@@ -7,7 +7,10 @@ import "errors"
 var errSkip = errors.New("url: skip to next handler")
 
 // handlers is the ordered list of handlers.
-var handlers = []func(url string) (string, error){}
+var handlers = []func(url string) (string, error){
+	// not working yet, don't have an api token :(
+	//handleTwitter,
+}
 
 // Title gets an URL and returns its title.
 func Title(url string) (string, error) {
