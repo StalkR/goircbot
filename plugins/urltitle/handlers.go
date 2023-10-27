@@ -27,7 +27,7 @@ func watchLine(b bot.Bot, line *client.Line, ignore map[string]bool) {
 		return
 	}
 	text := line.Args[1]
-	if silenceRE.MatchString(text) {
+	if strings.HasPrefix(text, b.CommandPrefix()) || silenceRE.MatchString(text) {
 		return
 	}
 	match := linkRE.FindStringSubmatch(text)
