@@ -4,6 +4,7 @@ package up
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 
@@ -20,21 +21,27 @@ func Probe(url string) bool {
 	return true
 }
 
+var hostRE = regexp.MustCompile(`^[\w._-]+$`)
+
 func up(e *bot.Event) {
 	arg := strings.TrimSpace(e.Args)
 	if len(arg) == 0 {
 		return
 	}
-	matched, err := regexp.Match(`^[\w._-]+$`, []byte(arg))
-	if err != nil || !matched {
+	target := arg
+	if hostRE.MatchString(arg) {
+		target = fmt.Sprintf("http://%s", arg)
+	}
+	u, err := url.Parse(target)
+	if err != nil || (u.Scheme != "http" && u.Scheme != "https") {
+		e.Bot.Privmsg(e.Target, fmt.Sprintf("%s must be either a hostname or an http(s) URL.", arg))
 		return
 	}
-	url := fmt.Sprintf("http://%s", arg)
-	if !Probe(url) {
-		e.Bot.Privmsg(e.Target, fmt.Sprintf("%s is down from here.", url))
+	if !Probe(target) {
+		e.Bot.Privmsg(e.Target, fmt.Sprintf("%s is down from here.", target))
 		return
 	}
-	e.Bot.Privmsg(e.Target, fmt.Sprintf("%s is up from here.", url))
+	e.Bot.Privmsg(e.Target, fmt.Sprintf("%s is up from here.", target))
 }
 
 // Register registers the plugin with a bot.
