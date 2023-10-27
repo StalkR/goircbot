@@ -29,7 +29,7 @@ func readURLs(b bot.Bot, line *client.Line, o *Old, ignore map[string]bool) {
 		return
 	}
 	text := line.Args[1]
-	if backlogRE.MatchString(text) || silenceRE.MatchString(text) {
+	if strings.HasPrefix(text, b.CommandPrefix()) || backlogRE.MatchString(text) || silenceRE.MatchString(text) {
 		return
 	}
 
