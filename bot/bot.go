@@ -224,8 +224,9 @@ func (b *botImpl) Conn() *client.Conn { return b.conn }
 
 // Channels returns a sorted list of channels the bot is currently on.
 func (b *botImpl) Channels() []string {
-	var channels []string
-	for name := range b.Conn().Me().Channels {
+	chans := b.Conn().Me().Channels
+	channels := make([]string, 0, len(chans))
+	for name := range chans {
 		channels = append(channels, name)
 	}
 	sort.Strings(channels)
@@ -254,7 +255,7 @@ func (b *botImpl) setup() {
 			// we end up with an empty state, so no channels and we do not want to
 			// save that, it does not make much sense. So ignore empty values.
 			if len(channels) > 0 {
-				b.channels = b.Channels()
+				b.channels = channels
 			}
 			b.quit <- true
 		})
