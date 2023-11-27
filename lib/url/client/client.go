@@ -11,17 +11,15 @@ import (
 )
 
 var (
-	flagURL          = flag.String("url", "", "URL to show title of.")
-	flagTwitterToken = flag.String("twitter_token", "", "Twitter API Token.")
+	flagURL = flag.String("url", "", "URL to show title of.")
 )
 
 func main() {
 	flag.Parse()
 	if *flagURL == "" {
-		fmt.Printf("Usage: %v [-twitter_token <token>] -url <url>\n", os.Args[0])
+		fmt.Printf("Usage: %v -url <url>\n", os.Args[0])
 		os.Exit(1)
 	}
-	url.TwitterAPIToken = *flagTwitterToken
 	title, err := url.Title(*flagURL)
 	if err != nil {
 		log.Fatal(err)
