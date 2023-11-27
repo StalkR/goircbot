@@ -8,8 +8,6 @@ github.com/emersion/go-sasl v0.0.0-20220912192320-0145f2c60ead h1:fI1Jck0vUrXT8b
 github.com/emersion/go-sasl v0.0.0-20220912192320-0145f2c60ead/go.mod h1:iL2twTeMvZnrg54ZoPDNfJaJaqy0xIQFuBdrLsmspwQ=
 github.com/fluffle/goirc v1.3.0 h1:6G38L9XiXD+XCo5+sLKQcz156W8YIc5Q6ZXM+SqXJNA=
 github.com/fluffle/goirc v1.3.0/go.mod h1:CHys34YkX6L6VYpOPCc8PYBjEldgE8M/bBuRa/+fxZw=
-github.com/g8rswimmer/go-twitter v1.1.4 h1:H1Fezm1/Sui6uYb2kXREZPvEae6Nx91j6X5GdhRssXs=
-github.com/g8rswimmer/go-twitter v1.1.4/go.mod h1:/6ZcU70I0EMkL0Zu1iABzKfE4E2oCvDUL2LZVQexLIA=
 github.com/golang/glog v1.1.2 h1:DVjP2PbBOzHyzA+dn3WhHIq4NdVu3Q+pvivFICf/7fo=
 github.com/golang/glog v1.1.2/go.mod h1:zR+okUeTbrL6EL3xHUDxZuEtGv04p5shwip1+mL/rLQ=
 github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=

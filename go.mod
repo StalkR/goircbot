@@ -6,7 +6,6 @@ require (
 	github.com/StalkR/dnssec-analyzer v1.0.0
 	github.com/StalkR/imdb v1.0.15
 	github.com/fluffle/goirc v1.3.0
-	github.com/g8rswimmer/go-twitter v1.1.4
 	golang.org/x/sys v0.13.0
 )
 
