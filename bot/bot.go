@@ -46,7 +46,7 @@ func NewBotOptions(options ...Option) (Bot, error) {
 		SSLConfig:   nil,
 		Version:     "Powered by GoIRCBot",
 		Recover:     (*client.Conn).LogPanic,
-		SplitLen:    450,
+		SplitLen:    450, // default is the same as goirc's unexported defaultLimit
 		Proxy:       "",
 		Pass:        "",
 	}
@@ -130,6 +130,11 @@ func Channels(channels []string) func(*botImpl) {
 // CommandPrefix is an option to configure the prefix of commands (default is !).
 func CommandPrefix(commandPrefix string) func(impl *botImpl) {
 	return func(b *botImpl) { b.commandPrefix = commandPrefix }
+}
+
+// SplitLen is an option to configure the split length for some IRC commands (default is 450).
+func SplitLen(n int) func(impl *botImpl) {
+	return func(b *botImpl) { b.config.SplitLen = n }
 }
 
 // NewBot creates a new Bot implementation with a set of parameters.

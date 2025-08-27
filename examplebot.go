@@ -62,7 +62,8 @@ func main() {
 	glog.Init()
 	b, err := bot.NewBotOptions(bot.Host(*host), bot.Nick(*nick), bot.SSL(*ssl), bot.Ident(*ident),
 		bot.Channels(strings.Split(*channels, ",")),
-		bot.CommandPrefix(*commandPrefix))
+		bot.CommandPrefix(*commandPrefix),
+		bot.SplitLen(450))
 	if err != nil {
 		log.Fatalf("failed to init new bot: %v", err)
 	}
