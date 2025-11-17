@@ -102,7 +102,7 @@ func Connect(hostPort, pwd string) (c net.Conn, err error) {
 
 // send sends a command.
 func send(c net.Conn, cmd string) error {
-	_, err := fmt.Fprintf(c, cmd+"\r\n")
+	_, err := fmt.Fprint(c, cmd+"\r\n")
 	return err
 }
 
