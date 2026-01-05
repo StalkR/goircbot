@@ -137,6 +137,12 @@ func SplitLen(n int) func(impl *botImpl) {
 	return func(b *botImpl) { b.config.SplitLen = n }
 }
 
+// ReNickDelay is an option to configure the delay before sending a new nick command
+// when the previous nick we tried was already in use (default is 0).
+func ReNickDelay(d time.Duration) func(impl *botImpl) {
+	return func(b *botImpl) { b.config.ReNickDelay = d }
+}
+
 // NewBot creates a new Bot implementation with a set of parameters.
 //
 // Deprecated: use NewBotOptions instead.
