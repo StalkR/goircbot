@@ -39,6 +39,7 @@ func NewBotOptions(options ...Option) (Bot, error) {
 	cfg := &client.Config{
 		Me:          &state.Nick{Nick: "goircbot"},
 		NewNick:     func(s string) string { return s + "_" },
+		ReNickDelay: 1 * time.Second,
 		PingFreq:    3 * time.Minute,
 		QuitMessage: "I have to go.",
 		Server:      "",
