@@ -50,6 +50,7 @@ func NewBotOptions(options ...Option) (Bot, error) {
 		SplitLen:    450, // default is the same as goirc's unexported defaultLimit
 		Proxy:       "",
 		Pass:        "",
+		Timeout:     time.Minute,
 	}
 
 	b := &botImpl{
