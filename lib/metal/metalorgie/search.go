@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 
 	"github.com/StalkR/goircbot/lib/metal"
 )
@@ -15,10 +16,11 @@ import (
 const baseURL = "https://www.metalorgie.com/recherche"
 
 var (
-	sectionsRE = regexp.MustCompile(`(?s)<div class="fleft">(.*?)<div class="clear">`)
-	nameRE     = regexp.MustCompile(`<a href="[^"]+" class="title">([^<]+)`)
-	genreRE    = regexp.MustCompile(`Style :</span> ([^<]+)`)
-	countryRE  = regexp.MustCompile(`Pays :</span> <a[^>]*>([^<]+)`)
+	resultsRE = regexp.MustCompile(`(?s)<h1 class="title">Groupes</h1>(.*?)<h1`)
+	bandRE    = regexp.MustCompile(`(?s)<div class="column[^"]*">(.*?)</div>\s*</div>\s*</div>`)
+	nameRE    = regexp.MustCompile(`<a class="post__content__band" href="[^"]+">([^<]+)`)
+	genresRE  = regexp.MustCompile(`<span class="tag">([^<]+)`)
+	countryRE = regexp.MustCompile(`<div class="post__content__flag flag-icon-background flag-icon-([^"]*)"></div>`)
 )
 
 // Search finds bands by name.
@@ -36,19 +38,32 @@ func Search(name string) ([]metal.Band, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("metalorgie: status %v; body: %v", resp.Status, string(b))
 	}
-	var results []metal.Band
-	for _, r := range sectionsRE.FindAllString(string(b), -1) {
-		name := nameRE.FindStringSubmatch(r)
-		genre := genreRE.FindStringSubmatch(r)
-		country := countryRE.FindStringSubmatch(r)
-		if name == nil || genre == nil || country == nil {
-			continue
+	results := resultsRE.FindStringSubmatch(string(b))
+	if results == nil {
+		return nil, fmt.Errorf("metalorgies: search results section not found")
+	}
+	var bands []metal.Band
+	for _, section := range bandRE.FindAllString(results[1], -1) {
+		name := nameRE.FindStringSubmatch(section)
+		if name == nil {
+			return nil, fmt.Errorf("metalorgies: empty name")
 		}
-		results = append(results, metal.Band{
+		var genres []string
+		for _, tag := range genresRE.FindAllStringSubmatch(section, -1) {
+			genres = append(genres, html.UnescapeString(tag[1]))
+		}
+		if genres == nil {
+			return nil, fmt.Errorf("metalorgies: no genres?")
+		}
+		country := countryRE.FindStringSubmatch(section)
+		if country == nil {
+			return nil, fmt.Errorf("metalorgies: empty country?")
+		}
+		bands = append(bands, metal.Band{
 			Name:    html.UnescapeString(name[1]),
-			Genre:   html.UnescapeString(genre[1]),
-			Country: html.UnescapeString(country[1]),
+			Genre:   strings.Join(genres, " / "),
+			Country: strings.ToUpper(country[1]),
 		})
 	}
-	return results, nil
+	return bands, nil
 }

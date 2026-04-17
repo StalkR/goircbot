@@ -8,7 +8,6 @@ import (
 )
 
 func TestSearch(t *testing.T) {
-	t.Skip() // metalorgie enabled cloudflare :(
 	for _, tt := range []struct {
 		name string
 		want []metal.Band
@@ -16,9 +15,9 @@ func TestSearch(t *testing.T) {
 		{
 			name: "Conv",
 			want: []metal.Band{
-				metal.Band{Name: "Converge", Genre: "Hardcore Chaotique / Punk / Metal", Country: "USA"},
-				metal.Band{Name: "Convict", Genre: "Punk Rock / Pop Punk", Country: "Belgique"},
-				metal.Band{Name: "Convulsing", Genre: "Death Metal / Black Metal", Country: "Australie"},
+				metal.Band{Name: "Converge", Genre: "Hardcore / Mathcore / Metal / Noise / Punk", Country: "US"},
+				metal.Band{Name: "Convict", Genre: "Pop / Punk / Punk Rock", Country: "BE"},
+				metal.Band{Name: "Convulsing", Genre: "Black Metal / Death Metal", Country: "AU"},
 			},
 		},
 		{
